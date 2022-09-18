@@ -46,4 +46,7 @@ interface CoreApi {
     @JsonRpc("net_listening")
     suspend fun getNetListening(): Result<Boolean>
 
+    @JsonRpc("net_version")
+    suspend fun getNetVersion(): Result<String>
+
 }

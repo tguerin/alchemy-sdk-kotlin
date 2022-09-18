@@ -105,6 +105,12 @@ class CoreIntegrationTest {
         data.getOrThrow() shouldBeEqualTo true
     }
 
+    @Test
+    fun getNetVersion() = runTest {
+        val data = alchemy.core.getNetVersion()
+        data.getOrThrow() shouldBeEqualTo "1"
+    }
+
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
         return JsonReader(
             InputStreamReader(
