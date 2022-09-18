@@ -37,4 +37,7 @@ interface CoreApi {
         @JsonRpcParam("blockTag", position = 2) blockTag: BlockTag = BlockTag.Latest
     ): Result<Proof>
 
+    @JsonRpc("eth_protocolVersion")
+    suspend fun getProtocolVersion(): Result<HexString>
+
 }

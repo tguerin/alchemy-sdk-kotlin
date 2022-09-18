@@ -24,6 +24,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.InputStreamReader
 import java.lang.reflect.Type
+import java.math.BigDecimal
+import java.math.BigInteger
 
 @RunWith(AndroidJUnit4::class)
 class CoreIntegrationTest {
@@ -83,6 +85,12 @@ class CoreIntegrationTest {
         data.getOrThrow().nonce shouldBeEqualTo expectedProof.nonce
         data.getOrThrow().storageHash shouldBeEqualTo expectedProof.storageHash
         data.getOrThrow().storageProof shouldBeEqualTo expectedProof.storageProof
+    }
+
+    @Test
+    fun getProtocolVersion() = runTest {
+        val data = alchemy.core.getProtocolVersion()
+        data.getOrThrow().decimalValue() shouldBeEqualTo BigInteger("65")
     }
 
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
