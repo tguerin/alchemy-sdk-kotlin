@@ -49,4 +49,7 @@ interface CoreApi {
     @JsonRpc("net_version")
     suspend fun getNetVersion(): Result<String>
 
+    @JsonRpc("web3_clientVersion")
+    suspend fun getWeb3ClientVersion(): Result<String>
+
 }

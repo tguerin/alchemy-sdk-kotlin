@@ -111,6 +111,12 @@ class CoreIntegrationTest {
         data.getOrThrow() shouldBeEqualTo "1"
     }
 
+    @Test
+    fun getWeb3ClientVersion() = runTest {
+        val data = alchemy.core.getWeb3ClientVersion()
+        data.getOrThrow() shouldBeEqualTo "Geth/v1.10.23-stable-d901d853/linux-amd64/go1.18.5"
+    }
+
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
         return JsonReader(
             InputStreamReader(
