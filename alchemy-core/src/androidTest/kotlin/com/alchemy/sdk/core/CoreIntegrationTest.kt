@@ -93,6 +93,12 @@ class CoreIntegrationTest {
         data.getOrThrow().decimalValue() shouldBeEqualTo BigInteger("65")
     }
 
+    @Test
+    fun getChainId() = runTest {
+        val data = alchemy.core.getChainId()
+        data.getOrThrow() shouldBeEqualTo HexString.from("0x1")
+    }
+
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
         return JsonReader(
             InputStreamReader(

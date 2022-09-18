@@ -40,4 +40,7 @@ interface CoreApi {
     @JsonRpc("eth_protocolVersion")
     suspend fun getProtocolVersion(): Result<HexString>
 
+    @JsonRpc("eth_chainId")
+    suspend fun getChainId(): Result<HexString>
+
 }
