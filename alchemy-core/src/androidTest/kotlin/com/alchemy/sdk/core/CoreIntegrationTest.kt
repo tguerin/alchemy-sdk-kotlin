@@ -99,6 +99,12 @@ class CoreIntegrationTest {
         data.getOrThrow() shouldBeEqualTo HexString.from("0x1")
     }
 
+    @Test
+    fun getNetListening() = runTest {
+        val data = alchemy.core.getNetListening()
+        data.getOrThrow() shouldBeEqualTo true
+    }
+
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
         return JsonReader(
             InputStreamReader(

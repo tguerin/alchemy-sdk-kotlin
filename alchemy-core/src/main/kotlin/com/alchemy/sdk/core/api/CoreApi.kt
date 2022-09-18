@@ -43,4 +43,7 @@ interface CoreApi {
     @JsonRpc("eth_chainId")
     suspend fun getChainId(): Result<HexString>
 
+    @JsonRpc("net_listening")
+    suspend fun getNetListening(): Result<Boolean>
+
 }
