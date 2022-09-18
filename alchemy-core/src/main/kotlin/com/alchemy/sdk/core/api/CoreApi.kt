@@ -52,4 +52,9 @@ interface CoreApi {
     @JsonRpc("web3_clientVersion")
     suspend fun getWeb3ClientVersion(): Result<String>
 
+    @JsonRpc("web3_sha3")
+    suspend fun getWeb3Sha3(
+        @JsonRpcParam("data", position = 0) data: HexString
+    ): Result<HexString>
+
 }

@@ -21,11 +21,15 @@ class JsonRpcMethod<T> private constructor(
             val request = JsonRpcRequest(
                 id = idGenerator.generateId(),
                 method = jsonRpcMethod,
-                params = args.toList().map {
-                    if (it is List<*>) {
-                        it.map { item -> transformParameter(item as Any) }
-                    } else {
-                        transformParameter(it)
+                params = if (args.size == 1 && args[0] is List<*>) {
+                    (args[0] as List<*>).map { item -> transformParameter(item as Any) }
+                } else {
+                    args.toList().map {
+                        if (it is List<*>) {
+                            it.map { item -> transformParameter(item as Any) }
+                        } else {
+                            transformParameter(it)
+                        }
                     }
                 }
             )

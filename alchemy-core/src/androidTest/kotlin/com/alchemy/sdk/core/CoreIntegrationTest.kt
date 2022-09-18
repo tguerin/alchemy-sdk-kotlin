@@ -24,7 +24,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.InputStreamReader
 import java.lang.reflect.Type
-import java.math.BigDecimal
 import java.math.BigInteger
 
 @RunWith(AndroidJUnit4::class)
@@ -115,6 +114,12 @@ class CoreIntegrationTest {
     fun getWeb3ClientVersion() = runTest {
         val data = alchemy.core.getWeb3ClientVersion()
         data.getOrThrow() shouldBeEqualTo "Geth/v1.10.23-stable-d901d853/linux-amd64/go1.18.5"
+    }
+
+    @Test
+    fun getWeb3Sha3() = runTest {
+        val data = alchemy.core.getWeb3Sha3(HexString.from("0x68656c6c6f20776f726c64"))
+        data.getOrThrow() shouldBeEqualTo  HexString.from("0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad")
     }
 
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
