@@ -163,6 +163,24 @@ class CoreIntegrationTest {
         data.getOrThrow() shouldBeEqualTo expectedBlock
     }
 
+    @Test
+    fun getBlockTransactionCountByNumber() = runTest {
+        val blockTag = BlockTag.BlockTagNumber(HexString.from("0xed14e5"))
+
+        val data = alchemy.core.getBlockTransactionCountByNumber(blockTag)
+
+        data.getOrThrow() shouldBeEqualTo HexString.from("0xf8")
+    }
+
+    @Test
+    fun getBlockTransactionCountByHash() = runTest {
+        val data = alchemy.core.getBlockTransactionCountByHash(
+            HexString.from("0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e")
+        )
+
+        data.getOrThrow() shouldBeEqualTo HexString.from("0xf8")
+    }
+
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
         return JsonReader(
             InputStreamReader(

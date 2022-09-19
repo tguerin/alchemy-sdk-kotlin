@@ -73,4 +73,14 @@ interface CoreApi {
         @JsonRpcParam("fullTransactions", position = 1) fullTransactions: Boolean = false
     ): Result<Block>
 
+    @JsonRpc("eth_getBlockTransactionCountByNumber")
+    suspend fun getBlockTransactionCountByNumber(
+        @JsonRpcParam("blockTag", position = 0) blockTag: BlockTag
+    ): Result<HexString>
+
+    @JsonRpc("eth_getBlockTransactionCountByHash")
+    suspend fun getBlockTransactionCountByHash(
+        @JsonRpcParam("blockHash", position = 0) blockHash: HexString
+    ): Result<HexString>
+
 }
