@@ -136,4 +136,7 @@ interface CoreApi {
         @JsonRpcParam("transactionHash", position = 0) transactionHash: HexString,
     ): Result<TransactionReceipt>
 
+    @JsonRpc("eth_gasPrice")
+    suspend fun getGasPrice(): Result<Wei>
+
 }

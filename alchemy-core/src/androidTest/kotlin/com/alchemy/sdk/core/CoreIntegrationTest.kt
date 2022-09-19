@@ -25,6 +25,7 @@ import com.google.gson.InstanceCreator
 import com.google.gson.stream.JsonReader
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeGreaterThan
 import org.amshove.kluent.shouldHaveSize
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -292,6 +293,12 @@ class CoreIntegrationTest {
             TransactionReceipt::class.java
         )
         data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
+    }
+
+    @Test
+    fun getGasPrice() = runTest {
+        val data = alchemy.core.getGasPrice()
+        data.getOrThrow().toGigaWei().toInt() shouldBeGreaterThan 0
     }
 
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
