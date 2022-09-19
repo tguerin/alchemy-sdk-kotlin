@@ -8,6 +8,8 @@ import com.alchemy.sdk.core.adapter.HexStringDeserializer
 import com.alchemy.sdk.core.adapter.WeiDeserializer
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.AlchemySettings
+import com.alchemy.sdk.core.model.Block
+import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.core.model.Proof
 import com.alchemy.sdk.core.model.StoragePosition
@@ -119,7 +121,7 @@ class CoreIntegrationTest {
     @Test
     fun getWeb3Sha3() = runTest {
         val data = alchemy.core.getWeb3Sha3(HexString.from("0x68656c6c6f20776f726c64"))
-        data.getOrThrow() shouldBeEqualTo  HexString.from("0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad")
+        data.getOrThrow() shouldBeEqualTo HexString.from("0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad")
     }
 
     @Test
@@ -132,6 +134,33 @@ class CoreIntegrationTest {
     fun getBlockNumber() = runTest {
         val data = alchemy.core.getBlockNumber()
         data.getOrThrow() // No way to check the value, we just check we have a result
+    }
+
+    @Test
+    fun getBlockByNumber() = runTest {
+        val blockTag = BlockTag.BlockTagNumber(HexString.from("0xed14e5"))
+
+        val data = alchemy.core.getBlockByNumber(blockTag, true)
+
+        val expectedBlock = gson.fromJson<Block?>(
+            jsonReaderFromFileName(R.raw.block_test),
+            Block::class.java
+        )
+        data.getOrThrow() shouldBeEqualTo expectedBlock
+    }
+
+    @Test
+    fun getBlockByHash() = runTest {
+        val blockHash =
+            HexString.from("0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e")
+
+        val data = alchemy.core.getBlockByHash(blockHash, true)
+
+        val expectedBlock = gson.fromJson<Block?>(
+            jsonReaderFromFileName(R.raw.block_test),
+            Block::class.java
+        )
+        data.getOrThrow() shouldBeEqualTo expectedBlock
     }
 
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {

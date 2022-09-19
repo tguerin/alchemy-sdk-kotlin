@@ -1,6 +1,7 @@
 package com.alchemy.sdk.core.api
 
 import com.alchemy.sdk.core.model.Address
+import com.alchemy.sdk.core.model.Block
 import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.model.Proof
 import com.alchemy.sdk.core.model.StoragePosition
@@ -59,5 +60,17 @@ interface CoreApi {
 
     @JsonRpc("eth_blockNumber")
     suspend fun getBlockNumber(): Result<HexString>
+
+    @JsonRpc("eth_getBlockByNumber")
+    suspend fun getBlockByNumber(
+        @JsonRpcParam("blockTag", position = 0) blockTag: BlockTag,
+        @JsonRpcParam("fullTransactions", position = 1) fullTransactions: Boolean = false
+    ): Result<Block>
+
+    @JsonRpc("eth_getBlockByHash")
+    suspend fun getBlockByHash(
+        @JsonRpcParam("blockHash", position = 0) blockHash: HexString,
+        @JsonRpcParam("fullTransactions", position = 1) fullTransactions: Boolean = false
+    ): Result<Block>
 
 }
