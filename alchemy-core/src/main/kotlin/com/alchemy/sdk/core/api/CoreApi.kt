@@ -3,6 +3,7 @@ package com.alchemy.sdk.core.api
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.Block
 import com.alchemy.sdk.core.model.BlockTag
+import com.alchemy.sdk.core.model.BlockTransaction
 import com.alchemy.sdk.core.model.Index
 import com.alchemy.sdk.core.model.Proof
 import com.alchemy.sdk.core.model.UncleBlock
@@ -105,5 +106,17 @@ interface CoreApi {
     suspend fun getUncleCountByBlockHash(
         @JsonRpcParam("blockHash", position = 0) blockHash: HexString
     ): Result<HexString>
+
+    @JsonRpc("eth_getTransactionByBlockNumberAndIndex")
+    suspend fun getTransactionByBlockNumberAndIndex(
+        @JsonRpcParam("blockTag", position = 0) blockTag: BlockTag,
+        @JsonRpcParam("index", position = 1) index: Index,
+    ): Result<BlockTransaction>
+
+    @JsonRpc("eth_getTransactionByBlockHashAndIndex")
+    suspend fun getTransactionByBlockHashAndIndex(
+        @JsonRpcParam("blockHash", position = 0) blockHash: HexString,
+        @JsonRpcParam("index", position = 1) index: Index,
+    ): Result<BlockTransaction>
 
 }

@@ -10,6 +10,7 @@ import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.AlchemySettings
 import com.alchemy.sdk.core.model.Block
 import com.alchemy.sdk.core.model.BlockTag
+import com.alchemy.sdk.core.model.BlockTransaction
 import com.alchemy.sdk.core.model.Index.Companion.index
 import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.core.model.Proof
@@ -224,6 +225,33 @@ class CoreIntegrationTest {
             HexString.from("0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e")
         )
         data.getOrThrow().intValue() shouldBeEqualTo 1
+    }
+
+    @Test
+    fun getTransactionByBlockNumberAndIndex() = runTest {
+        val blockTag = BlockTag.BlockTagNumber(HexString.from("0xed14e5"))
+
+        val data = alchemy.core.getTransactionByBlockNumberAndIndex(blockTag, 0.index)
+
+        val expectedBlockTransaction = gson.fromJson<BlockTransaction?>(
+            jsonReaderFromFileName(R.raw.transaction_test),
+            BlockTransaction::class.java
+        )
+        data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
+    }
+
+    @Test
+    fun getTransactionByBlockHashAndIndex() = runTest {
+        val data = alchemy.core.getTransactionByBlockHashAndIndex(
+            HexString.from("0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e"),
+            0.index
+        )
+
+        val expectedBlockTransaction = gson.fromJson<BlockTransaction?>(
+            jsonReaderFromFileName(R.raw.transaction_test),
+            BlockTransaction::class.java
+        )
+        data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
     }
 
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
