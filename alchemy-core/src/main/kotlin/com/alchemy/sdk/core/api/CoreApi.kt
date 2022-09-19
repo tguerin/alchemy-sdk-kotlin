@@ -57,4 +57,7 @@ interface CoreApi {
         @JsonRpcParam("data", position = 0) data: HexString
     ): Result<HexString>
 
+    @JsonRpc("eth_blockNumber")
+    suspend fun getBlockNumber(): Result<HexString>
+
 }

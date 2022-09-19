@@ -128,6 +128,12 @@ class CoreIntegrationTest {
         data.getOrThrow() shouldBeEqualTo emptyList()
     }
 
+    @Test
+    fun getBlockNumber() = runTest {
+        val data = alchemy.core.getBlockNumber()
+        data.getOrThrow() // No way to check the value, we just check we have a result
+    }
+
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
         return JsonReader(
             InputStreamReader(
