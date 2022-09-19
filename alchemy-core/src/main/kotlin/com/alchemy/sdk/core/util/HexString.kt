@@ -48,27 +48,27 @@ class HexString private constructor(val data: String) {
 
         fun isValidHex(raw: String) = hexRegex.matches(raw)
 
-        fun from(dataInt: Int): HexString {
-            val hexRepresentation = Integer.toHexString(dataInt).lowercase()
+        fun from(data: Int): HexString {
+            val hexRepresentation = Integer.toHexString(data).lowercase()
             return HexString(
                 "0x${if (hexRepresentation.length % 2 != 0) "0" else ""}$hexRepresentation"
             )
         }
 
-        fun from(byteArray: ByteArray): HexString {
+        fun from(data: ByteArray): HexString {
             val hexRepresentation =
-                byteArray.joinToString(separator = "", prefix = "0x") { eachByte ->
+                data.joinToString(separator = "", prefix = "0x") { eachByte ->
                     "%02x".format(eachByte)
                 }
             return HexString(hexRepresentation)
         }
 
-        fun from(dataStr: String) = if (dataStr.isNotEmpty() && isValidHex(dataStr)) {
+        fun from(data: String) = if (data.isNotEmpty() && isValidHex(data)) {
             HexString(
-                if (!dataStr.startsWith("0x")) {
-                    "0x" + dataStr.lowercase()
+                if (!data.startsWith("0x")) {
+                    "0x" + data.lowercase()
                 } else {
-                    dataStr.lowercase()
+                    data.lowercase()
                 }
             )
         } else {

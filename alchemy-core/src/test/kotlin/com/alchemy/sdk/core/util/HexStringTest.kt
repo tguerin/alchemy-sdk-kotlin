@@ -44,4 +44,9 @@ class HexStringTest {
         HexString.from("0x02").intValue() shouldBeEqualTo 2
     }
 
+    @Test
+    fun `should be able to parse integer`() {
+        HexString.from(2).toString() shouldBeEqualTo "0x02"
+    }
+
 }
