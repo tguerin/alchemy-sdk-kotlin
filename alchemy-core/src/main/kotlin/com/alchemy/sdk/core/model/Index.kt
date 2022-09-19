@@ -1,6 +1,7 @@
 package com.alchemy.sdk.core.model
 
-data class Index constructor(val value: Int) {
+@JvmInline
+value class Index constructor(val value: Int) {
 
     companion object {
         val Int.index: Index

@@ -7,13 +7,12 @@ import com.alchemy.sdk.core.api.CoreApi
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.AlchemySettings
 import com.alchemy.sdk.core.model.BlockTag
-import com.alchemy.sdk.core.model.Index
 import com.alchemy.sdk.core.proxy.AlchemyProxy
 import com.alchemy.sdk.core.proxy.ParameterConverter
 import com.alchemy.sdk.core.proxy.converters.AddressParamConverter
 import com.alchemy.sdk.core.proxy.converters.BlockTagParameterConverter
 import com.alchemy.sdk.core.proxy.converters.HexStringParameterConverter
-import com.alchemy.sdk.core.proxy.converters.IndexParameterConverter
+import com.alchemy.sdk.core.proxy.converters.NumberParameterConverter
 import com.alchemy.sdk.core.util.Constants
 import com.alchemy.sdk.core.util.HexString
 import com.alchemy.sdk.core.util.Wei
@@ -56,7 +55,7 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
                     HexString::class.java to HexStringParameterConverter as ParameterConverter<Any, Any>,
                     BlockTag::class.java to BlockTagParameterConverter as ParameterConverter<Any, Any>,
                     Address::class.java to AddressParamConverter as ParameterConverter<Any, Any>,
-                    Index::class.java to IndexParameterConverter as ParameterConverter<Any, Any>,
+                    Number::class.java to NumberParameterConverter as ParameterConverter<Any, Any>
                 )
             )
         core = Core(alchemyProxy.createProxy(CoreApi::class.java))
