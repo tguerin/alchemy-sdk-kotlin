@@ -6,6 +6,7 @@ import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.model.BlockTransaction
 import com.alchemy.sdk.core.model.Index
 import com.alchemy.sdk.core.model.Proof
+import com.alchemy.sdk.core.model.TransactionReceipt
 import com.alchemy.sdk.core.model.UncleBlock
 import com.alchemy.sdk.core.util.HexString
 import com.alchemy.sdk.core.util.Wei
@@ -129,5 +130,10 @@ interface CoreApi {
     suspend fun getTransactionByHash(
         @JsonRpcParam("transactionHash", position = 0) transactionHash: HexString,
     ): Result<BlockTransaction>
+
+    @JsonRpc("eth_getTransactionReceipt")
+    suspend fun getTransactionReceipt(
+        @JsonRpcParam("transactionHash", position = 0) transactionHash: HexString,
+    ): Result<TransactionReceipt>
 
 }

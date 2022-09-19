@@ -14,6 +14,7 @@ import com.alchemy.sdk.core.model.BlockTransaction
 import com.alchemy.sdk.core.model.Index.Companion.index
 import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.core.model.Proof
+import com.alchemy.sdk.core.model.TransactionReceipt
 import com.alchemy.sdk.core.model.UncleBlock
 import com.alchemy.sdk.core.test.R
 import com.alchemy.sdk.core.util.HexString
@@ -277,6 +278,18 @@ class CoreIntegrationTest {
         data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
     }
 
+    @Test
+    fun getTransactionReceipt() = runTest {
+        val data = alchemy.core.getTransactionReceipt(
+            HexString.from("0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef")
+        )
+
+        val expectedBlockTransaction = gson.fromJson<TransactionReceipt?>(
+            jsonReaderFromFileName(R.raw.transaction_receipt_test),
+            TransactionReceipt::class.java
+        )
+        data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
+    }
 
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
         return JsonReader(
