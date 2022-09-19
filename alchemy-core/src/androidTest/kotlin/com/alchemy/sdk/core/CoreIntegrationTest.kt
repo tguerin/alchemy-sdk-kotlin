@@ -254,6 +254,16 @@ class CoreIntegrationTest {
         data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
     }
 
+    @Test
+    fun getTransactionCount() = runTest {
+        val data = alchemy.core.getTransactionCount(
+            Address.from("0x10ce4cd51b9e95be1c8a9bc665d3ebdfa9762529"),
+            BlockTag.BlockTagNumber(HexString.from("0xed14e5"))
+        )
+
+        data.getOrThrow().intValue() shouldBeEqualTo 6185
+    }
+
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
         return JsonReader(
             InputStreamReader(

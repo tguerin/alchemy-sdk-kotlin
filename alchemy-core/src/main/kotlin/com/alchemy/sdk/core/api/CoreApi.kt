@@ -119,4 +119,10 @@ interface CoreApi {
         @JsonRpcParam("index", position = 1) index: Index,
     ): Result<BlockTransaction>
 
+    @JsonRpc("eth_getTransactionCount")
+    suspend fun getTransactionCount(
+        @JsonRpcParam("address", position = 0) address: Address,
+        @JsonRpcParam("blockTag", position = 1) blockTag: BlockTag = BlockTag.Latest,
+    ): Result<HexString>
+
 }
