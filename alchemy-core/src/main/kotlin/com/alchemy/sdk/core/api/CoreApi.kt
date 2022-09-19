@@ -139,4 +139,7 @@ interface CoreApi {
     @JsonRpc("eth_gasPrice")
     suspend fun getGasPrice(): Result<Wei>
 
+    @JsonRpc("eth_maxPriorityFeePerGas")
+    suspend fun getMaxPriorityFeePerGas(): Result<Wei>
+
 }

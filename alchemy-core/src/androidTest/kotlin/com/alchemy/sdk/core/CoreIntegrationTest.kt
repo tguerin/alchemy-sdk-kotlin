@@ -298,7 +298,13 @@ class CoreIntegrationTest {
     @Test
     fun getGasPrice() = runTest {
         val data = alchemy.core.getGasPrice()
-        data.getOrThrow().toGigaWei().toInt() shouldBeGreaterThan 0
+        data.getOrThrow().toGigaWei().toDouble() shouldBeGreaterThan 0.0
+    }
+
+    @Test
+    fun getMaxPriorityFeePerGas() = runTest {
+        val data = alchemy.core.getMaxPriorityFeePerGas()
+        data.getOrThrow().toGigaWei().toDouble() shouldBeGreaterThan 0.0
     }
 
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
