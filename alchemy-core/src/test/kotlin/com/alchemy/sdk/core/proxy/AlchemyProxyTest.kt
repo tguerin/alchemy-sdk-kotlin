@@ -124,7 +124,7 @@ class AlchemyProxyTest {
 
         result.isSuccess shouldBeEqualTo false
         val exception = result.exceptionOrNull()
-        exception shouldBeInstanceOf  IOException::class.java
+        exception shouldBeInstanceOf IOException::class.java
         exception?.message shouldBeEqualTo "an error occured"
     }
 

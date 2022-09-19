@@ -110,7 +110,7 @@ class JsonRpcMethodTest {
         result.isSuccess shouldBeEqualTo false
         val exception = result.exceptionOrNull()
         exception shouldBeInstanceOf IOException::class.java
-        exception?.message shouldBeEqualTo  "issue happened"
+        exception?.message shouldBeEqualTo "issue happened"
     }
 
     private fun prepareCallEnvironment() {

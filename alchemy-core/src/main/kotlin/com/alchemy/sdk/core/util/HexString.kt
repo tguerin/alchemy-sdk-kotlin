@@ -6,7 +6,11 @@ class HexString private constructor(val data: String) {
 
     fun withoutPrefix(): String = data.substring(2)
 
+    fun withoutLeadingZero(): String = data.replace("0x0", "0x")
+
     fun decimalValue(): BigInteger = BigInteger.valueOf(java.lang.Long.decode(data))
+
+    fun intValue(): Int = decimalValue().toInt()
 
     fun toByteArray(): ByteArray {
         return withoutPrefix().chunked(2)

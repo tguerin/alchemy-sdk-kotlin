@@ -3,8 +3,9 @@ package com.alchemy.sdk.core.api
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.Block
 import com.alchemy.sdk.core.model.BlockTag
+import com.alchemy.sdk.core.model.Index
 import com.alchemy.sdk.core.model.Proof
-import com.alchemy.sdk.core.model.StoragePosition
+import com.alchemy.sdk.core.model.UncleBlock
 import com.alchemy.sdk.core.util.HexString
 import com.alchemy.sdk.core.util.Wei
 import com.alchemy.sdk.json.rpc.client.annotation.JsonRpc
@@ -27,7 +28,7 @@ interface CoreApi {
     @JsonRpc("eth_getStorageAt")
     suspend fun getStorageAt(
         @JsonRpcParam("address", position = 0) address: Address,
-        @JsonRpcParam("blockTag", position = 1) position: StoragePosition,
+        @JsonRpcParam("position", position = 1) index: Index,
         @JsonRpcParam("blockTag", position = 2) blockTag: BlockTag = BlockTag.Latest
     ): Result<HexString>
 
@@ -80,6 +81,28 @@ interface CoreApi {
 
     @JsonRpc("eth_getBlockTransactionCountByHash")
     suspend fun getBlockTransactionCountByHash(
+        @JsonRpcParam("blockHash", position = 0) blockHash: HexString
+    ): Result<HexString>
+
+    @JsonRpc("eth_getUncleByBlockNumberAndIndex")
+    suspend fun getUncleByBlockNumberAndIndex(
+        @JsonRpcParam("blockTag", position = 0) blockTag: BlockTag,
+        @JsonRpcParam("index", position = 1) index: Index
+    ): Result<UncleBlock>
+
+    @JsonRpc("eth_getUncleByBlockHashAndIndex")
+    suspend fun getUncleByBlockHashAndIndex(
+        @JsonRpcParam("blockHash", position = 0) blockHash: HexString,
+        @JsonRpcParam("index", position = 1) index: Index
+    ): Result<UncleBlock>
+
+    @JsonRpc("eth_getUncleCountByBlockNumber")
+    suspend fun getUncleCountByBlockNumber(
+        @JsonRpcParam("blockTag", position = 0) blockTag: BlockTag
+    ): Result<HexString>
+
+    @JsonRpc("eth_getUncleCountByBlockHash")
+    suspend fun getUncleCountByBlockHash(
         @JsonRpcParam("blockHash", position = 0) blockHash: HexString
     ): Result<HexString>
 

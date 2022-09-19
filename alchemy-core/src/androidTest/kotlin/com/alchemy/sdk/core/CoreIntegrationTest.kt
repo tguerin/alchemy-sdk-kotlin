@@ -10,9 +10,10 @@ import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.AlchemySettings
 import com.alchemy.sdk.core.model.Block
 import com.alchemy.sdk.core.model.BlockTag
+import com.alchemy.sdk.core.model.Index.Companion.index
 import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.core.model.Proof
-import com.alchemy.sdk.core.model.StoragePosition
+import com.alchemy.sdk.core.model.UncleBlock
 import com.alchemy.sdk.core.test.R
 import com.alchemy.sdk.core.util.HexString
 import com.alchemy.sdk.core.util.Wei
@@ -64,7 +65,7 @@ class CoreIntegrationTest {
     fun getStorageAt() = runTest {
         val data = alchemy.core.getStorageAt(
             address = Address.from("0x4B076f0E07eED3F1007fB1B5C000F7A08D3208E1"),
-            position = StoragePosition.from(0)
+            index = 0.index
         )
         data.getOrThrow() shouldBeEqualTo HexString.from("0x41494c616e647363617065000000000000000000000000000000000000000016")
     }
@@ -179,6 +180,50 @@ class CoreIntegrationTest {
         )
 
         data.getOrThrow() shouldBeEqualTo HexString.from("0xf8")
+    }
+
+    @Test
+    fun getUncleByBlockNumberAndIndex() = runTest {
+        val blockTag = BlockTag.BlockTagNumber(HexString.from("0xed14e5"))
+
+        val data = alchemy.core.getUncleByBlockNumberAndIndex(blockTag, 0.index)
+
+        val expectedBlock = gson.fromJson<UncleBlock?>(
+            jsonReaderFromFileName(R.raw.uncle_block_test),
+            UncleBlock::class.java
+        )
+        data.getOrThrow() shouldBeEqualTo expectedBlock
+    }
+
+    @Test
+    fun getUncleByBlockHashAndIndex() = runTest {
+        val data = alchemy.core.getUncleByBlockHashAndIndex(
+            HexString.from("0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e"),
+            0.index
+        )
+
+        val expectedBlock = gson.fromJson<UncleBlock?>(
+            jsonReaderFromFileName(R.raw.uncle_block_test),
+            UncleBlock::class.java
+        )
+        data.getOrThrow() shouldBeEqualTo expectedBlock
+    }
+
+    @Test
+    fun getUncleCountByBlockNumber() = runTest {
+        val blockTag = BlockTag.BlockTagNumber(HexString.from("0xed14e5"))
+
+        val data = alchemy.core.getUncleCountByBlockNumber(blockTag)
+
+        data.getOrThrow().intValue() shouldBeEqualTo 1
+    }
+
+    @Test
+    fun getUncleCountByBlockHash() = runTest {
+        val data = alchemy.core.getUncleCountByBlockHash(
+            HexString.from("0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e")
+        )
+        data.getOrThrow().intValue() shouldBeEqualTo 1
     }
 
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {

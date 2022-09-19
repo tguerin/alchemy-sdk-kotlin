@@ -39,4 +39,9 @@ class HexStringTest {
         HexString.from("0x04") + HexString.from("0xBC") shouldBeEqualTo HexString.from("0x04bc")
     }
 
+    @Test
+    fun `should be able to cast as an integer`() {
+        HexString.from("0x02").intValue() shouldBeEqualTo 2
+    }
+
 }
