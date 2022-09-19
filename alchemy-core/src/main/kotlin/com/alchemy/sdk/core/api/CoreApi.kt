@@ -125,4 +125,9 @@ interface CoreApi {
         @JsonRpcParam("blockTag", position = 1) blockTag: BlockTag = BlockTag.Latest,
     ): Result<HexString>
 
+    @JsonRpc("eth_getTransactionByHash")
+    suspend fun getTransactionByHash(
+        @JsonRpcParam("transactionHash", position = 0) transactionHash: HexString,
+    ): Result<BlockTransaction>
+
 }

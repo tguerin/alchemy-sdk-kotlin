@@ -264,6 +264,20 @@ class CoreIntegrationTest {
         data.getOrThrow().intValue() shouldBeEqualTo 6185
     }
 
+    @Test
+    fun getTransactionByHash() = runTest {
+        val data = alchemy.core.getTransactionByHash(
+            HexString.from("0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef")
+        )
+
+        val expectedBlockTransaction = gson.fromJson<BlockTransaction?>(
+            jsonReaderFromFileName(R.raw.transaction_test),
+            BlockTransaction::class.java
+        )
+        data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
+    }
+
+
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
         return JsonReader(
             InputStreamReader(
