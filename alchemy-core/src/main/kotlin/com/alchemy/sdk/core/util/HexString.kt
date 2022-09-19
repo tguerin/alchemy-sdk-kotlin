@@ -8,7 +8,7 @@ class HexString private constructor(val data: String) {
 
     fun withoutLeadingZero(): String = data.replace("0x0", "0x")
 
-    fun decimalValue(): BigInteger = BigInteger.valueOf(java.lang.Long.decode(data))
+    fun decimalValue(): BigInteger = BigInteger(withoutPrefix(), 16)
 
     fun intValue(): Int = decimalValue().toInt()
 
