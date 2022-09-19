@@ -2,6 +2,7 @@ package com.alchemy.sdk.core
 
 import androidx.annotation.IdRes
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.FlakyTest
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.alchemy.sdk.core.adapter.AddressDeserializer
 import com.alchemy.sdk.core.adapter.HexStringDeserializer
@@ -140,6 +141,7 @@ class CoreIntegrationTest {
     }
 
     @Test
+    @FlakyTest
     fun getBlockByNumber() = runTest {
         val blockTag = BlockTag.BlockTagNumber(HexString.from("0xed14e5"))
 
@@ -153,6 +155,7 @@ class CoreIntegrationTest {
     }
 
     @Test
+    @FlakyTest
     fun getBlockByHash() = runTest {
         val blockHash =
             HexString.from("0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e")

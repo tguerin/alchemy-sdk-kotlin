@@ -14,6 +14,7 @@ android {
         targetSdk = 33
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments += "notAnnotation" to "androidx.test.filters.FlakyTest"
         consumerProguardFiles("consumer-rules.pro")
     }
 
