@@ -14,7 +14,7 @@ class PercentileTest {
 
     @Test(expected = IllegalStateException::class)
     fun `percentile can't be more than 100`() {
-        100.percentile
+        101.percentile
     }
 
     @Test
