@@ -1,10 +1,14 @@
 package com.alchemy.sdk.core.api
 
+import androidx.annotation.IntRange
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.Block
+import com.alchemy.sdk.core.model.BlockCount
 import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.model.BlockTransaction
+import com.alchemy.sdk.core.model.FeeHistory
 import com.alchemy.sdk.core.model.Index
+import com.alchemy.sdk.core.model.Percentile
 import com.alchemy.sdk.core.model.Proof
 import com.alchemy.sdk.core.model.TransactionReceipt
 import com.alchemy.sdk.core.model.UncleBlock
@@ -141,5 +145,12 @@ interface CoreApi {
 
     @JsonRpc("eth_maxPriorityFeePerGas")
     suspend fun getMaxPriorityFeePerGas(): Result<Wei>
+
+    @JsonRpc("eth_feeHistory")
+    suspend fun getFeeHistory(
+        @JsonRpcParam("transactionHash", position = 0) blockCount: BlockCount,
+        @JsonRpcParam("newestBlock", position = 1) blockTag: BlockTag,
+        @JsonRpcParam("rewardPercentiles", position = 2) rewardPercentiles: List<Percentile>? = null,
+    ): Result<FeeHistory>
 
 }

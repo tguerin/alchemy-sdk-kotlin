@@ -16,7 +16,7 @@ class JsonRpcMethod<T> private constructor(
     private val returnType: Class<T>
 ) {
     @Suppress("UNCHECKED_CAST")
-    suspend fun invoke(args: Array<Any>): Result<T> {
+    suspend fun invoke(args: Array<Any?>): Result<T> {
         return try {
             val request = JsonRpcRequest(
                 id = idGenerator.generateId(),
@@ -24,7 +24,7 @@ class JsonRpcMethod<T> private constructor(
                 params = if (args.size == 1 && args[0] is List<*>) {
                     (args[0] as List<*>).map { item -> transformParameter(item as Any) }
                 } else {
-                    args.toList().map {
+                    args.filterNotNull().toList().map {
                         if (it is List<*>) {
                             it.map { item -> transformParameter(item as Any) }
                         } else {

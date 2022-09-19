@@ -10,10 +10,13 @@ import com.alchemy.sdk.core.adapter.WeiDeserializer
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.AlchemySettings
 import com.alchemy.sdk.core.model.Block
+import com.alchemy.sdk.core.model.BlockCount.Companion.blockCount
 import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.model.BlockTransaction
+import com.alchemy.sdk.core.model.FeeHistory
 import com.alchemy.sdk.core.model.Index.Companion.index
 import com.alchemy.sdk.core.model.Network
+import com.alchemy.sdk.core.model.Percentile.Companion.percentile
 import com.alchemy.sdk.core.model.Proof
 import com.alchemy.sdk.core.model.TransactionReceipt
 import com.alchemy.sdk.core.model.UncleBlock
@@ -27,6 +30,7 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
 import org.amshove.kluent.shouldHaveSize
+import org.amshove.kluent.shouldNotBeEqualTo
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.InputStreamReader
@@ -305,6 +309,33 @@ class CoreIntegrationTest {
     fun getMaxPriorityFeePerGas() = runTest {
         val data = alchemy.core.getMaxPriorityFeePerGas()
         data.getOrThrow().toGigaWei().toDouble() shouldBeGreaterThan 0.0
+    }
+
+    @Test
+    fun getFeeHistoryWithoutPercentiles() = runTest {
+        val data = alchemy.core.getFeeHistory(
+            4.blockCount,
+            BlockTag.BlockTagNumber(HexString.from("0xed14e5"))
+        )
+        val expectedFeeHistory = gson.fromJson<FeeHistory?>(
+            jsonReaderFromFileName(R.raw.fee_history_test),
+            FeeHistory::class.java
+        )
+        data.getOrThrow() shouldBeEqualTo expectedFeeHistory
+    }
+
+    @Test
+    fun getFeeHistoryWithPercentiles() = runTest {
+        val data = alchemy.core.getFeeHistory(
+            4.blockCount,
+            BlockTag.BlockTagNumber(HexString.from("0xed14e5")),
+            listOf(25.percentile, 75.percentile)
+        )
+        val expectedFeeHistory = gson.fromJson<FeeHistory?>(
+            jsonReaderFromFileName(R.raw.fee_history_percentiles_test),
+            FeeHistory::class.java
+        )
+        data.getOrThrow() shouldBeEqualTo expectedFeeHistory
     }
 
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
