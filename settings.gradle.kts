@@ -17,7 +17,6 @@ dependencyResolutionManagement {
 rootProject.name = "AlchemySdkAndroid"
 include(":alchemy-core")
 include(":json-rpc-client")
-include(":alchemy-sample-app")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 enableFeaturePreview("VERSION_CATALOGS")
