@@ -1,7 +1,7 @@
 package com.alchemy.sdk.core.model
 
+import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.HexString
-import com.alchemy.sdk.core.util.Wei
 
 data class UncleBlock(
     val number: HexString,
@@ -22,5 +22,5 @@ data class UncleBlock(
     val timestamp: HexString,
     val transactionsRoot: HexString,
     val uncles: List<HexString>,
-    val baseFeePerGas: Wei,
+    val baseFeePerGas: Ether,
 )

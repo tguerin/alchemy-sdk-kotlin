@@ -1,7 +1,7 @@
 package com.alchemy.sdk.core.model
 
+import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.HexString
-import com.alchemy.sdk.core.util.Wei
 
 data class BlockTransaction(
     val blockHash: HexString,
@@ -11,10 +11,10 @@ data class BlockTransaction(
     val chainId: HexString,
     val from: HexString,
     val gas: HexString,
-    val gasPrice: Wei,
+    val gasPrice: Ether,
     val input: HexString,
-    val maxFeePerGas: Wei,
-    val maxPriorityFeePerGas: Wei,
+    val maxFeePerGas: Ether,
+    val maxPriorityFeePerGas: Ether,
     val nonce: HexString,
     val r: HexString,
     val s: HexString,

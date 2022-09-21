@@ -1,7 +1,7 @@
 package com.alchemy.sdk.core.adapter
 
-import com.alchemy.sdk.core.util.HexString
-import com.alchemy.sdk.core.util.Wei
+import com.alchemy.sdk.core.util.Ether
+import com.alchemy.sdk.core.util.Ether.Companion.wei
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonPrimitive
 import io.mockk.impl.annotations.MockK
@@ -10,7 +10,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Rule
 import org.junit.Test
 
-class WeiDeserializerTest {
+class EtherDeserializerTest {
 
     @get:Rule
     val mockkRule = MockKRule(this)
@@ -20,30 +20,30 @@ class WeiDeserializerTest {
 
     @Test(expected = IllegalStateException::class)
     fun `should throw exception if value is not a string`() {
-        WeiDeserializer.deserialize(
+        EtherDeserializer.deserialize(
             JsonPrimitive(2),
-            Wei::class.java,
+            Ether::class.java,
             context
         )
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `should throw exception if value is not a valid hex value`() {
-        WeiDeserializer.deserialize(
+        EtherDeserializer.deserialize(
             JsonPrimitive("XD"),
-            Wei::class.java,
+            Ether::class.java,
             context
         )
     }
 
     @Test
-    fun `should parse hex value as wei`() {
-        val data = WeiDeserializer.deserialize(
+    fun `should parse hex value as ether`() {
+        val data = EtherDeserializer.deserialize(
             JsonPrimitive("0x02"),
-            Wei::class.java,
+            Ether::class.java,
             context
         )
-        data shouldBeEqualTo Wei(HexString.from("0x02"))
+        data shouldBeEqualTo "0x02".wei
     }
 
 }

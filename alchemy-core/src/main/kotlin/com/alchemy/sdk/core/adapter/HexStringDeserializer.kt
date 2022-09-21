@@ -1,6 +1,7 @@
 package com.alchemy.sdk.core.adapter
 
 import com.alchemy.sdk.core.util.HexString
+import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
@@ -14,6 +15,6 @@ object HexStringDeserializer : JsonDeserializer<HexString> {
         context: JsonDeserializationContext
     ): HexString {
         check(json is JsonPrimitive && json.isString)
-        return HexString.from(json.asString)
+        return json.asString.hexString
     }
 }

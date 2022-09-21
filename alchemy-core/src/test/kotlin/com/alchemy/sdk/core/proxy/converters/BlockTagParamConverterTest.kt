@@ -1,7 +1,7 @@
 package com.alchemy.sdk.core.proxy.converters
 
 import com.alchemy.sdk.core.model.BlockTag
-import com.alchemy.sdk.core.util.HexString
+import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
@@ -23,7 +23,7 @@ class BlockTagParamConverterTest {
             BlockTag.Finalized
         ) shouldBeEqualTo "finalized"
         BlockTagParameterConverter.convert(
-            BlockTag.BlockTagNumber(HexString.Companion.from("0x04BC"))
+            BlockTag.BlockTagNumber("0x04BC".hexString)
         ) shouldBeEqualTo "0x04bc"
     }
 }

@@ -2,6 +2,7 @@ package com.alchemy.sdk.core.model
 
 import android.icu.text.IDNA
 import com.alchemy.sdk.core.util.HexString
+import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import org.komputing.khash.keccak.Keccak
 import org.komputing.khash.keccak.KeccakParameter
 
@@ -24,7 +25,7 @@ sealed class Address private constructor(
             }
             return when {
                 HexString.isValidHex(rawAddress) -> {
-                    val sanitizedAddress = HexString.from(rawAddress)
+                    val sanitizedAddress = rawAddress.hexString
                     val result = getChecksumAddress(sanitizedAddress)
                     // It is a checksummed address with a bad checksum
                     if (checksumRegex.matches(rawAddress) && result != sanitizedAddress) {
@@ -69,11 +70,11 @@ sealed class Address private constructor(
                     chars[i + 1] = chars[i + 1].uppercaseChar()
                 }
             }
-            return HexString.from(chars.joinToString(""))
+            return chars.joinToString("").hexString
         }
 
         private fun nameHash(dnsName: String): HexString {
-            var node = HexString.from(ByteArray(32) { 0 })
+            var node = ByteArray(32) { 0 }.hexString
             val labels = dnsName.split('.')
             for (i in labels.size - 1 downTo 0) {
                 node = sha3((node + sha3(labels[i].toByteArray())).toByteArray())
@@ -82,7 +83,7 @@ sealed class Address private constructor(
         }
 
         private fun sha3(data: ByteArray): HexString {
-            return HexString.from(Keccak.digest(data, KeccakParameter.KECCAK_256))
+            return Keccak.digest(data, KeccakParameter.KECCAK_256).hexString
         }
     }
 

@@ -1,6 +1,5 @@
 package com.alchemy.sdk.core.api
 
-import androidx.annotation.IntRange
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.Block
 import com.alchemy.sdk.core.model.BlockCount
@@ -12,8 +11,8 @@ import com.alchemy.sdk.core.model.Percentile
 import com.alchemy.sdk.core.model.Proof
 import com.alchemy.sdk.core.model.TransactionReceipt
 import com.alchemy.sdk.core.model.UncleBlock
+import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.HexString
-import com.alchemy.sdk.core.util.Wei
 import com.alchemy.sdk.json.rpc.client.annotation.JsonRpc
 import com.alchemy.sdk.json.rpc.client.annotation.JsonRpcParam
 
@@ -23,7 +22,7 @@ interface CoreApi {
     suspend fun getBalance(
         @JsonRpcParam("address", position = 0) address: Address,
         @JsonRpcParam("blockTag", position = 1) blockTag: BlockTag = BlockTag.Latest
-    ): Result<Wei>
+    ): Result<Ether>
 
     @JsonRpc("eth_getCode")
     suspend fun getCode(
@@ -141,16 +140,19 @@ interface CoreApi {
     ): Result<TransactionReceipt>
 
     @JsonRpc("eth_gasPrice")
-    suspend fun getGasPrice(): Result<Wei>
+    suspend fun getGasPrice(): Result<Ether>
 
     @JsonRpc("eth_maxPriorityFeePerGas")
-    suspend fun getMaxPriorityFeePerGas(): Result<Wei>
+    suspend fun getMaxPriorityFeePerGas(): Result<Ether>
 
     @JsonRpc("eth_feeHistory")
     suspend fun getFeeHistory(
         @JsonRpcParam("transactionHash", position = 0) blockCount: BlockCount,
         @JsonRpcParam("newestBlock", position = 1) blockTag: BlockTag,
-        @JsonRpcParam("rewardPercentiles", position = 2) rewardPercentiles: List<Percentile>? = null,
+        @JsonRpcParam(
+            "rewardPercentiles",
+            position = 2
+        ) rewardPercentiles: List<Percentile>? = null,
     ): Result<FeeHistory>
 
 }

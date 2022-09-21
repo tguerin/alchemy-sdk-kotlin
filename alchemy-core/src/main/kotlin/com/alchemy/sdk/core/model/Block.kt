@@ -1,7 +1,7 @@
 package com.alchemy.sdk.core.model
 
+import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.HexString
-import com.alchemy.sdk.core.util.Wei
 
 data class Block(
     val number: HexString,
@@ -24,5 +24,5 @@ data class Block(
     val transactions: List<BlockTransaction>,
     val transactionsRoot: HexString,
     val uncles: List<HexString>,
-    val baseFeePerGas: Wei,
+    val baseFeePerGas: Ether,
 )

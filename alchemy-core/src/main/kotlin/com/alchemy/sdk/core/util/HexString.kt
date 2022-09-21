@@ -1,5 +1,6 @@
 package com.alchemy.sdk.core.util
 
+import java.math.BigDecimal
 import java.math.BigInteger
 
 class HexString private constructor(val data: String) {
@@ -48,31 +49,62 @@ class HexString private constructor(val data: String) {
 
         fun isValidHex(raw: String) = hexRegex.matches(raw)
 
-        fun from(data: Int): HexString {
-            val hexRepresentation = Integer.toHexString(data).lowercase()
-            return HexString(
-                "0x${if (hexRepresentation.length % 2 != 0) "0" else ""}$hexRepresentation"
-            )
-        }
+        val Number.hexString: HexString
+            get() {
+                return when (this) {
+                    is Int -> {
+                        val hexRepresentation = Integer.toHexString(this).lowercase()
+                        HexString(
+                            "0x${if (hexRepresentation.length % 2 != 0) "0" else ""}$hexRepresentation"
+                        )
+                    }
+                    is Long -> {
+                        val hexRepresentation = java.lang.Long.toHexString(this).lowercase()
+                        HexString(
+                            "0x${if (hexRepresentation.length % 2 != 0) "0" else ""}$hexRepresentation"
+                        )
+                    }
+                    else -> throw IllegalArgumentException("Only Int or Long are supported for now")
+                }
+            }
 
-        fun from(data: ByteArray): HexString {
-            val hexRepresentation =
-                data.joinToString(separator = "", prefix = "0x") { eachByte ->
+        val BigInteger.hexString: HexString
+            get() {
+                return this.toString(16).hexString
+            }
+
+        val BigDecimal.hexString: HexString
+            get() {
+                // For now we take only the integer part
+                return this.toBigInteger().hexString
+            }
+
+        val ByteArray.hexString: HexString
+            get() {
+                val hexRepresentation = joinToString(separator = "", prefix = "0x") { eachByte ->
                     "%02x".format(eachByte)
                 }
-            return HexString(hexRepresentation)
-        }
+                return HexString(hexRepresentation)
+            }
 
-        fun from(data: String) = if (data.isNotEmpty() && isValidHex(data)) {
-            HexString(
-                if (!data.startsWith("0x")) {
-                    "0x" + data.lowercase()
+        val String.hexString: HexString
+            get() {
+                return if (isNotEmpty() && isValidHex(this)) {
+                    val leadingZeroOrEmpty = if (this.length % 2 != 0) "0" else ""
+                    HexString(
+                        when {
+                            !startsWith("0x") -> {
+                                "0x$leadingZeroOrEmpty${lowercase()}"
+                            }
+                            leadingZeroOrEmpty.isNotEmpty() -> {
+                                lowercase().replace("0x", "0x0")
+                            }
+                            else -> lowercase()
+                        }
+                    )
                 } else {
-                    data.lowercase()
+                    throw IllegalArgumentException("No a valid hexadecimal string")
                 }
-            )
-        } else {
-            throw IllegalArgumentException("No a valid hexadecimal string")
-        }
+            }
     }
 }

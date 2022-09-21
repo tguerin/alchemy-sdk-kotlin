@@ -1,8 +1,8 @@
 package com.alchemy.sdk.core.proxy
 
 import com.alchemy.sdk.core.model.Address
-import com.alchemy.sdk.core.util.HexString
-import com.alchemy.sdk.core.util.Wei
+import com.alchemy.sdk.core.util.Ether
+import com.alchemy.sdk.core.util.Ether.Companion.wei
 import com.alchemy.sdk.json.rpc.client.JsonRpcClient
 import com.alchemy.sdk.json.rpc.client.annotation.JsonRpc
 import com.alchemy.sdk.json.rpc.client.generator.IdGenerator
@@ -65,11 +65,11 @@ class JsonRpcMethodTest {
                         "eth_getBalance",
                         arrayListOf("0x1188aa75c38e1790be3768508743fbe7b50b2153")
                     ),
-                    Wei::class.java
+                    Ether::class.java
                 )
-            } returns Result.success(Wei(HexString.from("0x3529b5834ea3c6")))
+            } returns Result.success("0x3529b5834ea3c6".wei)
 
-            val result = JsonRpcMethod.parseAnnotations<Wei>(
+            val result = JsonRpcMethod.parseAnnotations<Ether>(
                 idGenerator,
                 jsonRpcClient,
                 mapOf(
@@ -79,7 +79,7 @@ class JsonRpcMethodTest {
             ).invoke(arrayOf(Address.from("0x1188aa75C38E1790bE3768508743FBE7b50b2153")))
 
             result.isSuccess shouldBeEqualTo true
-            result.getOrThrow() shouldBeEqualTo Wei(HexString.from("0x3529b5834ea3c6"))
+            result.getOrThrow() shouldBeEqualTo "0x3529b5834ea3c6".wei
         }
 
     @Test
@@ -94,11 +94,11 @@ class JsonRpcMethodTest {
                     "eth_getBalance",
                     arrayListOf("0x1188aa75c38e1790be3768508743fbe7b50b2153")
                 ),
-                Wei::class.java
+                Ether::class.java
             )
         } throws IOException("issue happened")
 
-        val result = JsonRpcMethod.parseAnnotations<Wei>(
+        val result = JsonRpcMethod.parseAnnotations<Ether>(
             idGenerator,
             jsonRpcClient,
             mapOf(
@@ -121,7 +121,7 @@ class JsonRpcMethodTest {
         every { parameter.parameterizedType } returns firstParameterizedType
         every { firstParameterizedType.actualTypeArguments } returns arrayOf(wildcardType)
         every { wildcardType.lowerBounds } returns arrayOf(secondParameterizedType)
-        every { secondParameterizedType.actualTypeArguments } returns arrayOf(Wei::class.java)
+        every { secondParameterizedType.actualTypeArguments } returns arrayOf(Ether::class.java)
     }
 
 }

@@ -3,8 +3,8 @@ package com.alchemy.sdk.core.proxy
 import com.alchemy.sdk.core.Core
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.BlockTag
-import com.alchemy.sdk.core.util.HexString
-import com.alchemy.sdk.core.util.Wei
+import com.alchemy.sdk.core.util.Ether
+import com.alchemy.sdk.core.util.Ether.Companion.wei
 import com.alchemy.sdk.json.rpc.client.annotation.JsonRpc
 import com.alchemy.sdk.json.rpc.client.annotation.JsonRpcParam
 import com.alchemy.sdk.json.rpc.client.generator.IdGenerator
@@ -29,7 +29,7 @@ class AlchemyProxyTest {
         suspend fun getBalance(
             @JsonRpcParam("address", position = 0) address: Address,
             @JsonRpcParam("blockTag", position = 1) blockTag: BlockTag = BlockTag.Latest
-        ): Result<Wei>
+        ): Result<Ether>
     }
 
     @get:Rule
@@ -71,7 +71,7 @@ class AlchemyProxyTest {
     fun `should delegate call to rpc client`() = runTest {
         val alchemy = alchemyProxy.createProxy(CoreApi::class.java)
         val targetAddress = Address.from("0x1188aa75c38e1790be3768508743fbe7b50b2153")
-        val expectedBalance = Wei(HexString.from("0x3529b5834ea3c6"))
+        val expectedBalance = "0x3529b5834ea3c6".wei
         every { idGenerator.generateId() } returns "1"
         coEvery {
             addressParameterConverter.convert(targetAddress)
@@ -87,7 +87,7 @@ class AlchemyProxyTest {
                     "eth_getBalance",
                     listOf("0x1188aa75c38e1790be3768508743fbe7b50b2153", "latest")
                 ),
-                Wei::class.java
+                Ether::class.java
             )
         } returns Result.success(expectedBalance)
 
@@ -116,7 +116,7 @@ class AlchemyProxyTest {
                     "eth_getBalance",
                     listOf("0x1188aa75c38e1790be3768508743fbe7b50b2153", "latest")
                 ),
-                Wei::class.java
+                Ether::class.java
             )
         } returns Result.failure(IOException("an error occured"))
 

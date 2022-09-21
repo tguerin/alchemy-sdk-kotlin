@@ -1,6 +1,7 @@
 package com.alchemy.sdk.core.adapter
 
 import com.alchemy.sdk.core.util.HexString
+import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonPrimitive
 import io.mockk.impl.annotations.MockK
@@ -42,6 +43,6 @@ class HexStringDeserializerTest {
             HexString::class.java,
             context
         )
-        data shouldBeEqualTo HexString.from("0x02")
+        data shouldBeEqualTo "0x02".hexString
     }
 }

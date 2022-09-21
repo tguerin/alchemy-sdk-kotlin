@@ -1,8 +1,8 @@
 package com.alchemy.sdk.core
 
 import com.alchemy.sdk.core.adapter.AddressDeserializer
+import com.alchemy.sdk.core.adapter.EtherDeserializer
 import com.alchemy.sdk.core.adapter.HexStringDeserializer
-import com.alchemy.sdk.core.adapter.WeiDeserializer
 import com.alchemy.sdk.core.api.CoreApi
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.AlchemySettings
@@ -16,8 +16,8 @@ import com.alchemy.sdk.core.proxy.converters.HexStringParameterConverter
 import com.alchemy.sdk.core.proxy.converters.NumberParameterConverter
 import com.alchemy.sdk.core.proxy.converters.PercentileParameterConverter
 import com.alchemy.sdk.core.util.Constants
+import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.HexString
-import com.alchemy.sdk.core.util.Wei
 import com.alchemy.sdk.json.rpc.client.generator.IncrementalIdGenerator
 import com.alchemy.sdk.json.rpc.client.http.HttpJsonRpcClient
 import com.google.gson.GsonBuilder
@@ -43,7 +43,7 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
             })
             .registerTypeAdapter(Address::class.java, AddressDeserializer)
             .registerTypeAdapter(HexString::class.java, HexStringDeserializer)
-            .registerTypeAdapter(Wei::class.java, WeiDeserializer)
+            .registerTypeAdapter(Ether::class.java, EtherDeserializer)
             .create()
         val alchemyProxy =
             AlchemyProxy(

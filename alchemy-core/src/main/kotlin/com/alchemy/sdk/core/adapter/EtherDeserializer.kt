@@ -1,20 +1,20 @@
 package com.alchemy.sdk.core.adapter
 
-import com.alchemy.sdk.core.util.HexString
-import com.alchemy.sdk.core.util.Wei
+import com.alchemy.sdk.core.util.Ether
+import com.alchemy.sdk.core.util.Ether.Companion.wei
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonPrimitive
 import java.lang.reflect.Type
 
-object WeiDeserializer : JsonDeserializer<Wei> {
+object EtherDeserializer : JsonDeserializer<Ether> {
     override fun deserialize(
         json: JsonElement,
         typeOfT: Type,
         context: JsonDeserializationContext
-    ): Wei {
+    ): Ether {
         check(json is JsonPrimitive && json.isString)
-        return Wei(HexString.from(json.asString))
+        return json.asString.wei
     }
 }

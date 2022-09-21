@@ -1,7 +1,7 @@
 package com.alchemy.sdk.core.model
 
+import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.HexString
-import com.alchemy.sdk.core.util.Wei
 
 data class TransactionReceipt(
     val transactionHash: HexString,
@@ -9,7 +9,7 @@ data class TransactionReceipt(
     val blockNumber: HexString,
     val contractAddress: Address?,
     val cumulativeGasUsed: HexString,
-    val effectiveGasPrice: Wei,
+    val effectiveGasPrice: Ether,
     val from: Address,
     val gasUsed: HexString,
     val logs: List<HexString>,

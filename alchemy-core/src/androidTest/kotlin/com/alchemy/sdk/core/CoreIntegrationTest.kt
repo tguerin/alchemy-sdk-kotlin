@@ -5,8 +5,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.FlakyTest
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.alchemy.sdk.core.adapter.AddressDeserializer
+import com.alchemy.sdk.core.adapter.EtherDeserializer
 import com.alchemy.sdk.core.adapter.HexStringDeserializer
-import com.alchemy.sdk.core.adapter.WeiDeserializer
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.AlchemySettings
 import com.alchemy.sdk.core.model.Block
@@ -21,8 +21,10 @@ import com.alchemy.sdk.core.model.Proof
 import com.alchemy.sdk.core.model.TransactionReceipt
 import com.alchemy.sdk.core.model.UncleBlock
 import com.alchemy.sdk.core.test.R
+import com.alchemy.sdk.core.util.Ether
+import com.alchemy.sdk.core.util.Ether.Companion.wei
 import com.alchemy.sdk.core.util.HexString
-import com.alchemy.sdk.core.util.Wei
+import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import com.google.gson.GsonBuilder
 import com.google.gson.InstanceCreator
 import com.google.gson.stream.JsonReader
@@ -30,7 +32,6 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
 import org.amshove.kluent.shouldHaveSize
-import org.amshove.kluent.shouldNotBeEqualTo
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.InputStreamReader
@@ -50,14 +51,14 @@ class CoreIntegrationTest {
         })
         .registerTypeAdapter(Address::class.java, AddressDeserializer)
         .registerTypeAdapter(HexString::class.java, HexStringDeserializer)
-        .registerTypeAdapter(Wei::class.java, WeiDeserializer)
+        .registerTypeAdapter(Ether::class.java, EtherDeserializer)
         .create()
 
     @Test
     fun getBalance() = runTest {
         val result =
             alchemy.core.getBalance(Address.from("0x1188aa75C38E1790bE3768508743FBE7b50b2153"))
-        result.getOrThrow() shouldBeEqualTo Wei(HexString.from("0x3529b5834ea3c6"))
+        result.getOrThrow() shouldBeEqualTo "0x3529b5834ea3c6".hexString.wei
     }
 
     @Test
@@ -75,14 +76,14 @@ class CoreIntegrationTest {
             address = Address.from("0x4B076f0E07eED3F1007fB1B5C000F7A08D3208E1"),
             index = 0.index
         )
-        data.getOrThrow() shouldBeEqualTo HexString.from("0x41494c616e647363617065000000000000000000000000000000000000000016")
+        data.getOrThrow() shouldBeEqualTo "0x41494c616e647363617065000000000000000000000000000000000000000016".hexString
     }
 
     @Test
     fun getProof() = runTest {
         val data = alchemy.core.getProof(
             address = Address.from("0x4B076f0E07eED3F1007fB1B5C000F7A08D3208E1"),
-            keys = listOf(HexString.from("0x41494c616e647363617065000000000000000000000000000000000000000016"))
+            keys = listOf("0x41494c616e647363617065000000000000000000000000000000000000000016".hexString)
         )
         val expectedProof = gson.fromJson<Proof?>(
             jsonReaderFromFileName(R.raw.proof_test),
@@ -106,7 +107,7 @@ class CoreIntegrationTest {
     @Test
     fun getChainId() = runTest {
         val data = alchemy.core.getChainId()
-        data.getOrThrow() shouldBeEqualTo HexString.from("0x1")
+        data.getOrThrow() shouldBeEqualTo "0x1".hexString
     }
 
     @Test
@@ -129,8 +130,8 @@ class CoreIntegrationTest {
 
     @Test
     fun getWeb3Sha3() = runTest {
-        val data = alchemy.core.getWeb3Sha3(HexString.from("0x68656c6c6f20776f726c64"))
-        data.getOrThrow() shouldBeEqualTo HexString.from("0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad")
+        val data = alchemy.core.getWeb3Sha3("0x68656c6c6f20776f726c64".hexString)
+        data.getOrThrow() shouldBeEqualTo "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad".hexString
     }
 
     @Test
@@ -148,7 +149,7 @@ class CoreIntegrationTest {
     @Test
     @FlakyTest
     fun getBlockByNumber() = runTest {
-        val blockTag = BlockTag.BlockTagNumber(HexString.from("0xed14e5"))
+        val blockTag = BlockTag.BlockTagNumber("0xed14e5".hexString)
 
         val data = alchemy.core.getBlockByNumber(blockTag, true)
 
@@ -163,7 +164,7 @@ class CoreIntegrationTest {
     @FlakyTest
     fun getBlockByHash() = runTest {
         val blockHash =
-            HexString.from("0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e")
+            "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString
 
         val data = alchemy.core.getBlockByHash(blockHash, true)
 
@@ -176,25 +177,25 @@ class CoreIntegrationTest {
 
     @Test
     fun getBlockTransactionCountByNumber() = runTest {
-        val blockTag = BlockTag.BlockTagNumber(HexString.from("0xed14e5"))
+        val blockTag = BlockTag.BlockTagNumber("0xed14e5".hexString)
 
         val data = alchemy.core.getBlockTransactionCountByNumber(blockTag)
 
-        data.getOrThrow() shouldBeEqualTo HexString.from("0xf8")
+        data.getOrThrow() shouldBeEqualTo "0xf8".hexString
     }
 
     @Test
     fun getBlockTransactionCountByHash() = runTest {
         val data = alchemy.core.getBlockTransactionCountByHash(
-            HexString.from("0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e")
+            "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString
         )
 
-        data.getOrThrow() shouldBeEqualTo HexString.from("0xf8")
+        data.getOrThrow() shouldBeEqualTo "0xf8".hexString
     }
 
     @Test
     fun getUncleByBlockNumberAndIndex() = runTest {
-        val blockTag = BlockTag.BlockTagNumber(HexString.from("0xed14e5"))
+        val blockTag = BlockTag.BlockTagNumber("0xed14e5".hexString)
 
         val data = alchemy.core.getUncleByBlockNumberAndIndex(blockTag, 0.index)
 
@@ -208,7 +209,7 @@ class CoreIntegrationTest {
     @Test
     fun getUncleByBlockHashAndIndex() = runTest {
         val data = alchemy.core.getUncleByBlockHashAndIndex(
-            HexString.from("0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e"),
+            "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString,
             0.index
         )
 
@@ -221,7 +222,7 @@ class CoreIntegrationTest {
 
     @Test
     fun getUncleCountByBlockNumber() = runTest {
-        val blockTag = BlockTag.BlockTagNumber(HexString.from("0xed14e5"))
+        val blockTag = BlockTag.BlockTagNumber("0xed14e5".hexString)
 
         val data = alchemy.core.getUncleCountByBlockNumber(blockTag)
 
@@ -231,14 +232,14 @@ class CoreIntegrationTest {
     @Test
     fun getUncleCountByBlockHash() = runTest {
         val data = alchemy.core.getUncleCountByBlockHash(
-            HexString.from("0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e")
+            "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString
         )
         data.getOrThrow().intValue() shouldBeEqualTo 1
     }
 
     @Test
     fun getTransactionByBlockNumberAndIndex() = runTest {
-        val blockTag = BlockTag.BlockTagNumber(HexString.from("0xed14e5"))
+        val blockTag = BlockTag.BlockTagNumber("0xed14e5".hexString)
 
         val data = alchemy.core.getTransactionByBlockNumberAndIndex(blockTag, 0.index)
 
@@ -252,7 +253,7 @@ class CoreIntegrationTest {
     @Test
     fun getTransactionByBlockHashAndIndex() = runTest {
         val data = alchemy.core.getTransactionByBlockHashAndIndex(
-            HexString.from("0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e"),
+            "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString,
             0.index
         )
 
@@ -267,7 +268,7 @@ class CoreIntegrationTest {
     fun getTransactionCount() = runTest {
         val data = alchemy.core.getTransactionCount(
             Address.from("0x10ce4cd51b9e95be1c8a9bc665d3ebdfa9762529"),
-            BlockTag.BlockTagNumber(HexString.from("0xed14e5"))
+            BlockTag.BlockTagNumber("0xed14e5".hexString)
         )
 
         data.getOrThrow().intValue() shouldBeEqualTo 6185
@@ -276,7 +277,7 @@ class CoreIntegrationTest {
     @Test
     fun getTransactionByHash() = runTest {
         val data = alchemy.core.getTransactionByHash(
-            HexString.from("0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef")
+            "0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString
         )
 
         val expectedBlockTransaction = gson.fromJson<BlockTransaction?>(
@@ -289,7 +290,7 @@ class CoreIntegrationTest {
     @Test
     fun getTransactionReceipt() = runTest {
         val data = alchemy.core.getTransactionReceipt(
-            HexString.from("0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef")
+            "0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString
         )
 
         val expectedBlockTransaction = gson.fromJson<TransactionReceipt?>(
@@ -302,20 +303,20 @@ class CoreIntegrationTest {
     @Test
     fun getGasPrice() = runTest {
         val data = alchemy.core.getGasPrice()
-        data.getOrThrow().toGigaWei().toDouble() shouldBeGreaterThan 0.0
+        data.getOrThrow().gigaWei.toDouble() shouldBeGreaterThan 0.0
     }
 
     @Test
     fun getMaxPriorityFeePerGas() = runTest {
         val data = alchemy.core.getMaxPriorityFeePerGas()
-        data.getOrThrow().toGigaWei().toDouble() shouldBeGreaterThan 0.0
+        data.getOrThrow().gigaWei.toDouble() shouldBeGreaterThan 0.0
     }
 
     @Test
     fun getFeeHistoryWithoutPercentiles() = runTest {
         val data = alchemy.core.getFeeHistory(
             4.blockCount,
-            BlockTag.BlockTagNumber(HexString.from("0xed14e5"))
+            BlockTag.BlockTagNumber("0xed14e5".hexString)
         )
         val expectedFeeHistory = gson.fromJson<FeeHistory?>(
             jsonReaderFromFileName(R.raw.fee_history_test),
@@ -328,7 +329,7 @@ class CoreIntegrationTest {
     fun getFeeHistoryWithPercentiles() = runTest {
         val data = alchemy.core.getFeeHistory(
             4.blockCount,
-            BlockTag.BlockTagNumber(HexString.from("0xed14e5")),
+            BlockTag.BlockTagNumber("0xed14e5".hexString),
             listOf(25.percentile, 75.percentile)
         )
         val expectedFeeHistory = gson.fromJson<FeeHistory?>(
