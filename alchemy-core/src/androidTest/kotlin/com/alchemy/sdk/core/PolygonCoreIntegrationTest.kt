@@ -2,6 +2,7 @@ package com.alchemy.sdk.core
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.alchemy.sdk.core.model.AlchemySettings
+import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import kotlinx.coroutines.test.runTest
@@ -19,6 +20,13 @@ class PolygonCoreIntegrationTest {
     fun getAuthor() = runTest {
         val data = alchemy.core.getAuthor()
         data.getOrThrow().toString().length shouldNotBe 0
+    }
+
+    @Test
+    fun getSignerAtHash() = runTest {
+        // This method doesn't seem to be supported
+        val data = alchemy.core.getSignersAtHash("0x350a56b14a8eb85de01d759794bce336689c40401f4b5b42192352dfcef16c35".hexString)
+        data.isFailure shouldBeEqualTo true
     }
 
     @Test

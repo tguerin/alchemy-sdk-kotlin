@@ -154,6 +154,9 @@ interface CoreApi {
     ): Result<FeeHistory>
 
     // Polygon specific
+    @JsonRpc("eth_getSignersAtHash")
+    suspend fun getSignersAtHash(@JsonRpcParam("blockHash") blockHash: HexString): Result<HexString>
+
     @JsonRpc("bor_getAuthor")
     suspend fun getAuthor(): Result<HexString>
 

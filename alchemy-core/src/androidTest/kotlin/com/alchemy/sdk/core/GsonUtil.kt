@@ -1,9 +1,11 @@
 package com.alchemy.sdk.core
 
 import com.alchemy.sdk.core.adapter.AddressDeserializer
+import com.alchemy.sdk.core.adapter.BlockTransactionDeserializer
 import com.alchemy.sdk.core.adapter.EtherDeserializer
 import com.alchemy.sdk.core.adapter.HexStringDeserializer
 import com.alchemy.sdk.core.model.Address
+import com.alchemy.sdk.core.model.BlockTransaction
 import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.HexString
 import com.google.gson.Gson
@@ -20,8 +22,9 @@ class GsonUtil {
                 }
             })
             .registerTypeAdapter(Address::class.java, AddressDeserializer)
-            .registerTypeAdapter(HexString::class.java, HexStringDeserializer)
+            .registerTypeAdapter(BlockTransaction::class.java, BlockTransactionDeserializer)
             .registerTypeAdapter(Ether::class.java, EtherDeserializer)
+            .registerTypeAdapter(HexString::class.java, HexStringDeserializer)
             .create()
     }
 }

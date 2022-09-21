@@ -159,6 +159,21 @@ class CoreIntegrationTest {
     }
 
     @Test
+    @FlakyTest
+    fun getBlockByHashWithoutTransactions() = runTest {
+        val blockHash =
+            "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString
+
+        val data = alchemy.core.getBlockByHash(blockHash)
+
+        val expectedBlock = gson.fromJson<Block?>(
+            jsonReaderFromFileName(R.raw.block_without_transactions_test),
+            Block::class.java
+        )
+        data.getOrThrow() shouldBeEqualTo expectedBlock
+    }
+
+    @Test
     fun getBlockTransactionCountByNumber() = runTest {
         val blockTag = BlockTag.BlockTagNumber("0xed14e5".hexString)
 
