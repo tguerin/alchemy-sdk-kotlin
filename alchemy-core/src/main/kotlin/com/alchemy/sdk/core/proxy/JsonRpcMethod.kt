@@ -2,6 +2,7 @@ package com.alchemy.sdk.core.proxy
 
 import com.alchemy.sdk.json.rpc.client.JsonRpcClient
 import com.alchemy.sdk.json.rpc.client.annotation.JsonRpc
+import com.alchemy.sdk.json.rpc.client.annotation.JsonRpcParam
 import com.alchemy.sdk.json.rpc.client.generator.IdGenerator
 import com.alchemy.sdk.json.rpc.client.model.JsonRpcRequest
 import java.lang.reflect.Method
@@ -13,6 +14,7 @@ class JsonRpcMethod<T> private constructor(
     private val idGenerator: IdGenerator,
     private val jsonRpcClient: JsonRpcClient,
     private val jsonRpcMethod: String,
+    private val parameters: List<JsonRpcParam>,
     private val parameterConverters: Map<Class<*>, ParameterConverter<Any, Any>>,
     private val returnType: Type
 ) {
@@ -25,12 +27,17 @@ class JsonRpcMethod<T> private constructor(
                 params = if (args.size == 1 && args[0] is List<*>) {
                     (args[0] as List<*>).map { item -> transformParameter(item as Any) }
                 } else {
-                    args.filterNotNull().toList().map {
-                        if (it is List<*>) {
-                            it.map { item -> transformParameter(item as Any) }
-                        } else {
-                            transformParameter(it)
+                    args.filterNotNull().toList().mapIndexed { index, param ->
+                        when {
+                            parameters[index].useRawValue -> {
+                                param
+                            }
+                            param is List<*> -> {
+                                param.map { item -> transformParameter(item as Any) }
+                            }
+                            else -> transformParameter(param)
                         }
+
                     }
                 }
             )
@@ -61,6 +68,11 @@ class JsonRpcMethod<T> private constructor(
                 idGenerator = idGenerator,
                 jsonRpcClient = jsonRpcClient,
                 jsonRpcMethod = jsonRpcAnnotation.method,
+                parameters = method.parameters.mapNotNull {
+                    it.annotations.filterIsInstance(
+                        JsonRpcParam::class.java
+                    ).firstOrNull()
+                },
                 parameterConverters = parameterConverters,
                 returnType = resolveReturnType(method)
             )

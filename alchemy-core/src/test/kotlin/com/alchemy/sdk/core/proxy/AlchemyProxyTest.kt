@@ -21,14 +21,15 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.io.IOException
+import java.lang.reflect.Type
 
 class AlchemyProxyTest {
 
     interface CoreApi {
         @JsonRpc("eth_getBalance")
         suspend fun getBalance(
-            @JsonRpcParam("address", position = 0) address: Address,
-            @JsonRpcParam("blockTag", position = 1) blockTag: BlockTag = BlockTag.Latest
+            @JsonRpcParam("address") address: Address,
+            @JsonRpcParam("blockTag") blockTag: BlockTag = BlockTag.Latest
         ): Result<Ether>
     }
 
@@ -80,7 +81,7 @@ class AlchemyProxyTest {
             blockTagParameterConverter.convert(BlockTag.Latest)
         } returns "latest"
         coEvery {
-            jsonRpcClient.call(
+            jsonRpcClient.call<Ether>(
                 JsonRpcRequest(
                     "1",
                     "2.0",
@@ -109,7 +110,7 @@ class AlchemyProxyTest {
             blockTagParameterConverter.convert(BlockTag.Latest)
         } returns "latest"
         coEvery {
-            jsonRpcClient.call(
+            jsonRpcClient.call<Ether>(
                 JsonRpcRequest(
                     "1",
                     "2.0",

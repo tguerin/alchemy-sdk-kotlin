@@ -4,9 +4,6 @@ import androidx.annotation.IdRes
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.FlakyTest
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import com.alchemy.sdk.core.adapter.AddressDeserializer
-import com.alchemy.sdk.core.adapter.EtherDeserializer
-import com.alchemy.sdk.core.adapter.HexStringDeserializer
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.AlchemySettings
 import com.alchemy.sdk.core.model.Block
@@ -21,12 +18,8 @@ import com.alchemy.sdk.core.model.Proof
 import com.alchemy.sdk.core.model.TransactionReceipt
 import com.alchemy.sdk.core.model.UncleBlock
 import com.alchemy.sdk.core.test.R
-import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.Ether.Companion.wei
-import com.alchemy.sdk.core.util.HexString
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
-import com.google.gson.GsonBuilder
-import com.google.gson.InstanceCreator
 import com.google.gson.stream.JsonReader
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -35,7 +28,6 @@ import org.amshove.kluent.shouldHaveSize
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.InputStreamReader
-import java.lang.reflect.Type
 import java.math.BigInteger
 
 @RunWith(AndroidJUnit4::class)
@@ -43,16 +35,7 @@ class CoreIntegrationTest {
 
     private val alchemy = Alchemy.with(AlchemySettings(network = Network.ETH_MAINNET))
 
-    private val gson = GsonBuilder()
-        .registerTypeAdapter(Address::class.java, object : InstanceCreator<Address> {
-            override fun createInstance(type: Type?): Address {
-                return Address.from("0x")
-            }
-        })
-        .registerTypeAdapter(Address::class.java, AddressDeserializer)
-        .registerTypeAdapter(HexString::class.java, HexStringDeserializer)
-        .registerTypeAdapter(Ether::class.java, EtherDeserializer)
-        .create()
+    private val gson = GsonUtil.get()
 
     @Test
     fun getBalance() = runTest {

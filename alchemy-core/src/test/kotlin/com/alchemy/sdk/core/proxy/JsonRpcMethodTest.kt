@@ -5,6 +5,7 @@ import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.Ether.Companion.wei
 import com.alchemy.sdk.json.rpc.client.JsonRpcClient
 import com.alchemy.sdk.json.rpc.client.annotation.JsonRpc
+import com.alchemy.sdk.json.rpc.client.annotation.JsonRpcParam
 import com.alchemy.sdk.json.rpc.client.generator.IdGenerator
 import com.alchemy.sdk.json.rpc.client.model.JsonRpcRequest
 import io.mockk.coEvery
@@ -58,7 +59,7 @@ class JsonRpcMethodTest {
             prepareCallEnvironment()
 
             coEvery {
-                jsonRpcClient.call(
+                jsonRpcClient.call<Ether>(
                     JsonRpcRequest(
                         "1",
                         "2.0",
@@ -87,7 +88,7 @@ class JsonRpcMethodTest {
         prepareCallEnvironment()
 
         coEvery {
-            jsonRpcClient.call(
+            jsonRpcClient.call<Ether>(
                 JsonRpcRequest(
                     "1",
                     "2.0",
@@ -118,6 +119,7 @@ class JsonRpcMethodTest {
         every { method.annotations } returns arrayOf(JsonRpc("eth_getBalance"))
         coEvery { addressParameterConverter.convert(any()) } returns "0x1188aa75c38e1790be3768508743fbe7b50b2153"
         every { method.parameters } returns arrayOf(parameter)
+        every { parameter.annotations } returns arrayOf(JsonRpcParam("address"))
         every { parameter.parameterizedType } returns firstParameterizedType
         every { firstParameterizedType.actualTypeArguments } returns arrayOf(wildcardType)
         every { wildcardType.lowerBounds } returns arrayOf(secondParameterizedType)

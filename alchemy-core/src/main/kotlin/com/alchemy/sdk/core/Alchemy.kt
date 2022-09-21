@@ -54,11 +54,11 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
                     gson
                 ),
                 parameterConverters = hashMapOf(
-                    HexString::class.java to HexStringParameterConverter as ParameterConverter<Any, Any>,
-                    BlockTag::class.java to BlockTagParameterConverter as ParameterConverter<Any, Any>,
                     Address::class.java to AddressParamConverter as ParameterConverter<Any, Any>,
+                    BlockTag::class.java to BlockTagParameterConverter as ParameterConverter<Any, Any>,
+                    HexString::class.java to HexStringParameterConverter as ParameterConverter<Any, Any>,
                     Number::class.java to NumberParameterConverter as ParameterConverter<Any, Any>,
-                    Percentile::class.java to PercentileParameterConverter as ParameterConverter<Any, Any>
+                    Percentile::class.java to PercentileParameterConverter as ParameterConverter<Any, Any>,
                 )
             )
         core = Core(alchemyProxy.createProxy(CoreApi::class.java))
