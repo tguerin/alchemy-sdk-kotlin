@@ -15,6 +15,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
+import java.lang.reflect.Type
 
 
 class HttpJsonRpcClient(
@@ -23,7 +24,7 @@ class HttpJsonRpcClient(
     private val gson: Gson
 ) : JsonRpcClient {
 
-    override suspend fun <T> call(request: JsonRpcRequest, returnType: Class<T>): Result<T> =
+    override suspend fun <T> call(request: JsonRpcRequest, returnType: Type): Result<T> =
         suspendCancellableCoroutine { continuation ->
             okHttpClient.newCall(
                 Request.Builder()

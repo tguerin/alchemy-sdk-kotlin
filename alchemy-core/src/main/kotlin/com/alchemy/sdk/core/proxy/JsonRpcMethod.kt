@@ -6,6 +6,7 @@ import com.alchemy.sdk.json.rpc.client.generator.IdGenerator
 import com.alchemy.sdk.json.rpc.client.model.JsonRpcRequest
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 
 class JsonRpcMethod<T> private constructor(
@@ -13,7 +14,7 @@ class JsonRpcMethod<T> private constructor(
     private val jsonRpcClient: JsonRpcClient,
     private val jsonRpcMethod: String,
     private val parameterConverters: Map<Class<*>, ParameterConverter<Any, Any>>,
-    private val returnType: Class<T>
+    private val returnType: Type
 ) {
     @Suppress("UNCHECKED_CAST")
     suspend fun invoke(args: Array<Any?>): Result<T> {
@@ -48,7 +49,7 @@ class JsonRpcMethod<T> private constructor(
     }
 
     companion object {
-        @Suppress("UNCHECKED_CAST")
+
         fun <T> parseAnnotations(
             idGenerator: IdGenerator,
             jsonRpcClient: JsonRpcClient,
@@ -61,8 +62,13 @@ class JsonRpcMethod<T> private constructor(
                 jsonRpcClient = jsonRpcClient,
                 jsonRpcMethod = jsonRpcAnnotation.method,
                 parameterConverters = parameterConverters,
-                returnType = (((method.parameters.last().parameterizedType as ParameterizedType).actualTypeArguments[0] as WildcardType).lowerBounds[0] as ParameterizedType).actualTypeArguments[0] as Class<T>
+                returnType = resolveReturnType(method)
             )
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        private fun resolveReturnType(method: Method): Type {
+            return (((method.parameters.last().parameterizedType as ParameterizedType).actualTypeArguments[0] as WildcardType).lowerBounds[0] as ParameterizedType).actualTypeArguments[0]
         }
     }
 }
