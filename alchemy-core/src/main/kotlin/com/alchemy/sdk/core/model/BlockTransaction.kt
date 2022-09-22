@@ -4,7 +4,7 @@ import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.HexString
 
 sealed class BlockTransaction {
-    data class SimpleBlockTransaction(val hash: HexString): BlockTransaction()
+    data class SimpleBlockTransaction(val hash: HexString) : BlockTransaction()
     data class FullBlockTransaction(
         val blockHash: HexString,
         val blockNumber: HexString,
@@ -25,6 +25,7 @@ sealed class BlockTransaction {
         val type: HexString,
         val v: HexString,
         val value: HexString,
-    ): BlockTransaction()
-    object Unknown: BlockTransaction()
+    ) : BlockTransaction()
+
+    object Unknown : BlockTransaction()
 }

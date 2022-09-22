@@ -7,42 +7,38 @@ import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.model.BlockTransaction
 import com.alchemy.sdk.core.model.FeeHistory
 import com.alchemy.sdk.core.model.Index
+import com.alchemy.sdk.core.model.Log
+import com.alchemy.sdk.core.model.LogFilter
 import com.alchemy.sdk.core.model.Percentile
 import com.alchemy.sdk.core.model.Proof
+import com.alchemy.sdk.core.model.RawInt
 import com.alchemy.sdk.core.model.TransactionReceipt
 import com.alchemy.sdk.core.model.UncleBlock
 import com.alchemy.sdk.core.model.Validator
 import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.HexString
 import com.alchemy.sdk.json.rpc.client.annotation.JsonRpc
-import com.alchemy.sdk.json.rpc.client.annotation.JsonRpcParam
 
 interface CoreApi {
 
     @JsonRpc("eth_getBalance")
-    suspend fun getBalance(
-        @JsonRpcParam("address") address: Address,
-        @JsonRpcParam("blockTag") blockTag: BlockTag = BlockTag.Latest
-    ): Result<Ether>
+    suspend fun getBalance(address: Address, blockTag: BlockTag = BlockTag.Latest): Result<Ether>
 
     @JsonRpc("eth_getCode")
-    suspend fun getCode(
-        @JsonRpcParam("address") address: Address,
-        @JsonRpcParam("blockTag") blockTag: BlockTag = BlockTag.Latest
-    ): Result<HexString>
+    suspend fun getCode(address: Address, blockTag: BlockTag = BlockTag.Latest): Result<HexString>
 
     @JsonRpc("eth_getStorageAt")
     suspend fun getStorageAt(
-        @JsonRpcParam("address") address: Address,
-        @JsonRpcParam("position") index: Index,
-        @JsonRpcParam("blockTag") blockTag: BlockTag = BlockTag.Latest
+        address: Address,
+        index: Index,
+        blockTag: BlockTag = BlockTag.Latest
     ): Result<HexString>
 
     @JsonRpc("eth_getProof")
     suspend fun getProof(
-        @JsonRpcParam("address") address: Address,
-        @JsonRpcParam("keys") keys: List<HexString>,
-        @JsonRpcParam("blockTag") blockTag: BlockTag = BlockTag.Latest
+        address: Address,
+        keys: List<HexString>,
+        blockTag: BlockTag = BlockTag.Latest
     ): Result<Proof>
 
     @JsonRpc("eth_protocolVersion")
@@ -61,83 +57,69 @@ interface CoreApi {
     suspend fun getWeb3ClientVersion(): Result<String>
 
     @JsonRpc("web3_sha3")
-    suspend fun getWeb3Sha3(
-        @JsonRpcParam("data") data: HexString
-    ): Result<HexString>
+    suspend fun getWeb3Sha3(data: HexString): Result<HexString>
 
     @JsonRpc("eth_blockNumber")
     suspend fun getBlockNumber(): Result<HexString>
 
     @JsonRpc("eth_getBlockByNumber")
     suspend fun getBlockByNumber(
-        @JsonRpcParam("blockTag") blockTag: BlockTag,
-        @JsonRpcParam("fullTransactions") fullTransactions: Boolean = false
+        blockTag: BlockTag,
+        fullTransactions: Boolean = false
     ): Result<Block>
 
     @JsonRpc("eth_getBlockByHash")
     suspend fun getBlockByHash(
-        @JsonRpcParam("blockHash") blockHash: HexString,
-        @JsonRpcParam("fullTransactions") fullTransactions: Boolean = false
+        blockHash: HexString,
+        fullTransactions: Boolean = false
     ): Result<Block>
 
     @JsonRpc("eth_getBlockTransactionCountByNumber")
-    suspend fun getBlockTransactionCountByNumber(
-        @JsonRpcParam("blockTag") blockTag: BlockTag
-    ): Result<HexString>
+    suspend fun getBlockTransactionCountByNumber(blockTag: BlockTag): Result<HexString>
 
     @JsonRpc("eth_getBlockTransactionCountByHash")
-    suspend fun getBlockTransactionCountByHash(
-        @JsonRpcParam("blockHash") blockHash: HexString
-    ): Result<HexString>
+    suspend fun getBlockTransactionCountByHash(blockHash: HexString): Result<HexString>
 
     @JsonRpc("eth_getUncleByBlockNumberAndIndex")
-    suspend fun getUncleByBlockNumberAndIndex(
-        @JsonRpcParam("blockTag") blockTag: BlockTag,
-        @JsonRpcParam("index") index: Index
-    ): Result<UncleBlock>
+    suspend fun getUncleByBlockNumberAndIndex(blockTag: BlockTag, index: Index): Result<UncleBlock>
 
     @JsonRpc("eth_getUncleByBlockHashAndIndex")
-    suspend fun getUncleByBlockHashAndIndex(
-        @JsonRpcParam("blockHash") blockHash: HexString,
-        @JsonRpcParam("index") index: Index
-    ): Result<UncleBlock>
+    suspend fun getUncleByBlockHashAndIndex(blockHash: HexString, index: Index): Result<UncleBlock>
 
     @JsonRpc("eth_getUncleCountByBlockNumber")
-    suspend fun getUncleCountByBlockNumber(
-        @JsonRpcParam("blockTag") blockTag: BlockTag
-    ): Result<HexString>
+    suspend fun getUncleCountByBlockNumber(blockTag: BlockTag): Result<HexString>
 
     @JsonRpc("eth_getUncleCountByBlockHash")
     suspend fun getUncleCountByBlockHash(
-        @JsonRpcParam("blockHash") blockHash: HexString
+        blockHash: HexString
     ): Result<HexString>
 
     @JsonRpc("eth_getTransactionByBlockNumberAndIndex")
     suspend fun getTransactionByBlockNumberAndIndex(
-        @JsonRpcParam("blockTag") blockTag: BlockTag,
-        @JsonRpcParam("index") index: Index,
+        blockTag: BlockTag,
+        index: Index,
     ): Result<BlockTransaction>
 
     @JsonRpc("eth_getTransactionByBlockHashAndIndex")
     suspend fun getTransactionByBlockHashAndIndex(
-        @JsonRpcParam("blockHash") blockHash: HexString,
-        @JsonRpcParam("index") index: Index,
+        blockHash: HexString,
+        index: Index,
     ): Result<BlockTransaction>
 
     @JsonRpc("eth_getTransactionCount")
     suspend fun getTransactionCount(
-        @JsonRpcParam("address") address: Address,
-        @JsonRpcParam("blockTag") blockTag: BlockTag = BlockTag.Latest,
+        address: Address,
+        blockTag: BlockTag = BlockTag.Latest,
     ): Result<HexString>
 
     @JsonRpc("eth_getTransactionByHash")
     suspend fun getTransactionByHash(
-        @JsonRpcParam("transactionHash") transactionHash: HexString,
+        transactionHash: HexString,
     ): Result<BlockTransaction>
 
     @JsonRpc("eth_getTransactionReceipt")
     suspend fun getTransactionReceipt(
-        @JsonRpcParam("transactionHash") transactionHash: HexString,
+        transactionHash: HexString,
     ): Result<TransactionReceipt>
 
     @JsonRpc("eth_gasPrice")
@@ -148,14 +130,17 @@ interface CoreApi {
 
     @JsonRpc("eth_feeHistory")
     suspend fun getFeeHistory(
-        @JsonRpcParam("transactionHash") blockCount: BlockCount,
-        @JsonRpcParam("newestBlock") blockTag: BlockTag,
-        @JsonRpcParam("rewardPercentiles") rewardPercentiles: List<Percentile>? = null,
+        blockCount: BlockCount,
+        blockTag: BlockTag,
+        rewardPercentiles: List<Percentile>? = null,
     ): Result<FeeHistory>
+
+    @JsonRpc("eth_getLogs")
+    suspend fun getLogs(filter: LogFilter): Result<List<Log>>
 
     // Polygon specific
     @JsonRpc("eth_getSignersAtHash")
-    suspend fun getSignersAtHash(@JsonRpcParam("blockHash") blockHash: HexString): Result<HexString>
+    suspend fun getSignersAtHash(blockHash: HexString): Result<HexString>
 
     @JsonRpc("bor_getAuthor")
     suspend fun getAuthor(): Result<HexString>
@@ -164,10 +149,7 @@ interface CoreApi {
     suspend fun getCurrentProposer(): Result<HexString>
 
     @JsonRpc("bor_getRootHash")
-    suspend fun getRootHash(
-        @JsonRpcParam("from", useRawValue = true) from: Int,
-        @JsonRpcParam("from", useRawValue = true) to: Int
-    ): Result<HexString>
+    suspend fun getRootHash(from: RawInt, to: RawInt): Result<HexString>
 
     @JsonRpc("bor_getCurrentValidators")
     suspend fun getCurrentValidators(): Result<List<Validator>>

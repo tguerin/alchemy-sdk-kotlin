@@ -6,7 +6,6 @@ import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.Ether.Companion.wei
 import com.alchemy.sdk.json.rpc.client.annotation.JsonRpc
-import com.alchemy.sdk.json.rpc.client.annotation.JsonRpcParam
 import com.alchemy.sdk.json.rpc.client.generator.IdGenerator
 import com.alchemy.sdk.json.rpc.client.http.HttpJsonRpcClient
 import com.alchemy.sdk.json.rpc.client.model.JsonRpcRequest
@@ -21,15 +20,14 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.io.IOException
-import java.lang.reflect.Type
 
 class AlchemyProxyTest {
 
     interface CoreApi {
         @JsonRpc("eth_getBalance")
         suspend fun getBalance(
-            @JsonRpcParam("address") address: Address,
-            @JsonRpcParam("blockTag") blockTag: BlockTag = BlockTag.Latest
+            address: Address,
+            blockTag: BlockTag = BlockTag.Latest
         ): Result<Ether>
     }
 
@@ -55,11 +53,7 @@ class AlchemyProxyTest {
     fun setUp() {
         alchemyProxy = AlchemyProxy(
             idGenerator,
-            jsonRpcClient,
-            mapOf(
-                Address::class.java to addressParameterConverter as ParameterConverter<Any, Any>,
-                BlockTag::class.java to blockTagParameterConverter as ParameterConverter<Any, Any>,
-            )
+            jsonRpcClient
         )
     }
 
@@ -86,7 +80,7 @@ class AlchemyProxyTest {
                     "1",
                     "2.0",
                     "eth_getBalance",
-                    listOf("0x1188aa75c38e1790be3768508743fbe7b50b2153", "latest")
+                    listOf(targetAddress, BlockTag.Latest)
                 ),
                 Ether::class.java
             )
@@ -115,7 +109,7 @@ class AlchemyProxyTest {
                     "1",
                     "2.0",
                     "eth_getBalance",
-                    listOf("0x1188aa75c38e1790be3768508743fbe7b50b2153", "latest")
+                    listOf(targetAddress, BlockTag.Latest)
                 ),
                 Ether::class.java
             )

@@ -3,7 +3,7 @@ package com.alchemy.sdk.core.model
 import com.alchemy.sdk.core.util.HexString
 import com.google.gson.annotations.SerializedName
 
-class Validators: ArrayList<Validator>()
+class Validators : ArrayList<Validator>()
 
 data class Validator(
     @SerializedName("ID")

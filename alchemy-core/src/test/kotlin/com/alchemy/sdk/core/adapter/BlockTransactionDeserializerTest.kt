@@ -55,7 +55,12 @@ class BlockTransactionDeserializerTest {
             "0x08".hexString,
         )
         val jsonTree = Gson().toJsonTree(blockTransaction)
-        every { context.deserialize<BlockTransaction.FullBlockTransaction>(jsonTree, BlockTransaction.FullBlockTransaction::class.java) } returns blockTransaction
+        every {
+            context.deserialize<BlockTransaction.FullBlockTransaction>(
+                jsonTree,
+                BlockTransaction.FullBlockTransaction::class.java
+            )
+        } returns blockTransaction
         BlockTransactionDeserializer.deserialize(
             jsonTree,
             BlockTransaction::class.java,

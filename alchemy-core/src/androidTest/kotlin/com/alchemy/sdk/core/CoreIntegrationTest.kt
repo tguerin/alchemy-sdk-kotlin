@@ -12,6 +12,8 @@ import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.model.BlockTransaction
 import com.alchemy.sdk.core.model.FeeHistory
 import com.alchemy.sdk.core.model.Index.Companion.index
+import com.alchemy.sdk.core.model.Log
+import com.alchemy.sdk.core.model.LogFilter
 import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.core.model.Percentile.Companion.percentile
 import com.alchemy.sdk.core.model.Proof
@@ -19,6 +21,7 @@ import com.alchemy.sdk.core.model.TransactionReceipt
 import com.alchemy.sdk.core.model.UncleBlock
 import com.alchemy.sdk.core.test.R
 import com.alchemy.sdk.core.util.Ether.Companion.wei
+import com.alchemy.sdk.core.util.GsonUtil
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import com.google.gson.stream.JsonReader
 import kotlinx.coroutines.test.runTest
@@ -335,6 +338,22 @@ class CoreIntegrationTest {
             FeeHistory::class.java
         )
         data.getOrThrow() shouldBeEqualTo expectedFeeHistory
+    }
+
+    @Test
+    fun getLogsWithBlockHash() = runTest {
+        val data = alchemy.core.getLogs(
+            LogFilter.BlockHashFilter(
+                "0x40c3019758abf6942b29d5efb43d0c26abac7db3c8545232b8a3bdf37c780dc1".hexString
+            )
+        )
+
+        val expectedLogs = gson.fromJson<Array<Log>>(
+            jsonReaderFromFileName(R.raw.logs_test),
+            Array<Log>::class.java
+        ).toList()
+
+        data.getOrThrow() shouldBeEqualTo expectedLogs
     }
 
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {

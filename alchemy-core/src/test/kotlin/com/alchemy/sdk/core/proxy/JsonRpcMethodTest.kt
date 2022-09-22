@@ -5,7 +5,6 @@ import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.Ether.Companion.wei
 import com.alchemy.sdk.json.rpc.client.JsonRpcClient
 import com.alchemy.sdk.json.rpc.client.annotation.JsonRpc
-import com.alchemy.sdk.json.rpc.client.annotation.JsonRpcParam
 import com.alchemy.sdk.json.rpc.client.generator.IdGenerator
 import com.alchemy.sdk.json.rpc.client.model.JsonRpcRequest
 import io.mockk.coEvery
@@ -50,9 +49,6 @@ class JsonRpcMethodTest {
     @MockK
     lateinit var secondParameterizedType: ParameterizedType
 
-    @MockK
-    lateinit var addressParameterConverter: ParameterConverter<Address, String>
-
     @Test
     fun `should parse annotation then delegate call to rpc client and return result on success`() =
         runTest {
@@ -64,7 +60,7 @@ class JsonRpcMethodTest {
                         "1",
                         "2.0",
                         "eth_getBalance",
-                        arrayListOf("0x1188aa75c38e1790be3768508743fbe7b50b2153")
+                        arrayListOf(Address.from("0x1188aa75c38e1790be3768508743fbe7b50b2153"))
                     ),
                     Ether::class.java
                 )
@@ -73,9 +69,6 @@ class JsonRpcMethodTest {
             val result = JsonRpcMethod.parseAnnotations<Ether>(
                 idGenerator,
                 jsonRpcClient,
-                mapOf(
-                    Address::class.java to addressParameterConverter as ParameterConverter<Any, Any>
-                ),
                 method
             ).invoke(arrayOf(Address.from("0x1188aa75C38E1790bE3768508743FBE7b50b2153")))
 
@@ -93,7 +86,7 @@ class JsonRpcMethodTest {
                     "1",
                     "2.0",
                     "eth_getBalance",
-                    arrayListOf("0x1188aa75c38e1790be3768508743fbe7b50b2153")
+                    arrayListOf(Address.from("0x1188aa75c38e1790be3768508743fbe7b50b2153"))
                 ),
                 Ether::class.java
             )
@@ -102,9 +95,6 @@ class JsonRpcMethodTest {
         val result = JsonRpcMethod.parseAnnotations<Ether>(
             idGenerator,
             jsonRpcClient,
-            mapOf(
-                Address::class.java to addressParameterConverter as ParameterConverter<Any, Any>
-            ),
             method
         ).invoke(arrayOf(Address.from("0x1188aa75C38E1790bE3768508743FBE7b50b2153")))
 
@@ -117,9 +107,7 @@ class JsonRpcMethodTest {
     private fun prepareCallEnvironment() {
         every { idGenerator.generateId() } returns "1"
         every { method.annotations } returns arrayOf(JsonRpc("eth_getBalance"))
-        coEvery { addressParameterConverter.convert(any()) } returns "0x1188aa75c38e1790be3768508743fbe7b50b2153"
         every { method.parameters } returns arrayOf(parameter)
-        every { parameter.annotations } returns arrayOf(JsonRpcParam("address"))
         every { parameter.parameterizedType } returns firstParameterizedType
         every { firstParameterizedType.actualTypeArguments } returns arrayOf(wildcardType)
         every { wildcardType.lowerBounds } returns arrayOf(secondParameterizedType)

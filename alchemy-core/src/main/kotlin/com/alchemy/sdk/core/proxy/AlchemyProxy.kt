@@ -14,8 +14,7 @@ import kotlin.coroutines.resume
 
 internal class AlchemyProxy(
     private val idGenerator: IdGenerator,
-    private val jsonRpcClient: HttpJsonRpcClient,
-    private val parameterConverters: Map<Class<*>, ParameterConverter<Any, Any>>
+    private val jsonRpcClient: HttpJsonRpcClient
 ) {
     private val jsonRpcMethodCache = ConcurrentHashMap<Method, JsonRpcMethod<Any>>()
 
@@ -56,7 +55,6 @@ internal class AlchemyProxy(
                 result = JsonRpcMethod.parseAnnotations(
                     idGenerator = idGenerator,
                     jsonRpcClient = jsonRpcClient,
-                    parameterConverters = parameterConverters,
                     method = method
                 )
                 jsonRpcMethodCache[method] = result!!

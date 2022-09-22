@@ -4,7 +4,7 @@ import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class Ether private constructor(private val weiHexValue: HexString) {
+class Ether private constructor(val weiHexValue: HexString) {
     private val weiValue = weiHexValue.decimalValue()
 
     val wei: BigInteger = weiValue
