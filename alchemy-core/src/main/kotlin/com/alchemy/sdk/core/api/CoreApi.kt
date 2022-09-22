@@ -5,14 +5,16 @@ import com.alchemy.sdk.core.model.Block
 import com.alchemy.sdk.core.model.BlockCount
 import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.model.BlockTransaction
+import com.alchemy.sdk.core.model.CancelPrivateTransactionRequest
 import com.alchemy.sdk.core.model.FeeHistory
-import com.alchemy.sdk.core.model.GasEstimation
 import com.alchemy.sdk.core.model.Index
 import com.alchemy.sdk.core.model.Log
 import com.alchemy.sdk.core.model.LogFilter
 import com.alchemy.sdk.core.model.Percentile
+import com.alchemy.sdk.core.model.PrivateTransactionCall
 import com.alchemy.sdk.core.model.Proof
 import com.alchemy.sdk.core.model.RawInt
+import com.alchemy.sdk.core.model.TransactionCall
 import com.alchemy.sdk.core.model.TransactionReceipt
 import com.alchemy.sdk.core.model.UncleBlock
 import com.alchemy.sdk.core.model.Validator
@@ -123,8 +125,25 @@ interface CoreApi {
         transactionHash: HexString,
     ): Result<TransactionReceipt>
 
+    @JsonRpc("eth_call")
+    suspend fun call(transactionCall: TransactionCall): Result<HexString>
+
+    @JsonRpc("eth_sendRawTransaction")
+    suspend fun sendRawTransaction(signedTransaction: HexString): Result<HexString>
+
+    @JsonRpc("eth_sendPrivateTransaction")
+    suspend fun sendPrivateTransaction(privateTransactionCall: PrivateTransactionCall): Result<HexString>
+
+    @JsonRpc("eth_cancelPrivateTransaction")
+    suspend fun cancelPrivateTransaction(
+        cancelPrivateTransactionRequest: CancelPrivateTransactionRequest
+    ): Result<Boolean>
+
     @JsonRpc("eth_estimateGas")
-    suspend fun estimateGas(estimationRequests: List<GasEstimation>): Result<HexString>
+    suspend fun estimateGas(transactionCall: TransactionCall): Result<HexString>
+
+    @JsonRpc("eth_estimateGas")
+    suspend fun estimateGas(blockTag: BlockTag): Result<HexString>
 
     @JsonRpc("eth_gasPrice")
     suspend fun getGasPrice(): Result<Ether>

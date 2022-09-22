@@ -11,7 +11,6 @@ import com.alchemy.sdk.core.model.BlockCount.Companion.blockCount
 import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.model.BlockTransaction
 import com.alchemy.sdk.core.model.FeeHistory
-import com.alchemy.sdk.core.model.GasEstimation
 import com.alchemy.sdk.core.model.Index.Companion.index
 import com.alchemy.sdk.core.model.Log
 import com.alchemy.sdk.core.model.LogFilter
@@ -307,7 +306,7 @@ class CoreIntegrationTest {
     @FlakyTest // Returns 503 for now...
     fun estimateGas() = runTest {
         val data =
-            alchemy.core.estimateGas(listOf(GasEstimation.BlockTagGasEstimation(BlockTag.Latest)))
+            alchemy.core.estimateGas(BlockTag.Latest)
         data.getOrThrow().decimalValue() shouldBeGreaterThan BigInteger.valueOf(0)
     }
 
