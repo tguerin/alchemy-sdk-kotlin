@@ -6,6 +6,7 @@ import com.alchemy.sdk.core.model.BlockCount
 import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.model.BlockTransaction
 import com.alchemy.sdk.core.model.FeeHistory
+import com.alchemy.sdk.core.model.GasEstimation
 import com.alchemy.sdk.core.model.Index
 import com.alchemy.sdk.core.model.Log
 import com.alchemy.sdk.core.model.LogFilter
@@ -121,6 +122,9 @@ interface CoreApi {
     suspend fun getTransactionReceipt(
         transactionHash: HexString,
     ): Result<TransactionReceipt>
+
+    @JsonRpc("eth_estimateGas")
+    suspend fun estimateGas(estimationRequests: List<GasEstimation>): Result<HexString>
 
     @JsonRpc("eth_gasPrice")
     suspend fun getGasPrice(): Result<Ether>
