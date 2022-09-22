@@ -350,6 +350,7 @@ class CoreIntegrationTest {
     }
 
     @Test
+    @FlakyTest // can take a while
     fun getLogsWithBlockHash() = runTest {
         val data = alchemy.core.getLogs(
             LogFilter.BlockHashFilter(
