@@ -142,6 +142,24 @@ interface CoreApi {
     @JsonRpc("eth_getLogs")
     suspend fun getLogs(filter: LogFilter): Result<List<Log>>
 
+    @JsonRpc("eth_newFilter")
+    suspend fun newFilter(filter: LogFilter): Result<HexString>
+
+    @JsonRpc("eth_newPendingTransactionFilter")
+    suspend fun newPendingTransactionFilter(): Result<HexString>
+
+    @JsonRpc("eth_newBlockFilter")
+    suspend fun newBlockFilter(): Result<HexString>
+
+    @JsonRpc("eth_getFilterChanges")
+    suspend fun getFilterChanges(filterId: HexString): Result<List<HexString>>
+
+    @JsonRpc("eth_getFilterLogs")
+    suspend fun getFilterLogs(): Result<List<HexString>>
+
+    @JsonRpc("eth_uninstallFilter")
+    suspend fun uninstallFilter(filterId: HexString): Result<Boolean>
+
     // Polygon specific
     @JsonRpc("eth_getSignersAtHash")
     suspend fun getSignersAtHash(blockHash: HexString): Result<HexString>

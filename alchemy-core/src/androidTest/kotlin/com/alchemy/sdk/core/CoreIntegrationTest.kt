@@ -29,6 +29,7 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
 import org.amshove.kluent.shouldHaveSize
+import org.amshove.kluent.shouldNotBeEqualTo
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.InputStreamReader
@@ -305,7 +306,8 @@ class CoreIntegrationTest {
     @Test
     @FlakyTest // Returns 503 for now...
     fun estimateGas() = runTest {
-        val data = alchemy.core.estimateGas(listOf(GasEstimation.BlockTagGasEstimation(BlockTag.Latest)))
+        val data =
+            alchemy.core.estimateGas(listOf(GasEstimation.BlockTagGasEstimation(BlockTag.Latest)))
         data.getOrThrow().decimalValue() shouldBeGreaterThan BigInteger.valueOf(0)
     }
 
@@ -364,6 +366,33 @@ class CoreIntegrationTest {
         ).toList()
 
         data.getOrThrow() shouldBeEqualTo expectedLogs
+    }
+
+    @Test
+    fun newFilter() = runTest {
+        val filterId = alchemy.core.newFilter(LogFilter.BlockRangeFilter())
+        val changes  = alchemy.core.getFilterChanges(filterId.getOrThrow())
+        changes.getOrThrow() shouldNotBeEqualTo null
+        val uninstallFilter = alchemy.core.uninstallFilter(filterId.getOrThrow())
+        uninstallFilter.getOrThrow() shouldBeEqualTo true
+    }
+
+    @Test
+    fun newBlockFilter() = runTest {
+        val filterId = alchemy.core.newBlockFilter()
+        val changes  = alchemy.core.getFilterChanges(filterId.getOrThrow())
+        changes.getOrThrow() shouldNotBeEqualTo null
+        val uninstallFilter = alchemy.core.uninstallFilter(filterId.getOrThrow())
+        uninstallFilter.getOrThrow() shouldBeEqualTo true
+    }
+
+    @Test
+    fun newPendingTransactionFilter() = runTest {
+        val filterId = alchemy.core.newPendingTransactionFilter()
+        val changes  = alchemy.core.getFilterChanges(filterId.getOrThrow())
+        changes.getOrThrow() shouldNotBeEqualTo null
+        val uninstallFilter = alchemy.core.uninstallFilter(filterId.getOrThrow())
+        uninstallFilter.getOrThrow() shouldBeEqualTo true
     }
 
     private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
