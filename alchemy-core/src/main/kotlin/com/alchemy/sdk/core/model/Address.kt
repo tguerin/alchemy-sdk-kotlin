@@ -1,6 +1,5 @@
 package com.alchemy.sdk.core.model
 
-import android.icu.text.IDNA
 import com.alchemy.sdk.core.util.HexString
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import org.komputing.khash.keccak.Keccak
@@ -10,14 +9,8 @@ sealed class Address private constructor(
     val value: HexString
 ) {
     class EthereumAddress internal constructor(value: HexString) : Address(value)
-    class IcapAddress internal constructor(value: HexString) : Address(value)
-    class ContractAddress internal constructor(value: HexString) : Address(value)
-    class NameHashAddress internal constructor(value: HexString) : Address(value)
 
     companion object {
-        private val dnsRegex =
-            "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$".toRegex()
-        private val icapAddressRegex = "^XE[0-9]{2}[0-9 A -Za-z]{30,31}$".toRegex()
         private val checksumRegex = "([A-F].*[a-f])|([a-f].*[A-F])".toRegex()
         fun from(rawAddress: String): Address {
             if (rawAddress.isEmpty()) {
@@ -32,16 +25,6 @@ sealed class Address private constructor(
                         throw IllegalArgumentException("Bad checksum")
                     }
                     EthereumAddress(result)
-                }
-                icapAddressRegex.matches(rawAddress) -> {
-                    throw NotImplementedError("wip")
-                }
-                dnsRegex.matches(rawAddress) -> {
-                    val idna =
-                        IDNA.getUTS46Instance(IDNA.USE_STD3_RULES or IDNA.NONTRANSITIONAL_TO_UNICODE)
-                    val normalizedName =
-                        idna.nameToUnicode(rawAddress, StringBuilder(), IDNA.Info()).toString()
-                    NameHashAddress(nameHash(normalizedName))
                 }
                 else -> throw IllegalArgumentException("Unknown address type $rawAddress")
             }

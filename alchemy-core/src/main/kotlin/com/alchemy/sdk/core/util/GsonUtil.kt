@@ -48,8 +48,6 @@ class GsonUtil {
                 })
             .registerTypeAdapter(Address::class.java, AddressDeserializer)
             .registerTypeAdapter(Address.EthereumAddress::class.java, AddressSerializer)
-            .registerTypeAdapter(Address.IcapAddress::class.java, AddressSerializer)
-            .registerTypeAdapter(Address.NameHashAddress::class.java, AddressSerializer)
             .registerTypeAdapter(BlockTag.BlockTagNumber::class.java, BlockTagSerializer)
             .registerTypeAdapter(BlockTag.Earliest::class.java, BlockTagSerializer)
             .registerTypeAdapter(BlockTag.Latest::class.java, BlockTagSerializer)

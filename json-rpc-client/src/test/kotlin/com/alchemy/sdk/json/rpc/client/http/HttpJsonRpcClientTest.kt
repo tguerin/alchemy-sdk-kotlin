@@ -52,7 +52,7 @@ class HttpJsonRpcClientTest {
             "eth_getBalance",
             listOf("0x1188aa75c38e1790be3768508743fbe7b50b2153")
         )
-        val result = httpJsonRpcClient.call(jsonRpcRequest, String::class.java)
+        val result = httpJsonRpcClient.call<String>(jsonRpcRequest, String::class.java)
 
         val request = withContext(Dispatchers.IO) { mockWebServer.takeRequest() }
         request.body.peek()
@@ -74,7 +74,7 @@ class HttpJsonRpcClientTest {
             "eth_getBalance",
             listOf("0x1188aa75c38e1790be3768508743fbe7b50b2153")
         )
-        val result = httpJsonRpcClient.call(jsonRpcRequest, String::class.java)
+        val result = httpJsonRpcClient.call<String>(jsonRpcRequest, String::class.java)
 
         val request = withContext(Dispatchers.IO) { mockWebServer.takeRequest() }
         request.body.peek()
@@ -95,7 +95,7 @@ class HttpJsonRpcClientTest {
             "eth_getBalance",
             listOf("0x1188aa75c38e1790be3768508743fbe7b50b2153")
         )
-        val result = httpJsonRpcClient.call(jsonRpcRequest, String::class.java)
+        val result = httpJsonRpcClient.call<String>(jsonRpcRequest, String::class.java)
 
         val request = withContext(Dispatchers.IO) { mockWebServer.takeRequest() }
         request.body.peek()
@@ -139,7 +139,7 @@ class HttpJsonRpcClientTest {
             HttpJsonRpcClient(mockWebServer.url("/").toString(), okHttpClient, mockGson)
         mockWebServer.enqueue(MockResponse().setBody("{\"id\":\"1\",\"result\":\"0x3529b5834ea3c6\",\"error\":null}"))
 
-        val result = httpJsonRpcClient.call(jsonRpcRequest, String::class.java)
+        val result = httpJsonRpcClient.call<String>(jsonRpcRequest, String::class.java)
 
         val request = withContext(Dispatchers.IO) { mockWebServer.takeRequest() }
         request.body.peek()

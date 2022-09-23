@@ -1,9 +1,5 @@
 package com.alchemy.sdk.core
 
-import androidx.annotation.IdRes
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.FlakyTest
-import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.AlchemySettings
 import com.alchemy.sdk.core.model.Block
@@ -19,7 +15,6 @@ import com.alchemy.sdk.core.model.Percentile.Companion.percentile
 import com.alchemy.sdk.core.model.Proof
 import com.alchemy.sdk.core.model.TransactionReceipt
 import com.alchemy.sdk.core.model.UncleBlock
-import com.alchemy.sdk.core.test.R
 import com.alchemy.sdk.core.util.Ether.Companion.wei
 import com.alchemy.sdk.core.util.GsonUtil
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
@@ -29,12 +24,13 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
 import org.amshove.kluent.shouldHaveSize
 import org.amshove.kluent.shouldNotBeEqualTo
+import org.junit.Ignore
 import org.junit.Test
-import org.junit.runner.RunWith
+import java.io.File
+import java.io.FileInputStream
 import java.io.InputStreamReader
 import java.math.BigInteger
 
-@RunWith(AndroidJUnit4::class)
 class CoreIntegrationTest {
 
     private val alchemy = Alchemy.with(AlchemySettings(network = Network.ETH_MAINNET))
@@ -73,7 +69,7 @@ class CoreIntegrationTest {
             keys = listOf("0x41494c616e647363617065000000000000000000000000000000000000000016".hexString)
         )
         val expectedProof = gson.fromJson<Proof?>(
-            jsonReaderFromFileName(R.raw.proof_test),
+            jsonReaderFromFileName("proof_test.json"),
             Proof::class.java
         )
         data.getOrThrow().address shouldBeEqualTo expectedProof.address
@@ -134,21 +130,19 @@ class CoreIntegrationTest {
     }
 
     @Test
-    @FlakyTest
     fun getBlockByNumber() = runTest {
         val blockTag = BlockTag.BlockTagNumber("0xed14e5".hexString)
 
         val data = alchemy.core.getBlockByNumber(blockTag, true)
 
         val expectedBlock = gson.fromJson<Block?>(
-            jsonReaderFromFileName(R.raw.block_test),
+            jsonReaderFromFileName("block_test.json"),
             Block::class.java
         )
         data.getOrThrow() shouldBeEqualTo expectedBlock
     }
 
     @Test
-    @FlakyTest
     fun getBlockByHash() = runTest {
         val blockHash =
             "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString
@@ -156,14 +150,13 @@ class CoreIntegrationTest {
         val data = alchemy.core.getBlockByHash(blockHash, true)
 
         val expectedBlock = gson.fromJson<Block?>(
-            jsonReaderFromFileName(R.raw.block_test),
+            jsonReaderFromFileName("block_test.json"),
             Block::class.java
         )
         data.getOrThrow() shouldBeEqualTo expectedBlock
     }
 
     @Test
-    @FlakyTest
     fun getBlockByHashWithoutTransactions() = runTest {
         val blockHash =
             "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString
@@ -171,7 +164,7 @@ class CoreIntegrationTest {
         val data = alchemy.core.getBlockByHash(blockHash)
 
         val expectedBlock = gson.fromJson<Block?>(
-            jsonReaderFromFileName(R.raw.block_without_transactions_test),
+            jsonReaderFromFileName("block_without_transactions_test.json"),
             Block::class.java
         )
         data.getOrThrow() shouldBeEqualTo expectedBlock
@@ -202,7 +195,7 @@ class CoreIntegrationTest {
         val data = alchemy.core.getUncleByBlockNumberAndIndex(blockTag, 0.index)
 
         val expectedBlock = gson.fromJson<UncleBlock?>(
-            jsonReaderFromFileName(R.raw.uncle_block_test),
+            jsonReaderFromFileName("uncle_block_test.json"),
             UncleBlock::class.java
         )
         data.getOrThrow() shouldBeEqualTo expectedBlock
@@ -216,7 +209,7 @@ class CoreIntegrationTest {
         )
 
         val expectedBlock = gson.fromJson<UncleBlock?>(
-            jsonReaderFromFileName(R.raw.uncle_block_test),
+            jsonReaderFromFileName("uncle_block_test.json"),
             UncleBlock::class.java
         )
         data.getOrThrow() shouldBeEqualTo expectedBlock
@@ -246,7 +239,7 @@ class CoreIntegrationTest {
         val data = alchemy.core.getTransactionByBlockNumberAndIndex(blockTag, 0.index)
 
         val expectedBlockTransaction = gson.fromJson<BlockTransaction?>(
-            jsonReaderFromFileName(R.raw.transaction_test),
+            jsonReaderFromFileName("transaction_test.json"),
             BlockTransaction::class.java
         )
         data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
@@ -260,7 +253,7 @@ class CoreIntegrationTest {
         )
 
         val expectedBlockTransaction = gson.fromJson<BlockTransaction?>(
-            jsonReaderFromFileName(R.raw.transaction_test),
+            jsonReaderFromFileName("transaction_test.json"),
             BlockTransaction::class.java
         )
         data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
@@ -283,7 +276,7 @@ class CoreIntegrationTest {
         )
 
         val expectedBlockTransaction = gson.fromJson<BlockTransaction?>(
-            jsonReaderFromFileName(R.raw.transaction_test),
+            jsonReaderFromFileName("transaction_test.json"),
             BlockTransaction::class.java
         )
         data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
@@ -296,14 +289,14 @@ class CoreIntegrationTest {
         )
 
         val expectedBlockTransaction = gson.fromJson<TransactionReceipt?>(
-            jsonReaderFromFileName(R.raw.transaction_receipt_test),
+            jsonReaderFromFileName("transaction_receipt_test.json"),
             TransactionReceipt::class.java
         )
         data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
     }
 
     @Test
-    @FlakyTest // Returns 503 for now...
+    @Ignore // Returns 503 for now...
     fun estimateGas() = runTest {
         val data =
             alchemy.core.estimateGas(BlockTag.Latest)
@@ -330,7 +323,7 @@ class CoreIntegrationTest {
             BlockTag.BlockTagNumber("0xed14e5".hexString)
         )
         val expectedFeeHistory = gson.fromJson<FeeHistory?>(
-            jsonReaderFromFileName(R.raw.fee_history_test),
+            jsonReaderFromFileName("fee_history_test.json"),
             FeeHistory::class.java
         )
         data.getOrThrow() shouldBeEqualTo expectedFeeHistory
@@ -344,14 +337,13 @@ class CoreIntegrationTest {
             listOf(25.percentile, 75.percentile)
         )
         val expectedFeeHistory = gson.fromJson<FeeHistory?>(
-            jsonReaderFromFileName(R.raw.fee_history_percentiles_test),
+            jsonReaderFromFileName("fee_history_percentiles_test.json"),
             FeeHistory::class.java
         )
         data.getOrThrow() shouldBeEqualTo expectedFeeHistory
     }
 
     @Test
-    @FlakyTest // can take a while
     fun getLogsWithBlockHash() = runTest {
         val data = alchemy.core.getLogs(
             LogFilter.BlockHashFilter(
@@ -360,7 +352,7 @@ class CoreIntegrationTest {
         )
 
         val expectedLogs = gson.fromJson<Array<Log>>(
-            jsonReaderFromFileName(R.raw.logs_test),
+            jsonReaderFromFileName("logs_test.json"),
             Array<Log>::class.java
         ).toList()
 
@@ -370,7 +362,7 @@ class CoreIntegrationTest {
     @Test
     fun newFilter() = runTest {
         val filterId = alchemy.core.newFilter(LogFilter.BlockRangeFilter())
-        val changes  = alchemy.core.getFilterChanges(filterId.getOrThrow())
+        val changes = alchemy.core.getFilterChanges(filterId.getOrThrow())
         changes.getOrThrow() shouldNotBeEqualTo null
         val uninstallFilter = alchemy.core.uninstallFilter(filterId.getOrThrow())
         uninstallFilter.getOrThrow() shouldBeEqualTo true
@@ -379,7 +371,7 @@ class CoreIntegrationTest {
     @Test
     fun newBlockFilter() = runTest {
         val filterId = alchemy.core.newBlockFilter()
-        val changes  = alchemy.core.getFilterChanges(filterId.getOrThrow())
+        val changes = alchemy.core.getFilterChanges(filterId.getOrThrow())
         changes.getOrThrow() shouldNotBeEqualTo null
         val uninstallFilter = alchemy.core.uninstallFilter(filterId.getOrThrow())
         uninstallFilter.getOrThrow() shouldBeEqualTo true
@@ -388,16 +380,18 @@ class CoreIntegrationTest {
     @Test
     fun newPendingTransactionFilter() = runTest {
         val filterId = alchemy.core.newPendingTransactionFilter()
-        val changes  = alchemy.core.getFilterChanges(filterId.getOrThrow())
+        val changes = alchemy.core.getFilterChanges(filterId.getOrThrow())
         changes.getOrThrow() shouldNotBeEqualTo null
         val uninstallFilter = alchemy.core.uninstallFilter(filterId.getOrThrow())
         uninstallFilter.getOrThrow() shouldBeEqualTo true
     }
 
-    private fun jsonReaderFromFileName(@IdRes fileRes: Int): JsonReader {
+    private fun jsonReaderFromFileName(fileName: String): JsonReader {
         return JsonReader(
             InputStreamReader(
-                getInstrumentation().context.resources.openRawResource(fileRes)
+                FileInputStream(
+                    File("src/test/resources/$fileName")
+                )
             )
         )
     }
