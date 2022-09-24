@@ -1,7 +1,8 @@
 package com.alchemy.sdk.core.adapter
 
-import com.alchemy.sdk.core.model.Percentile
-import com.alchemy.sdk.core.model.Percentile.Companion.percentile
+import com.alchemy.sdk.core.adapter.core.PercentileSerializer
+import com.alchemy.sdk.core.model.core.Percentile
+import com.alchemy.sdk.core.model.core.Percentile.Companion.percentile
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import io.mockk.impl.annotations.MockK

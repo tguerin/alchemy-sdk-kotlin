@@ -1,7 +1,9 @@
 package com.alchemy.sdk.core.adapter
 
-import com.alchemy.sdk.core.model.Address
+import com.alchemy.sdk.core.adapter.core.AddressDeserializer
+import com.alchemy.sdk.core.model.core.Address
 import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule
@@ -43,5 +45,15 @@ class AddressDeserializerTest {
             context
         )
         data shouldBeEqualTo Address.from("0x1188aa75C38E1790bE3768508743FBE7b50b2153")
+    }
+
+    @Test
+    fun `should handle null case`() {
+        val data = AddressDeserializer.deserialize(
+            JsonNull.INSTANCE,
+            Address::class.java,
+            context
+        )
+        data shouldBeEqualTo null
     }
 }

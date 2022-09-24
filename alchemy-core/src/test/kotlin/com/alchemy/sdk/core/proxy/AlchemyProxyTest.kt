@@ -1,8 +1,8 @@
 package com.alchemy.sdk.core.proxy
 
 import com.alchemy.sdk.core.Core
-import com.alchemy.sdk.core.model.Address
-import com.alchemy.sdk.core.model.BlockTag
+import com.alchemy.sdk.core.model.core.Address
+import com.alchemy.sdk.core.model.core.BlockTag
 import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.Ether.Companion.wei
 import com.alchemy.sdk.json.rpc.client.annotation.JsonRpc

@@ -1,8 +1,10 @@
 package com.alchemy.sdk.core.adapter
 
+import com.alchemy.sdk.core.adapter.core.EtherDeserializer
 import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.Ether.Companion.wei
 import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule
@@ -44,6 +46,16 @@ class EtherDeserializerTest {
             context
         )
         data shouldBeEqualTo "0x02".wei
+    }
+
+    @Test
+    fun `should handle null case`() {
+        val data = EtherDeserializer.deserialize(
+            JsonNull.INSTANCE,
+            Ether::class.java,
+            context
+        )
+        data shouldBeEqualTo null
     }
 
 }

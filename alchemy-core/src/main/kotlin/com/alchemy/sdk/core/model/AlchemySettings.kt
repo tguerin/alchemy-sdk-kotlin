@@ -1,5 +1,6 @@
 package com.alchemy.sdk.core.model
 
+import com.alchemy.sdk.core.model.core.Network
 import com.alchemy.sdk.core.util.Constants
 
 data class AlchemySettings(

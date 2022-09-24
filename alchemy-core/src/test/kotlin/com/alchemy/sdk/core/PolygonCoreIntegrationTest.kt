@@ -1,8 +1,8 @@
 package com.alchemy.sdk.core
 
 import com.alchemy.sdk.core.model.AlchemySettings
-import com.alchemy.sdk.core.model.Network
-import com.alchemy.sdk.core.model.RawInt.Companion.raw
+import com.alchemy.sdk.core.model.core.Network
+import com.alchemy.sdk.core.model.core.RawInt.Companion.raw
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo

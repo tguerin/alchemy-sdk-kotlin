@@ -1,8 +1,10 @@
 package com.alchemy.sdk.core.adapter
 
+import com.alchemy.sdk.core.adapter.core.EtherSerializer
 import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.Ether.Companion.ether
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
+import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import io.mockk.impl.annotations.MockK
@@ -28,4 +30,14 @@ class EtherSerializerTest {
             context
         ) shouldBeEqualTo JsonPrimitive(1.ether.wei.hexString.toString())
     }
+
+    @Test
+    fun `should handle null case`() {
+        EtherSerializer.serialize(
+            null,
+            Ether::class.java,
+            context
+        ) shouldBeEqualTo JsonNull.INSTANCE
+    }
+
 }

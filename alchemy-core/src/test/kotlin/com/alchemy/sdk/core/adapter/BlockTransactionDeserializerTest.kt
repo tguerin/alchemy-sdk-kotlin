@@ -1,11 +1,13 @@
 package com.alchemy.sdk.core.adapter
 
-import com.alchemy.sdk.core.model.Address
-import com.alchemy.sdk.core.model.BlockTransaction
+import com.alchemy.sdk.core.adapter.core.BlockTransactionDeserializer
+import com.alchemy.sdk.core.model.core.Address
+import com.alchemy.sdk.core.model.core.BlockTransaction
 import com.alchemy.sdk.core.util.Ether.Companion.wei
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import com.google.gson.Gson
 import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -66,5 +68,15 @@ class BlockTransactionDeserializerTest {
             BlockTransaction::class.java,
             context
         ) shouldBeEqualTo blockTransaction
+    }
+
+    @Test
+    fun `should handle null case`() {
+        val data = BlockTransactionDeserializer.deserialize(
+            JsonNull.INSTANCE,
+            BlockTransaction::class.java,
+            context
+        )
+        data shouldBeEqualTo null
     }
 }

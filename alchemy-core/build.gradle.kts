@@ -11,6 +11,8 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.okhttp)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
 
     testImplementation(libs.test.fluent.assertions)
     testImplementation(libs.test.junit)

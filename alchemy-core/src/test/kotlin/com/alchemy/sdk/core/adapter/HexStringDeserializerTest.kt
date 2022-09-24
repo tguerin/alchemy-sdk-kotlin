@@ -1,8 +1,10 @@
 package com.alchemy.sdk.core.adapter
 
+import com.alchemy.sdk.core.adapter.core.HexStringDeserializer
 import com.alchemy.sdk.core.util.HexString
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule
@@ -44,5 +46,15 @@ class HexStringDeserializerTest {
             context
         )
         data shouldBeEqualTo "0x02".hexString
+    }
+
+    @Test
+    fun `should handle null case`() {
+        val data = HexStringDeserializer.deserialize(
+            JsonNull.INSTANCE,
+            HexString::class.java,
+            context
+        )
+        data shouldBeEqualTo null
     }
 }

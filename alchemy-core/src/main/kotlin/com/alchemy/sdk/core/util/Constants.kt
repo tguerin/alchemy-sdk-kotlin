@@ -1,6 +1,6 @@
 package com.alchemy.sdk.core.util
 
-import com.alchemy.sdk.core.model.Network
+import com.alchemy.sdk.core.model.core.Network
 
 internal object Constants {
     const val DEFAULT_CONTRACT_ADDRESSES = "DEFAULT_TOKENS"
@@ -29,6 +29,10 @@ internal object Constants {
 
     fun getAlchemyHttpUrl(network: Network, apiKey: String): String {
         return "https://${network.networkId}.g.alchemy.com/v2/${apiKey}";
+    }
+
+    fun getAlchemyNftUrl(network: Network, apiKey: String): String {
+        return "https://${network.networkId}.g.alchemy.com/nft/v2/${apiKey}/";
     }
 
     const val ETH_NULL_VALUE = "0x"

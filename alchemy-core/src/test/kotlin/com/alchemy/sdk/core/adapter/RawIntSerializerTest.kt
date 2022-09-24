@@ -1,10 +1,9 @@
 package com.alchemy.sdk.core.adapter
 
-import com.alchemy.sdk.core.model.RawInt
-import com.alchemy.sdk.core.model.RawInt.Companion.raw
-import com.alchemy.sdk.core.util.Ether
-import com.alchemy.sdk.core.util.Ether.Companion.ether
-import com.alchemy.sdk.core.util.HexString.Companion.hexString
+import com.alchemy.sdk.core.adapter.core.RawIntSerializer
+import com.alchemy.sdk.core.model.core.RawInt
+import com.alchemy.sdk.core.model.core.RawInt.Companion.raw
+import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import io.mockk.impl.annotations.MockK
@@ -29,5 +28,14 @@ class RawIntSerializerTest {
             RawInt::class.java,
             context
         ) shouldBeEqualTo JsonPrimitive(1)
+    }
+
+    @Test
+    fun `should handle null case`() {
+        RawIntSerializer.serialize(
+            null,
+            RawInt::class.java,
+            context
+        ) shouldBeEqualTo JsonNull.INSTANCE
     }
 }

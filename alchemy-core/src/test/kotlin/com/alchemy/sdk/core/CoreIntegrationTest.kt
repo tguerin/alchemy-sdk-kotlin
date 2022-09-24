@@ -1,24 +1,24 @@
 package com.alchemy.sdk.core
 
-import com.alchemy.sdk.core.model.Address
+import com.alchemy.sdk.core.ResourceUtils.Companion.parseFile
 import com.alchemy.sdk.core.model.AlchemySettings
-import com.alchemy.sdk.core.model.Block
-import com.alchemy.sdk.core.model.BlockCount.Companion.blockCount
-import com.alchemy.sdk.core.model.BlockTag
-import com.alchemy.sdk.core.model.BlockTransaction
-import com.alchemy.sdk.core.model.FeeHistory
-import com.alchemy.sdk.core.model.Index.Companion.index
-import com.alchemy.sdk.core.model.Log
-import com.alchemy.sdk.core.model.LogFilter
-import com.alchemy.sdk.core.model.Network
-import com.alchemy.sdk.core.model.Percentile.Companion.percentile
-import com.alchemy.sdk.core.model.Proof
-import com.alchemy.sdk.core.model.TransactionReceipt
-import com.alchemy.sdk.core.model.UncleBlock
+import com.alchemy.sdk.core.model.core.Address
+import com.alchemy.sdk.core.model.core.Block
+import com.alchemy.sdk.core.model.core.BlockCount.Companion.blockCount
+import com.alchemy.sdk.core.model.core.BlockTag
+import com.alchemy.sdk.core.model.core.BlockTransaction
+import com.alchemy.sdk.core.model.core.FeeHistory
+import com.alchemy.sdk.core.model.core.Index.Companion.index
+import com.alchemy.sdk.core.model.core.Log
+import com.alchemy.sdk.core.model.core.LogFilter
+import com.alchemy.sdk.core.model.core.Network
+import com.alchemy.sdk.core.model.core.Percentile.Companion.percentile
+import com.alchemy.sdk.core.model.core.Proof
+import com.alchemy.sdk.core.model.core.TransactionReceipt
+import com.alchemy.sdk.core.model.core.UncleBlock
 import com.alchemy.sdk.core.util.Ether.Companion.wei
 import com.alchemy.sdk.core.util.GsonUtil
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
-import com.google.gson.stream.JsonReader
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
@@ -26,16 +26,13 @@ import org.amshove.kluent.shouldHaveSize
 import org.amshove.kluent.shouldNotBeEqualTo
 import org.junit.Ignore
 import org.junit.Test
-import java.io.File
-import java.io.FileInputStream
-import java.io.InputStreamReader
 import java.math.BigInteger
 
 class CoreIntegrationTest {
 
     private val alchemy = Alchemy.with(AlchemySettings(network = Network.ETH_MAINNET))
 
-    private val gson = GsonUtil.get()
+    private val gson = GsonUtil.gson
 
     @Test
     fun getBalance() = runTest {
@@ -68,10 +65,8 @@ class CoreIntegrationTest {
             address = Address.from("0x4B076f0E07eED3F1007fB1B5C000F7A08D3208E1"),
             keys = listOf("0x41494c616e647363617065000000000000000000000000000000000000000016".hexString)
         )
-        val expectedProof = gson.fromJson<Proof?>(
-            jsonReaderFromFileName("proof_test.json"),
-            Proof::class.java
-        )
+        val expectedProof = parseFile("proof_test.json", Proof::class.java)
+
         data.getOrThrow().address shouldBeEqualTo expectedProof.address
         data.getOrThrow().accountProof shouldHaveSize expectedProof.accountProof.size
         data.getOrThrow().balance shouldBeEqualTo expectedProof.balance
@@ -135,10 +130,7 @@ class CoreIntegrationTest {
 
         val data = alchemy.core.getBlockByNumber(blockTag, true)
 
-        val expectedBlock = gson.fromJson<Block?>(
-            jsonReaderFromFileName("block_test.json"),
-            Block::class.java
-        )
+        val expectedBlock = parseFile("block_test.json", Block::class.java)
         data.getOrThrow() shouldBeEqualTo expectedBlock
     }
 
@@ -149,10 +141,7 @@ class CoreIntegrationTest {
 
         val data = alchemy.core.getBlockByHash(blockHash, true)
 
-        val expectedBlock = gson.fromJson<Block?>(
-            jsonReaderFromFileName("block_test.json"),
-            Block::class.java
-        )
+        val expectedBlock = parseFile("block_test.json", Block::class.java)
         data.getOrThrow() shouldBeEqualTo expectedBlock
     }
 
@@ -163,10 +152,7 @@ class CoreIntegrationTest {
 
         val data = alchemy.core.getBlockByHash(blockHash)
 
-        val expectedBlock = gson.fromJson<Block?>(
-            jsonReaderFromFileName("block_without_transactions_test.json"),
-            Block::class.java
-        )
+        val expectedBlock = parseFile("block_without_transactions_test.json", Block::class.java)
         data.getOrThrow() shouldBeEqualTo expectedBlock
     }
 
@@ -194,10 +180,7 @@ class CoreIntegrationTest {
 
         val data = alchemy.core.getUncleByBlockNumberAndIndex(blockTag, 0.index)
 
-        val expectedBlock = gson.fromJson<UncleBlock?>(
-            jsonReaderFromFileName("uncle_block_test.json"),
-            UncleBlock::class.java
-        )
+        val expectedBlock = parseFile("uncle_block_test.json", UncleBlock::class.java)
         data.getOrThrow() shouldBeEqualTo expectedBlock
     }
 
@@ -208,10 +191,7 @@ class CoreIntegrationTest {
             0.index
         )
 
-        val expectedBlock = gson.fromJson<UncleBlock?>(
-            jsonReaderFromFileName("uncle_block_test.json"),
-            UncleBlock::class.java
-        )
+        val expectedBlock = parseFile("uncle_block_test.json", UncleBlock::class.java)
         data.getOrThrow() shouldBeEqualTo expectedBlock
     }
 
@@ -238,10 +218,8 @@ class CoreIntegrationTest {
 
         val data = alchemy.core.getTransactionByBlockNumberAndIndex(blockTag, 0.index)
 
-        val expectedBlockTransaction = gson.fromJson<BlockTransaction?>(
-            jsonReaderFromFileName("transaction_test.json"),
-            BlockTransaction::class.java
-        )
+        val expectedBlockTransaction =
+            parseFile("transaction_test.json", BlockTransaction::class.java)
         data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
     }
 
@@ -252,10 +230,8 @@ class CoreIntegrationTest {
             0.index
         )
 
-        val expectedBlockTransaction = gson.fromJson<BlockTransaction?>(
-            jsonReaderFromFileName("transaction_test.json"),
-            BlockTransaction::class.java
-        )
+        val expectedBlockTransaction =
+            parseFile("transaction_test.json", BlockTransaction::class.java)
         data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
     }
 
@@ -275,10 +251,8 @@ class CoreIntegrationTest {
             "0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString
         )
 
-        val expectedBlockTransaction = gson.fromJson<BlockTransaction?>(
-            jsonReaderFromFileName("transaction_test.json"),
-            BlockTransaction::class.java
-        )
+        val expectedBlockTransaction =
+            parseFile("transaction_test.json", BlockTransaction::class.java)
         data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
     }
 
@@ -288,11 +262,9 @@ class CoreIntegrationTest {
             "0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString
         )
 
-        val expectedBlockTransaction = gson.fromJson<TransactionReceipt?>(
-            jsonReaderFromFileName("transaction_receipt_test.json"),
-            TransactionReceipt::class.java
-        )
-        data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
+        val expectedTransactionReceipt =
+            parseFile("transaction_receipt_test.json", TransactionReceipt::class.java)
+        data.getOrThrow() shouldBeEqualTo expectedTransactionReceipt
     }
 
     @Test
@@ -322,10 +294,8 @@ class CoreIntegrationTest {
             4.blockCount,
             BlockTag.BlockTagNumber("0xed14e5".hexString)
         )
-        val expectedFeeHistory = gson.fromJson<FeeHistory?>(
-            jsonReaderFromFileName("fee_history_test.json"),
-            FeeHistory::class.java
-        )
+
+        val expectedFeeHistory = parseFile("fee_history_test.json", FeeHistory::class.java)
         data.getOrThrow() shouldBeEqualTo expectedFeeHistory
     }
 
@@ -336,10 +306,8 @@ class CoreIntegrationTest {
             BlockTag.BlockTagNumber("0xed14e5".hexString),
             listOf(25.percentile, 75.percentile)
         )
-        val expectedFeeHistory = gson.fromJson<FeeHistory?>(
-            jsonReaderFromFileName("fee_history_percentiles_test.json"),
-            FeeHistory::class.java
-        )
+        val expectedFeeHistory =
+            parseFile("fee_history_percentiles_test.json", FeeHistory::class.java)
         data.getOrThrow() shouldBeEqualTo expectedFeeHistory
     }
 
@@ -351,10 +319,7 @@ class CoreIntegrationTest {
             )
         )
 
-        val expectedLogs = gson.fromJson<Array<Log>>(
-            jsonReaderFromFileName("logs_test.json"),
-            Array<Log>::class.java
-        ).toList()
+        val expectedLogs = parseFile("logs_test.json", Array<Log>::class.java).toList()
 
         data.getOrThrow() shouldBeEqualTo expectedLogs
     }
@@ -384,15 +349,5 @@ class CoreIntegrationTest {
         changes.getOrThrow() shouldNotBeEqualTo null
         val uninstallFilter = alchemy.core.uninstallFilter(filterId.getOrThrow())
         uninstallFilter.getOrThrow() shouldBeEqualTo true
-    }
-
-    private fun jsonReaderFromFileName(fileName: String): JsonReader {
-        return JsonReader(
-            InputStreamReader(
-                FileInputStream(
-                    File("src/test/resources/$fileName")
-                )
-            )
-        )
     }
 }

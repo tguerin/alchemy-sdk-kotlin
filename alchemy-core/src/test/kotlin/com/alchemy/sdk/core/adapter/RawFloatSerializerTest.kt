@@ -1,6 +1,9 @@
 package com.alchemy.sdk.core.adapter
 
-import com.alchemy.sdk.core.model.RawFloat.Companion.raw
+import com.alchemy.sdk.core.adapter.core.RawFloatSerializer
+import com.alchemy.sdk.core.model.core.RawFloat
+import com.alchemy.sdk.core.model.core.RawFloat.Companion.raw
+import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import io.mockk.impl.annotations.MockK
@@ -25,5 +28,14 @@ class RawFloatSerializerTest {
             RawFloatSerializer::class.java,
             context
         ) shouldBeEqualTo JsonPrimitive(1f)
+    }
+
+    @Test
+    fun `should handle null case`() {
+        RawFloatSerializer.serialize(
+            null,
+            RawFloat::class.java,
+            context
+        ) shouldBeEqualTo JsonNull.INSTANCE
     }
 }

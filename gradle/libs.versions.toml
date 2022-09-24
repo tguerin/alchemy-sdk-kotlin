@@ -14,6 +14,7 @@ kluent = "1.68"
 kotlin = "1.7.10"
 material = "1.6.1"
 mockk = "1.12.8"
+retrofit = "2.9.0"
 okhttp = "4.10.0"
 
 [plugins]
@@ -48,6 +49,9 @@ kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-co
 material = { module = "com.google.android.material:material", version.ref = "material" }
 
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 
 test-fluent-assertions = { module = "org.amshove.kluent:kluent-android", version.ref = "kluent" }
 test-junit = { module = "junit:junit", version.ref = "junit" }

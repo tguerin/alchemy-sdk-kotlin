@@ -1,5 +1,7 @@
 package com.alchemy.sdk.core.adapter
 
+import com.alchemy.sdk.core.adapter.core.NumberSerializer
+import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import io.mockk.impl.annotations.MockK
@@ -38,5 +40,14 @@ class NumberSerializerTest {
     @Test(expected = IllegalArgumentException::class)
     fun `should throw exception if number is not a int`() = runTest {
         NumberSerializer.serialize(2.0, java.lang.Float::class.java, context)
+    }
+
+    @Test
+    fun `should handle null case`() {
+        NumberSerializer.serialize(
+            null,
+            Number::class.java,
+            context
+        ) shouldBeEqualTo JsonNull.INSTANCE
     }
 }

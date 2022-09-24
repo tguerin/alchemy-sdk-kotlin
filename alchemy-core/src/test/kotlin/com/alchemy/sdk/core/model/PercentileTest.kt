@@ -1,7 +1,7 @@
 package com.alchemy.sdk.core.model
 
-import com.alchemy.sdk.core.model.Percentile.Companion.percentile
-import com.alchemy.sdk.core.model.RawFloat.Companion.raw
+import com.alchemy.sdk.core.model.core.Percentile.Companion.percentile
+import com.alchemy.sdk.core.model.core.RawFloat.Companion.raw
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 

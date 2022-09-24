@@ -1,8 +1,9 @@
 package com.alchemy.sdk.core.adapter
 
-import com.alchemy.sdk.core.model.Address
-import com.alchemy.sdk.core.model.BlockTag
-import com.alchemy.sdk.core.model.LogFilter
+import com.alchemy.sdk.core.adapter.core.LogFilterSerializer
+import com.alchemy.sdk.core.model.core.Address
+import com.alchemy.sdk.core.model.core.BlockTag
+import com.alchemy.sdk.core.model.core.LogFilter
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject

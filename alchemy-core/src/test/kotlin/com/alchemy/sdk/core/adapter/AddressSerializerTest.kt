@@ -1,6 +1,8 @@
 package com.alchemy.sdk.core.adapter
 
-import com.alchemy.sdk.core.model.Address
+import com.alchemy.sdk.core.adapter.core.AddressSerializer
+import com.alchemy.sdk.core.model.core.Address
+import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import io.mockk.impl.annotations.MockK
@@ -25,5 +27,14 @@ class AddressSerializerTest {
             Address.EthereumAddress::class.java,
             context
         ) shouldBeEqualTo JsonPrimitive("0x1188aa75c38e1790be3768508743fbe7b50b2153")
+    }
+
+    @Test
+    fun `should handle null case`() {
+        AddressSerializer.serialize(
+            null,
+            Address::class.java,
+            context
+        ) shouldBeEqualTo JsonNull.INSTANCE
     }
 }

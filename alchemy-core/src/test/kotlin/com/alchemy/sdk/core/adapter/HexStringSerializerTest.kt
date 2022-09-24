@@ -1,7 +1,9 @@
 package com.alchemy.sdk.core.adapter
 
+import com.alchemy.sdk.core.adapter.core.HexStringSerializer
 import com.alchemy.sdk.core.util.HexString
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
+import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import io.mockk.impl.annotations.MockK
@@ -26,5 +28,14 @@ class HexStringSerializerTest {
             HexString::class.java,
             context
         ) shouldBeEqualTo JsonPrimitive("0x02")
+    }
+
+    @Test
+    fun `should handle null case`() {
+        HexStringSerializer.serialize(
+            null,
+            HexString::class.java,
+            context
+        ) shouldBeEqualTo JsonNull.INSTANCE
     }
 }

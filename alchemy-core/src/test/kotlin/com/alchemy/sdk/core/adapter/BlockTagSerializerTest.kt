@@ -1,7 +1,9 @@
 package com.alchemy.sdk.core.adapter
 
-import com.alchemy.sdk.core.model.BlockTag
+import com.alchemy.sdk.core.adapter.core.BlockTagSerializer
+import com.alchemy.sdk.core.model.core.BlockTag
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
+import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import io.mockk.impl.annotations.MockK
@@ -46,5 +48,14 @@ class BlockTagSerializerTest {
             BlockTag.BlockTagNumber::class.java,
             context
         ) shouldBeEqualTo JsonPrimitive("0x04bc")
+    }
+
+    @Test
+    fun `should handle null case`() {
+        BlockTagSerializer.serialize(
+            null,
+            BlockTag::class.java,
+            context
+        ) shouldBeEqualTo JsonNull.INSTANCE
     }
 }

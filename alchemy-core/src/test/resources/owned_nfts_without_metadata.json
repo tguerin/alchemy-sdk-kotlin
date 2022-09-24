@@ -1,0 +1,24 @@
+{
+  "ownedNfts": [
+    {
+      "contract": {
+        "address": "0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1"
+      },
+      "id": {
+        "tokenId": "0x0000000000000000000000000000000000000000000000000000000000000001"
+      },
+      "balance": "1"
+    },
+    {
+      "contract": {
+        "address": "0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1"
+      },
+      "id": {
+        "tokenId": "0x0000000000000000000000000000000000000000000000000000000000000002"
+      },
+      "balance": "1"
+    }
+  ],
+  "totalCount": 2,
+  "blockHash": "0xf319369c84b7ea317da4811c912a536bf8fb4bc0696aba38fbf1cf8c86493360"
+}
