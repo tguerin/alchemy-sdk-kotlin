@@ -2,7 +2,7 @@
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/tguerin/alchemy-sdk-kotlin/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/tguerin/alchemy-sdk-kotlin/tree/main)
 
-Support Alchemy on Android devices. This is a side project to learn stuff around web3 and releasing a library.
+Support Alchemy on Android devices and java based projects. This is a side project to learn stuff around web3 and releasing a library.
 
 ## Roadmap
 
