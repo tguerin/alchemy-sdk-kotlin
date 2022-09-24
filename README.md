@@ -1,6 +1,6 @@
-# Alchemy Android Sdk
+# Alchemy Kotlin Sdk
 
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/tguerin/alchemy-sdk-android/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/tguerin/alchemy-sdk-android/tree/main)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/tguerin/alchemy-sdk-kotlin/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/tguerin/alchemy-sdk-kotlin/tree/main)
 
 Support Alchemy on Android devices. This is a side project to learn stuff around web3 and releasing a library.
 
