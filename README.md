@@ -1,4 +1,4 @@
-# Alchemy Kotlin Sdk
+# Alchemy Sdk Kotlin
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/tguerin/alchemy-sdk-kotlin/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/tguerin/alchemy-sdk-kotlin/tree/main)
 
