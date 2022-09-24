@@ -14,7 +14,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "AlchemySdkAndroid"
+rootProject.name = "AlchemySdkKotlin"
 include(":alchemy-core")
 include(":json-rpc-client")
 

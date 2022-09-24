@@ -1,3 +1,6 @@
+import groovy.util.Node
+import groovy.util.NodeList
+
 plugins {
     id("kotlin")
     id("java-library")
@@ -36,15 +39,24 @@ publishing {
         register("mavenJava", MavenPublication::class) {
             from(components["java"])
             groupId = "com.github.tguerin"
-            artifactId = "alchemy-sdk-android"
-            version = "0.1.0"
+            artifactId = "alchemy-sdk-kotlin"
+            version = "0.2.0"
+            pom.withXml {
+                val nodeList = ((asNode().get("dependencies") as NodeList)[0] as Node).value() as NodeList
+                nodeList.firstOrNull { data ->
+                    (((data as Node).value() as NodeList)[1] as Node).value() == "json-rpc-client"
+                }?.let {
+                    nodeList.remove(it)
+                }
+
+            }
             artifact(sourcesJar.get())
         }
     }
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/tguerin/alchemy-sdk-android")
+            url = uri("https://maven.pkg.github.com/tguerin/alchemy-sdk-kotlin")
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
                 password = System.getenv("GITHUB_TOKEN")

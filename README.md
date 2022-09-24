@@ -23,7 +23,7 @@ Add the github repository to your gradle config:
 repositories {
     maven {
         name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/tguerin/alchemy-sdk-android")
+        url = uri("https://maven.pkg.github.com/tguerin/alchemy-sdk-kotlin")
         credentials {
             username = "username"
             password = "personal access token with read permission"
@@ -35,7 +35,7 @@ repositories {
 then just add the dependency to the required module:
 
 ```kotlin
-implementation("com.github.tguerin:alchemy-sdk-android:0.1.0")
+implementation("com.github.tguerin:alchemy-sdk-kotlin:0.2.0")
 ```
 
 ## Using Alchemy sdk
