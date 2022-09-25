@@ -1,5 +1,7 @@
+import groovy.namespace.QName
 import groovy.util.Node
 import groovy.util.NodeList
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames.value
 
 plugins {
     id("kotlin")
@@ -42,13 +44,14 @@ publishing {
             artifactId = "alchemy-sdk-kotlin"
             version = "0.2.0"
             pom.withXml {
-                val nodeList = ((asNode().get("dependencies") as NodeList)[0] as Node).value() as NodeList
-                nodeList.firstOrNull { data ->
-                    (((data as Node).value() as NodeList)[1] as Node).value() == "json-rpc-client"
-                }?.let {
-                    nodeList.remove(it)
-                }
-
+                val artifactsToExclude = listOf("json-rpc-client")
+                asNode().depthFirst().toList()
+                    .filterIsInstance<Node>()
+                    .filter { (it.name() as QName).localPart == "artifactId" && it.value() in artifactsToExclude }
+                    .forEach { node ->
+                        val dependencyNode = node.parent()
+                        dependencyNode.parent().remove(dependencyNode)
+                    }
             }
             artifact(sourcesJar.get())
         }
