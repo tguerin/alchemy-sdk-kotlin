@@ -69,7 +69,7 @@ internal class GsonUtil {
                     }
                 })
             .registerTypeAdapter(
-                OwnedNftsResponse::class.java,
+                OwnedNft::class.java,
                 object : InstanceCreator<OwnedNft> {
                     override fun createInstance(type: Type): OwnedNft {
                         return OwnedNft.OwnedBaseNft(
@@ -81,7 +81,7 @@ internal class GsonUtil {
                     }
                 })
             .registerTypeAdapter(
-                OwnedNftsResponse::class.java,
+                Nft::class.java,
                 object : InstanceCreator<Nft> {
                     override fun createInstance(type: Type): Nft {
                         return Nft.BaseNft(
@@ -92,7 +92,7 @@ internal class GsonUtil {
                     }
                 })
             .registerTypeAdapter(
-                OwnedNftsResponse::class.java,
+                NftContract::class.java,
                 object : InstanceCreator<NftContract> {
                     override fun createInstance(type: Type): NftContract {
                         return NftContract.BaseNftContract(Address.ContractAddress("0x0".hexString))
