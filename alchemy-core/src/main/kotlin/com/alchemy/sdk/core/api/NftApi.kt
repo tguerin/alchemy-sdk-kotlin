@@ -12,7 +12,6 @@ interface NftApi {
 
     @GET("getNFTs")
     @Headers(
-        "Alchemy-Ethers-Sdk-Version: 2.0.3",
         "Alchemy-Ethers-Sdk-Method: getNftsForOwner"
     )
     suspend fun getNftsForOwner(
