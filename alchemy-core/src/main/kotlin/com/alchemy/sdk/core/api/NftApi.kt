@@ -37,4 +37,13 @@ interface NftApi {
     suspend fun getContractMetadata(
         @Query("contractAddress") contractAddress: Address.ContractAddress
     ): Result<NftContractMetadata>
+
+    @GET("getNFTsForCollection")
+    @Headers(
+        "Alchemy-Ethers-Sdk-Method: getNFTsForContract"
+    )
+    suspend fun getNftsForContract(
+        @Query("contractAddress") contractAddress: Address.ContractAddress,
+        @QueryMap options: GetNftsForContractOptions = GetNftsForContractOptions()
+    ): Result<NftContractNftsResponse>
 }

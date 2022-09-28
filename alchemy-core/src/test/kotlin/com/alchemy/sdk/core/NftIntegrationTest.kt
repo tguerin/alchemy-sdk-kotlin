@@ -4,10 +4,8 @@ import com.alchemy.sdk.core.ResourceUtils.Companion.parseFile
 import com.alchemy.sdk.core.model.AlchemySettings
 import com.alchemy.sdk.core.model.core.Address
 import com.alchemy.sdk.core.model.core.Network
-import com.alchemy.sdk.core.model.nft.GetNftsForOwnerOptions
+import com.alchemy.sdk.core.model.nft.*
 import com.alchemy.sdk.core.model.nft.Nft
-import com.alchemy.sdk.core.model.nft.NftContractMetadata
-import com.alchemy.sdk.core.model.nft.OwnedNftsResponse
 import com.alchemy.sdk.core.util.GsonUtil.Companion.nftGson
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import kotlinx.coroutines.test.runTest
@@ -56,7 +54,35 @@ class NftIntegrationTest {
         val nft = alchemy.nft.getContractMetadata(
             Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
         )
-        val expectedNft = parseFile("contract_metadata_test.json", NftContractMetadata::class.java, nftGson)
+        val expectedNft =
+            parseFile("contract_metadata_test.json", NftContractMetadata::class.java, nftGson)
         nft.getOrThrow() shouldBeEqualTo expectedNft
+    }
+
+    @Test
+    fun `retrieve nfts for contract without metadata`() = runTest {
+        val nftContractNfts = alchemy.nft.getNftsForContract(
+            Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString),
+            GetNftsForContractOptions(omitMetadata = true)
+        )
+        val expectedNftContractNfts = parseFile(
+            "nft_for_contracts_without_metadata.json",
+            NftContractNftsResponse::class.java,
+            nftGson
+        )
+        nftContractNfts.getOrThrow() shouldBeEqualTo expectedNftContractNfts
+    }
+
+    @Test
+    fun `retrieve nfts for contract with metadata`() = runTest {
+        val nftContractNfts = alchemy.nft.getNftsForContract(
+            Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
+        )
+        val expectedNftContractNfts = parseFile(
+            "nft_for_contracts_with_metadata.json",
+            NftContractNftsResponse::class.java,
+            nftGson
+        )
+        nftContractNfts.getOrThrow() shouldBeEqualTo expectedNftContractNfts
     }
 }

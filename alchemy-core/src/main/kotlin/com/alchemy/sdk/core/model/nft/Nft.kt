@@ -21,7 +21,7 @@ sealed interface Nft {
         override val tokenId: HexString
             get() = id.tokenId
         override val tokenType: NftTokenType
-            get() = id.tokenMetadata.tokenType
+            get() = id.tokenMetadata?.tokenType ?: NftTokenType.Unknown
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
