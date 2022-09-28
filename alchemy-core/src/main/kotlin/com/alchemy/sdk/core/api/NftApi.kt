@@ -33,9 +33,19 @@ interface NftApi {
     )
     suspend fun getNftMetadata(
         @Query("contractAddress") contractAddress: Address.ContractAddress,
-        @Query("tokenId") tokenId: HexString,
+        @Query("tokenId") tokenId: Long,
         @Query("tokenType") tokenType: NftTokenType? = null,
-        @Query("tokenUriTimeoutInMs") tokenUriTimeoutInMs: Int? = null,
+        @Query("tokenUriTimeoutInMs") tokenUriTimeoutInMs: Int? = null
+    ): Result<Nft>
+
+    @GET("getNFTMetadata")
+    @Headers(
+        "Alchemy-Ethers-Sdk-Method: refreshNftMetadata"
+    )
+    suspend fun getNftMetadataRefreshed(
+        @Query("contractAddress") contractAddress: Address.ContractAddress,
+        @Query("tokenId") tokenId: Long,
+        @Query("refreshCache") refreshCache: Boolean = true
     ): Result<Nft>
 
     @GET("getContractMetadata")

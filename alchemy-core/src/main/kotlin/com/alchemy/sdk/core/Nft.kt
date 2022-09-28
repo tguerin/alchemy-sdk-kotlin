@@ -3,7 +3,9 @@ package com.alchemy.sdk.core
 import com.alchemy.sdk.core.api.NftApi
 import com.alchemy.sdk.core.model.core.Address
 import com.alchemy.sdk.core.model.nft.GetNftsForOwnerOptions
+import com.alchemy.sdk.core.model.nft.Nft
 import com.alchemy.sdk.core.model.nft.OwnedNftsResponse
+import com.alchemy.sdk.core.model.nft.RefreshNftMetadataResponse
 
 class Nft(private val nftApi: NftApi) : NftApi by nftApi {
 
@@ -30,5 +32,35 @@ class Nft(private val nftApi: NftApi) : NftApi by nftApi {
         } else {
             Result.success(nftsResult.getOrThrow().ownedNfts.isNotEmpty())
         }
+    }
+
+    override suspend fun getNftMetadataRefreshed(
+        contractAddress: Address.ContractAddress,
+        tokenId: Long,
+        refreshCache: Boolean
+    ): Result<Nft> {
+        throw IllegalAccessException("Use refreshNftMetadata instead")
+    }
+
+    suspend fun refreshNftMetadata(
+        contractAddress: Address.ContractAddress,
+        tokenId: Long,
+    ): Result<RefreshNftMetadataResponse> {
+        val nftResult = getNftMetadata(contractAddress, tokenId)
+        if (nftResult.isFailure) {
+            return Result.failure(nftResult.exceptionOrNull()!!)
+        }
+        val refreshedNftResult = nftApi.getNftMetadataRefreshed(contractAddress, tokenId)
+        if (refreshedNftResult.isFailure) {
+            return Result.failure(refreshedNftResult.exceptionOrNull()!!)
+        }
+        val refreshedNft = refreshedNftResult.getOrThrow()
+        val nft = nftResult.getOrThrow()
+        return Result.success(
+            RefreshNftMetadataResponse(
+                (nft as Nft.AlchemyNft).timeLastUpdated != (refreshedNft as Nft.AlchemyNft).timeLastUpdated,
+                refreshedNft
+            )
+        )
     }
 }

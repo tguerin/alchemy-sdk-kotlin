@@ -18,6 +18,8 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
 import org.amshove.kluent.shouldBeInstanceOf
+import org.amshove.kluent.shouldNotBeEqualTo
+import org.junit.Ignore
 import org.junit.Test
 
 class NftIntegrationTest {
@@ -51,7 +53,7 @@ class NftIntegrationTest {
     fun `retrieve nft metadata`() = runTest {
         val nft = alchemy.nft.getNftMetadata(
             Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString),
-            "0x0000000000000000000000000000000000000000000000000000000000000001".hexString
+            1L
         )
         val expectedNft = parseFile("nft_metadata_test.json", Nft::class.java, nftGson)
         nft.getOrThrow() shouldBeEqualTo expectedNft
@@ -161,6 +163,15 @@ class NftIntegrationTest {
         )
         val floorPrice = floorPriceResponse.getOrThrow()
         floorPrice.openSea shouldBeInstanceOf FloorPrice.FloorPriceMarketplace::class.java
-        floorPrice shouldBeInstanceOf FloorPrice.FloorPriceError::class.java
+        floorPrice.looksRare shouldBeInstanceOf FloorPrice.FloorPriceError::class.java
+    }
+
+    @Test
+    fun `should refresh metadata`() = runTest {
+        val refreshNftMetadataResponse = alchemy.nft.refreshNftMetadata(
+            Address.ContractAddress("0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d".hexString),
+            1L
+        )
+        refreshNftMetadataResponse.getOrThrow() shouldNotBeEqualTo  null
     }
 }

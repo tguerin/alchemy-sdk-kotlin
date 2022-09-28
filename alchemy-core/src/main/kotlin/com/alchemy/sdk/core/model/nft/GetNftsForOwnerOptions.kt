@@ -37,6 +37,8 @@ data class GetNftsForOwnerOptions(
      * metadata for cache misses then set this value to 0.
      */
     val tokenUriTimeoutInMs: Int? = null,
+
+    val refreshCache: Boolean? = null
 ) : QueryMapObject() {
 
     init {
@@ -56,6 +58,9 @@ data class GetNftsForOwnerOptions(
         queryData["withMetadata"] = (!omitMetadata).toString()
         tokenUriTimeoutInMs?.let {
             queryData["tokenUriTimeoutInMs"] = it.toString()
+        }
+        refreshCache?.let {
+            queryData["refreshCache"] = true
         }
         this.queryData = queryData
     }
