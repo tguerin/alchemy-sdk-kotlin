@@ -1,5 +1,6 @@
-package com.alchemy.sdk.core
+package com.alchemy.sdk.core.e2e
 
+import com.alchemy.sdk.core.Alchemy
 import com.alchemy.sdk.core.ResourceUtils.Companion.parseFile
 import com.alchemy.sdk.core.model.AlchemySettings
 import com.alchemy.sdk.core.model.core.*

@@ -7,7 +7,7 @@ Support Alchemy on Android devices and java based projects. This is a side proje
 ## Roadmap
 
 - [x] core api
-- [ ] nft api
+- [x] nft api
 - [ ] websocket api
 - [ ] transact api
 - [ ] ens support
@@ -35,7 +35,7 @@ repositories {
 then just add the dependency to the required module:
 
 ```kotlin
-implementation("com.github.tguerin:alchemy-sdk-kotlin:0.2.0")
+implementation("com.github.tguerin:alchemy-sdk-kotlin:0.3.0")
 ```
 
 ## Using Alchemy sdk
@@ -53,7 +53,7 @@ coroutineScope.launch {
 }
 ```
 
-Have a look at the e2e tests for samples.
+Have a look at the [e2e tests](./alchemy-core/src/test/kotlin/com/alchemy/sdk/core/e2e) for samples.
 
 No benchmark has been made but the init can take some time. The alchemy object is thread safe so 
 you can do the init off the main thread.

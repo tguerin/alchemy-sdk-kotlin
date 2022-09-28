@@ -1,5 +1,6 @@
-package com.alchemy.sdk.core
+package com.alchemy.sdk.core.e2e
 
+import com.alchemy.sdk.core.Alchemy
 import com.alchemy.sdk.core.ResourceUtils.Companion.parseFile
 import com.alchemy.sdk.core.model.AlchemySettings
 import com.alchemy.sdk.core.model.core.Address
@@ -19,7 +20,6 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldNotBeEqualTo
-import org.junit.Ignore
 import org.junit.Test
 
 class NftIntegrationTest {
