@@ -9,7 +9,7 @@ Support Alchemy on Android devices and java based projects. This is a side proje
 - [x] core api
 - [x] nft api
 - [ ] websocket api
-- [ ] transact api
+- [x] transact api (missing wait for transaction that requires ws)
 - [ ] ens support
 - [ ] wallet api
 
@@ -35,7 +35,7 @@ repositories {
 then just add the dependency to the required module:
 
 ```kotlin
-implementation("com.github.tguerin:alchemy-sdk-kotlin:0.3.0")
+implementation("com.github.tguerin:alchemy-sdk-kotlin:0.4.0")
 ```
 
 ## Using Alchemy sdk
