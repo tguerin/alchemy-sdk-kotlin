@@ -77,4 +77,13 @@ interface NftApi {
         "Alchemy-Ethers-Sdk-Method: getSpamContracts"
     )
     suspend fun getSpamContracts(): Result<List<Address.ContractAddress>>
+
+    @GET("getNFTs")
+    @Headers(
+        "Alchemy-Ethers-Sdk-Method: checkNftOwnership"
+    )
+    suspend fun getNftsForOwnership(
+        @Query("owner") owner: Address,
+        @QueryMap options: GetNftsForOwnerOptions = GetNftsForOwnerOptions()
+    ): Result<OwnedNftsResponse>
 }

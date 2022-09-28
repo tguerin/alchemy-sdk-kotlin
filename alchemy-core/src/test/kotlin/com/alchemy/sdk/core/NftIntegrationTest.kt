@@ -12,6 +12,7 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
 import org.junit.Test
+import kotlin.math.exp
 
 class NftIntegrationTest {
 
@@ -127,5 +128,20 @@ class NftIntegrationTest {
         alchemy.nft.isSpamContract(
             Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
         ).getOrThrow() shouldBeEqualTo false
+    }
+
+    @Test
+    fun `check ownership of nft`() = runTest {
+        alchemy.nft.checkNftOwnership(
+            Address.from("0x1188aa75c38e1790be3768508743fbe7b50b2153"),
+            listOf(Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString), Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString))
+        ).getOrThrow() shouldBeEqualTo true
+    }
+
+    @Test(expected = IllegalAccessException::class)
+    fun `user of the sdk can't access getNFTsForOwnership`() = runTest {
+        alchemy.nft.getNftsForOwnership(
+            Address.from("0x1188aa75c38e1790be3768508743fbe7b50b2153")
+        )
     }
 }

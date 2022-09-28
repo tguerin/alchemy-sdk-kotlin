@@ -2,6 +2,7 @@ package com.alchemy.sdk.core.model.nft
 
 import com.alchemy.sdk.core.model.core.Address
 import com.alchemy.sdk.core.util.GsonUtil
+import com.alchemy.sdk.core.util.ProxyRetrofitQueryMap
 import com.alchemy.sdk.core.util.QueryMapObject
 
 data class GetNftsForOwnerOptions(
@@ -39,16 +40,15 @@ data class GetNftsForOwnerOptions(
 ) : QueryMapObject() {
 
     init {
-        val gson = GsonUtil.gson
-        val queryData = hashMapOf<String, String>()
+        val queryData = ProxyRetrofitQueryMap()
         pageKey?.let {
             queryData["pageKey"] = it
         }
         if (contractAddresses.isNotEmpty()) {
-            queryData["contractAddresses"] = gson.toJson(contractAddresses)
+            queryData["contractAddresses[]"] = contractAddresses
         }
         if (excludeFilters.isNotEmpty()) {
-            queryData["excludeFilters"] = gson.toJson(excludeFilters)
+            queryData["excludeFilters[]"] = excludeFilters
         }
         pageSize?.let {
             queryData["pageSize"] = it.toString()

@@ -1,5 +1,6 @@
 package com.alchemy.sdk.core.model.nft
 
+import com.alchemy.sdk.core.util.ProxyRetrofitQueryMap
 import com.alchemy.sdk.core.util.QueryMapObject
 
 data class GetNftsForContractOptions(
@@ -28,7 +29,7 @@ data class GetNftsForContractOptions(
 ) : QueryMapObject() {
 
     init {
-        val queryData = hashMapOf<String, String>()
+        val queryData = ProxyRetrofitQueryMap()
         pageKey?.let {
             queryData["pageKey"] = it
         }

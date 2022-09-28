@@ -8,8 +8,30 @@ import org.komputing.khash.keccak.KeccakParameter
 sealed class Address private constructor(
     val value: HexString
 ) {
-    class EthereumAddress internal constructor(value: HexString) : Address(value)
-    class ContractAddress constructor(value: HexString) : Address(value)
+    class EthereumAddress internal constructor(value: HexString) : Address(value) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+            if (!super.equals(other)) return false
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return value.hashCode()
+        }
+    }
+    class ContractAddress constructor(value: HexString) : Address(value) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+            if (!super.equals(other)) return false
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return value.hashCode()
+        }
+    }
 
     companion object {
         private val checksumRegex = "([A-F].*[a-f])|([a-f].*[A-F])".toRegex()
