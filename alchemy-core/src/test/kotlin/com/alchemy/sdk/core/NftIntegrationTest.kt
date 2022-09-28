@@ -85,4 +85,31 @@ class NftIntegrationTest {
         )
         nftContractNfts.getOrThrow() shouldBeEqualTo expectedNftContractNfts
     }
+
+    @Test
+    fun `retrieve owners for nft`() = runTest {
+        val owners = alchemy.nft.getOwnersForNft(
+            Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString),
+            tokenId = 1L
+        )
+        val expectedOwners = parseFile(
+            "owners_for_nft_test.json",
+            OwnersResponse::class.java,
+            nftGson
+        )
+        owners.getOrThrow() shouldBeEqualTo expectedOwners
+    }
+
+    @Test
+    fun `retrieve owners for contract`() = runTest {
+        val owners = alchemy.nft.getOwnersForContract(
+            Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
+        )
+        val expectedOwners = parseFile(
+            "owners_for_contract_test.json",
+            OwnersResponse::class.java,
+            nftGson
+        )
+        owners.getOrThrow() shouldBeEqualTo expectedOwners
+    }
 }

@@ -46,4 +46,21 @@ interface NftApi {
         @Query("contractAddress") contractAddress: Address.ContractAddress,
         @QueryMap options: GetNftsForContractOptions = GetNftsForContractOptions()
     ): Result<NftContractNftsResponse>
+
+    @GET("getOwnersForToken")
+    @Headers(
+        "Alchemy-Ethers-Sdk-Method: getOwnersForNft"
+    )
+    suspend fun getOwnersForNft(
+        @Query("contractAddress") contractAddress: Address.ContractAddress,
+        @Query("tokenId") tokenId: Long
+    ): Result<OwnersResponse>
+
+    @GET("getOwnersForCollection")
+    @Headers(
+        "Alchemy-Ethers-Sdk-Method: getOwnersForContract"
+    )
+    suspend fun getOwnersForContract(
+        @Query("contractAddress") contractAddress: Address.ContractAddress
+    ): Result<OwnersResponse>
 }
