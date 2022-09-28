@@ -32,6 +32,10 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
         setupNft(alchemySettings)
     }
 
+    val transact by lazy {
+        Transact(core)
+    }
+
     private fun setupCore(alchemySettings: AlchemySettings): Core {
         val alchemyUrl =
             Constants.getAlchemyHttpUrl(alchemySettings.network, alchemySettings.apiKey)
