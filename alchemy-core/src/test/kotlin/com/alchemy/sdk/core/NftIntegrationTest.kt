@@ -10,6 +10,7 @@ import com.alchemy.sdk.core.util.GsonUtil.Companion.nftGson
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeGreaterThan
 import org.junit.Test
 
 class NftIntegrationTest {
@@ -111,5 +112,20 @@ class NftIntegrationTest {
             nftGson
         )
         owners.getOrThrow() shouldBeEqualTo expectedOwners
+    }
+
+    @Test
+    fun `retrieve spam contracts`() = runTest {
+        val spamContractsResult = alchemy.nft.getSpamContracts()
+        val spamContracts = spamContractsResult.getOrThrow()
+        spamContracts.size shouldBeGreaterThan 0
+        spamContracts[0].value shouldBeEqualTo "0x000386e3f7559d9b6a2f5c46b4ad1a9587d59dc3".hexString
+    }
+
+    @Test
+    fun `check if a contract is a spam`() = runTest {
+        alchemy.nft.isSpamContract(
+            Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
+        ).getOrThrow() shouldBeEqualTo false
     }
 }
