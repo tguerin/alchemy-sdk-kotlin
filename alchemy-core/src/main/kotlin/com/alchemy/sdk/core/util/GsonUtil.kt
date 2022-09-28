@@ -114,6 +114,7 @@ internal class GsonUtil {
                 .registerTypeAdapter(NftTokenType::class.java, NftTokenTypeDeserializer)
                 .registerTypeAdapter(NftMetadata::class.java, NftMetadataDeserializer)
                 .registerTypeAdapter(Nft::class.java, NftDeserializer)
+                .registerTypeAdapter(FloorPrice::class.java, FloorPriceDeserializer)
                 .create()
         }
     }

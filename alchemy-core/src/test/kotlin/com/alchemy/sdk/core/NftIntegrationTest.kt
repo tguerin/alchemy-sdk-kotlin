@@ -4,15 +4,21 @@ import com.alchemy.sdk.core.ResourceUtils.Companion.parseFile
 import com.alchemy.sdk.core.model.AlchemySettings
 import com.alchemy.sdk.core.model.core.Address
 import com.alchemy.sdk.core.model.core.Network
-import com.alchemy.sdk.core.model.nft.*
+import com.alchemy.sdk.core.model.nft.FloorPrice
+import com.alchemy.sdk.core.model.nft.GetNftsForContractOptions
+import com.alchemy.sdk.core.model.nft.GetNftsForOwnerOptions
 import com.alchemy.sdk.core.model.nft.Nft
+import com.alchemy.sdk.core.model.nft.NftContractMetadata
+import com.alchemy.sdk.core.model.nft.NftContractNftsResponse
+import com.alchemy.sdk.core.model.nft.OwnedNftsResponse
+import com.alchemy.sdk.core.model.nft.OwnersResponse
 import com.alchemy.sdk.core.util.GsonUtil.Companion.nftGson
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.Test
-import kotlin.math.exp
 
 class NftIntegrationTest {
 
@@ -134,7 +140,10 @@ class NftIntegrationTest {
     fun `check ownership of nft`() = runTest {
         alchemy.nft.checkNftOwnership(
             Address.from("0x1188aa75c38e1790be3768508743fbe7b50b2153"),
-            listOf(Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString), Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString))
+            listOf(
+                Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString),
+                Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
+            )
         ).getOrThrow() shouldBeEqualTo true
     }
 
@@ -143,5 +152,15 @@ class NftIntegrationTest {
         alchemy.nft.getNftsForOwnership(
             Address.from("0x1188aa75c38e1790be3768508743fbe7b50b2153")
         )
+    }
+
+    @Test
+    fun `retrieve floor price for the collection`() = runTest {
+        val floorPriceResponse = alchemy.nft.getFloorPrice(
+            Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
+        )
+        val floorPrice = floorPriceResponse.getOrThrow()
+        floorPrice.openSea shouldBeInstanceOf FloorPrice.FloorPriceMarketplace::class.java
+        floorPrice shouldBeInstanceOf FloorPrice.FloorPriceError::class.java
     }
 }
