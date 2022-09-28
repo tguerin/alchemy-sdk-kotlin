@@ -54,12 +54,12 @@ class Nft(private val nftApi: NftApi) : NftApi by nftApi {
         if (refreshedNftResult.isFailure) {
             return Result.failure(refreshedNftResult.exceptionOrNull()!!)
         }
-        val refreshedNft = refreshedNftResult.getOrThrow()
-        val nft = nftResult.getOrThrow()
+        val refreshedNft = refreshedNftResult.getOrThrow() as Nft.AlchemyNft
+        val nft = nftResult.getOrThrow() as Nft.AlchemyNft
         return Result.success(
             RefreshNftMetadataResponse(
-                (nft as Nft.AlchemyNft).timeLastUpdated != (refreshedNft as Nft.AlchemyNft).timeLastUpdated,
-                refreshedNft
+                updated = nft.timeLastUpdated != refreshedNft.timeLastUpdated,
+                nft = refreshedNft
             )
         )
     }

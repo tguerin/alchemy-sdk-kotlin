@@ -1,7 +1,6 @@
 package com.alchemy.sdk.core.model.nft
 
 import com.alchemy.sdk.core.model.core.Address
-import com.alchemy.sdk.core.util.GsonUtil
 import com.alchemy.sdk.core.util.ProxyRetrofitQueryMap
 import com.alchemy.sdk.core.util.QueryMapObject
 
@@ -19,7 +18,7 @@ data class GetNftsForOwnerOptions(
      * Optional list of filters applied to the query. NFTs that match one or more
      * of these filters are excluded from the response.
      */
-    val excludeFilters: List<NftExcludeFilters> = emptyList(),
+    val excludeFilters: List<NftExcludeFilter> = emptyList(),
 
     /**
      * Sets the total number of NFTs to return in the response. Defaults to 100.
@@ -50,7 +49,7 @@ data class GetNftsForOwnerOptions(
             queryData["contractAddresses[]"] = contractAddresses
         }
         if (excludeFilters.isNotEmpty()) {
-            queryData["excludeFilters[]"] = excludeFilters
+            queryData["excludeFilters[]"] = excludeFilters.map { it.value }
         }
         pageSize?.let {
             queryData["pageSize"] = it.toString()

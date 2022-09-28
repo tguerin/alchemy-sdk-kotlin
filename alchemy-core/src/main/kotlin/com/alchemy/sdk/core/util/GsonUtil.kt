@@ -2,10 +2,46 @@
 
 package com.alchemy.sdk.core.util
 
-import com.alchemy.sdk.core.adapter.core.*
-import com.alchemy.sdk.core.adapter.nft.*
-import com.alchemy.sdk.core.model.core.*
-import com.alchemy.sdk.core.model.nft.*
+import com.alchemy.sdk.core.adapter.core.AddressDeserializer
+import com.alchemy.sdk.core.adapter.core.AddressSerializer
+import com.alchemy.sdk.core.adapter.core.BlockTagSerializer
+import com.alchemy.sdk.core.adapter.core.BlockTransactionDeserializer
+import com.alchemy.sdk.core.adapter.core.EtherDeserializer
+import com.alchemy.sdk.core.adapter.core.EtherSerializer
+import com.alchemy.sdk.core.adapter.core.HexStringDeserializer
+import com.alchemy.sdk.core.adapter.core.HexStringSerializer
+import com.alchemy.sdk.core.adapter.core.LogFilterSerializer
+import com.alchemy.sdk.core.adapter.core.NumberSerializer
+import com.alchemy.sdk.core.adapter.core.PercentileSerializer
+import com.alchemy.sdk.core.adapter.core.RawFloatSerializer
+import com.alchemy.sdk.core.adapter.core.RawIntSerializer
+import com.alchemy.sdk.core.adapter.nft.FloorPriceDeserializer
+import com.alchemy.sdk.core.adapter.nft.NftContractDeserializer
+import com.alchemy.sdk.core.adapter.nft.NftDeserializer
+import com.alchemy.sdk.core.adapter.nft.NftMetadataDeserializer
+import com.alchemy.sdk.core.adapter.nft.NftTokenTypeDeserializer
+import com.alchemy.sdk.core.adapter.nft.OwnedNftDeserializer
+import com.alchemy.sdk.core.adapter.nft.OwnedNftsResponseDeserializer
+import com.alchemy.sdk.core.adapter.nft.RefreshStateDeserializer
+import com.alchemy.sdk.core.model.core.Address
+import com.alchemy.sdk.core.model.core.BlockTag
+import com.alchemy.sdk.core.model.core.BlockTransaction
+import com.alchemy.sdk.core.model.core.Index
+import com.alchemy.sdk.core.model.core.LogFilter
+import com.alchemy.sdk.core.model.core.Percentile
+import com.alchemy.sdk.core.model.core.RawFloat
+import com.alchemy.sdk.core.model.core.RawInt
+import com.alchemy.sdk.core.model.nft.FloorPrice
+import com.alchemy.sdk.core.model.nft.Nft
+import com.alchemy.sdk.core.model.nft.NftContract
+import com.alchemy.sdk.core.model.nft.NftExcludeFilter
+import com.alchemy.sdk.core.model.nft.NftId
+import com.alchemy.sdk.core.model.nft.NftMetadata
+import com.alchemy.sdk.core.model.nft.NftTokenType
+import com.alchemy.sdk.core.model.nft.OwnedNft
+import com.alchemy.sdk.core.model.nft.OwnedNftsResponse
+import com.alchemy.sdk.core.model.nft.RefreshState
+import com.alchemy.sdk.core.model.nft.TokenMetadata
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -115,6 +151,7 @@ internal class GsonUtil {
                 .registerTypeAdapter(NftMetadata::class.java, NftMetadataDeserializer)
                 .registerTypeAdapter(Nft::class.java, NftDeserializer)
                 .registerTypeAdapter(FloorPrice::class.java, FloorPriceDeserializer)
+                .registerTypeAdapter(RefreshState::class.java, RefreshStateDeserializer)
                 .create()
         }
     }
