@@ -5,8 +5,7 @@ import com.alchemy.sdk.core.api.NftApi
 import com.alchemy.sdk.core.model.AlchemySettings
 import com.alchemy.sdk.core.proxy.AlchemyProxy
 import com.alchemy.sdk.core.util.*
-import com.alchemy.sdk.core.util.Constants
-import com.alchemy.sdk.core.util.GsonUtil
+import com.alchemy.sdk.core.util.GsonUtil.Companion.nftGson
 import com.alchemy.sdk.json.rpc.client.generator.IncrementalIdGenerator
 import com.alchemy.sdk.json.rpc.client.http.HttpJsonRpcClient
 import kotlinx.coroutines.channels.trySendBlocking
@@ -55,15 +54,15 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
             .client(okHttpClient)
             .baseUrl(alchemyUrl)
             .addCallAdapterFactory(ResultCallAdapter)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .addConverterFactory(GsonStringConverter(gson))
+            .addConverterFactory(GsonConverterFactory.create(nftGson))
+            .addConverterFactory(GsonStringConverter(nftGson))
             .build()
         return Nft(retrofit.create(NftApi::class.java))
     }
 
     companion object {
         fun with(alchemySettings: AlchemySettings) = Alchemy(alchemySettings)
-        fun asyncWith(alchemySettings: AlchemySettings) = callbackFlow<Alchemy> {
+        fun asyncWith(alchemySettings: AlchemySettings) = callbackFlow {
             trySendBlocking(Alchemy(alchemySettings))
             channel.close()
         }

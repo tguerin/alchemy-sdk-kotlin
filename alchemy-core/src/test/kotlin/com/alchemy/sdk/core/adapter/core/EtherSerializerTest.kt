@@ -1,7 +1,8 @@
-package com.alchemy.sdk.core.adapter
+package com.alchemy.sdk.core.adapter.core
 
-import com.alchemy.sdk.core.adapter.core.AddressSerializer
-import com.alchemy.sdk.core.model.core.Address
+import com.alchemy.sdk.core.util.Ether
+import com.alchemy.sdk.core.util.Ether.Companion.ether
+import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
@@ -12,7 +13,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Rule
 import org.junit.Test
 
-class AddressSerializerTest {
+class EtherSerializerTest {
 
     @get:Rule
     val mockkRule = MockKRule(this)
@@ -21,20 +22,21 @@ class AddressSerializerTest {
     lateinit var context: JsonSerializationContext
 
     @Test
-    fun `should convert address to string`() = runTest {
-        AddressSerializer.serialize(
-            Address.from("0x1188aa75C38E1790bE3768508743FBE7b50b2153"),
-            Address.EthereumAddress::class.java,
+    fun `should convert ether to string hex representation of its wei value`() = runTest {
+        EtherSerializer.serialize(
+            1.ether,
+            Ether::class.java,
             context
-        ) shouldBeEqualTo JsonPrimitive("0x1188aa75c38e1790be3768508743fbe7b50b2153")
+        ) shouldBeEqualTo JsonPrimitive(1.ether.wei.hexString.toString())
     }
 
     @Test
     fun `should handle null case`() {
-        AddressSerializer.serialize(
+        EtherSerializer.serialize(
             null,
-            Address::class.java,
+            Ether::class.java,
             context
         ) shouldBeEqualTo JsonNull.INSTANCE
     }
+
 }

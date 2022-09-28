@@ -1,8 +1,8 @@
-package com.alchemy.sdk.core.adapter
+package com.alchemy.sdk.core.adapter.nft
 
-import com.alchemy.sdk.core.adapter.nft.NftContractDeserializer
 import com.alchemy.sdk.core.model.core.Address
 import com.alchemy.sdk.core.model.nft.NftContract
+import com.alchemy.sdk.core.model.nft.NftContractMetadata
 import com.alchemy.sdk.core.model.nft.NftTokenType
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import com.google.gson.JsonDeserializationContext
@@ -58,10 +58,12 @@ class NftContractDeserializerTest {
     fun `should parse nft contract as alchemy nft contract`() {
         val expectedNftContract = NftContract.AlchemyNftContract(
             address = Address.ContractAddress("0x0".hexString),
-            tokenType = NftTokenType.Erc721,
-            name = "my token",
-            symbol = "mt",
-            totalSupply = 10L
+            contractMetadata = NftContractMetadata(
+                tokenType = NftTokenType.Erc721,
+                name = "my token",
+                symbol = "mt",
+                totalSupply = 10L
+            )
         )
         val json = JsonObject().apply {
             add("contract", JsonPrimitive("0x0"))

@@ -1,6 +1,7 @@
 package com.alchemy.sdk.core
 
-import com.alchemy.sdk.core.util.GsonUtil.Companion.gson
+import com.alchemy.sdk.core.util.GsonUtil
+import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
 import java.io.File
 import java.io.FileInputStream
@@ -10,7 +11,7 @@ class ResourceUtils {
 
     companion object {
 
-        fun <T> parseFile(fileName: String, type: Class<T>): T {
+        fun <T> parseFile(fileName: String, type: Class<T>, gson: Gson = GsonUtil.gson): T {
             return gson.fromJson(
                 jsonReaderFromFileName(fileName),
                 type

@@ -14,13 +14,13 @@ class PolygonCoreIntegrationTest {
     private val alchemy = Alchemy.with(AlchemySettings(network = Network.MATIC_MAINNET))
 
     @Test
-    fun getAuthor() = runTest {
+    fun `retrieve author`() = runTest {
         val data = alchemy.core.getAuthor()
         data.getOrThrow().toString().length shouldNotBe 0
     }
 
     @Test
-    fun getSignerAtHash() = runTest {
+    fun `retrieve signer at a specific hash`() = runTest {
         // This method doesn't seem to be supported
         val data =
             alchemy.core.getSignersAtHash("0x350a56b14a8eb85de01d759794bce336689c40401f4b5b42192352dfcef16c35".hexString)
@@ -28,19 +28,19 @@ class PolygonCoreIntegrationTest {
     }
 
     @Test
-    fun getCurrentProposer() = runTest {
+    fun `retrieve the current proposer`() = runTest {
         val data = alchemy.core.getCurrentProposer()
         data.getOrThrow().toString().length shouldNotBe 0
     }
 
     @Test
-    fun getRootHash() = runTest {
+    fun `retrieve the root hash`() = runTest {
         val data = alchemy.core.getRootHash(from = 1.raw, to = 2.raw)
         data.getOrThrow() shouldBeEqualTo "e105ee4b21c49a6f79a26647122abc8ad0b5aed34801999e30bc37ea5b0c589b".hexString
     }
 
     @Test
-    fun getCurrentValidators() = runTest {
+    fun `retrieve the current validators`() = runTest {
         val data = alchemy.core.getCurrentValidators()
         val validators = data.getOrThrow()
         // If we are here the parsing succeeded, hard to find values to compare with

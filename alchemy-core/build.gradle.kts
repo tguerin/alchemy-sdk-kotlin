@@ -1,7 +1,5 @@
 import groovy.namespace.QName
 import groovy.util.Node
-import groovy.util.NodeList
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames.value
 
 plugins {
     id("kotlin")

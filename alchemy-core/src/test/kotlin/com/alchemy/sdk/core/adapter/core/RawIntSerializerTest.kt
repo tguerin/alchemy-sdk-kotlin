@@ -1,6 +1,5 @@
-package com.alchemy.sdk.core.adapter
+package com.alchemy.sdk.core.adapter.core
 
-import com.alchemy.sdk.core.adapter.core.RawIntSerializer
 import com.alchemy.sdk.core.model.core.RawInt
 import com.alchemy.sdk.core.model.core.RawInt.Companion.raw
 import com.google.gson.JsonNull

@@ -1,6 +1,5 @@
-package com.alchemy.sdk.core.adapter
+package com.alchemy.sdk.core.adapter.core
 
-import com.alchemy.sdk.core.adapter.core.NumberSerializer
 import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext

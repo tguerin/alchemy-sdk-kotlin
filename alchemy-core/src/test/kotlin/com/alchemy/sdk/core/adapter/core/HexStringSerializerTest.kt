@@ -1,8 +1,7 @@
-package com.alchemy.sdk.core.adapter
+package com.alchemy.sdk.core.adapter.core
 
-import com.alchemy.sdk.core.adapter.core.RawFloatSerializer
-import com.alchemy.sdk.core.model.core.RawFloat
-import com.alchemy.sdk.core.model.core.RawFloat.Companion.raw
+import com.alchemy.sdk.core.util.HexString
+import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
@@ -13,7 +12,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Rule
 import org.junit.Test
 
-class RawFloatSerializerTest {
+class HexStringSerializerTest {
 
     @get:Rule
     val mockkRule = MockKRule(this)
@@ -22,19 +21,19 @@ class RawFloatSerializerTest {
     lateinit var context: JsonSerializationContext
 
     @Test
-    fun `should convert raw float to float primitive`() = runTest {
-        RawFloatSerializer.serialize(
-            1f.raw,
-            RawFloatSerializer::class.java,
+    fun `should convert hex string to string hex representation`() = runTest {
+        HexStringSerializer.serialize(
+            "0x02".hexString,
+            HexString::class.java,
             context
-        ) shouldBeEqualTo JsonPrimitive(1f)
+        ) shouldBeEqualTo JsonPrimitive("0x02")
     }
 
     @Test
     fun `should handle null case`() {
-        RawFloatSerializer.serialize(
+        HexStringSerializer.serialize(
             null,
-            RawFloat::class.java,
+            HexString::class.java,
             context
         ) shouldBeEqualTo JsonNull.INSTANCE
     }

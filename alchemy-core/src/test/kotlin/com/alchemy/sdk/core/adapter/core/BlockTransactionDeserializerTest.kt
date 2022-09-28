@@ -1,6 +1,5 @@
-package com.alchemy.sdk.core.adapter
+package com.alchemy.sdk.core.adapter.core
 
-import com.alchemy.sdk.core.adapter.core.BlockTransactionDeserializer
 import com.alchemy.sdk.core.model.core.Address
 import com.alchemy.sdk.core.model.core.BlockTransaction
 import com.alchemy.sdk.core.util.Ether.Companion.wei

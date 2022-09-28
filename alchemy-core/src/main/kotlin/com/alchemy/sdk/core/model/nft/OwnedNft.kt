@@ -7,32 +7,77 @@ sealed interface OwnedNft {
     class OwnedBaseNft(
         override val balance: Long,
         contract: NftContract.BaseNftContract,
-        tokenId: String,
-        tokenType: NftTokenType
-    ) : Nft.BaseNft(contract, tokenId, tokenType), OwnedNft
+        id: NftId,
+    ) : Nft.BaseNft(contract, id), OwnedNft {
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+            if (!super.equals(other)) return false
+
+            other as OwnedBaseNft
+
+            if (balance != other.balance) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = super.hashCode()
+            result = 31 * result + balance.hashCode()
+            return result
+        }
+
+        override fun toString(): String {
+            return "OwnedBaseNft(balance=$balance, ${super.toString()})"
+        }
+
+    }
 
     class OwnedAlchemyNft(
         override val balance: Long,
-        contract: NftContract.BaseNftContract,
-        tokenId: String,
-        tokenType: NftTokenType,
+        contract: NftContract.AlchemyNftContract,
+        id: NftId,
         title: String,
         description: String,
         timeLastUpdated: String,
         metadataError: String?,
-        rawMetadata: NftMetadata,
+        metadata: NftMetadata,
         tokenUri: TokenUri,
         media: List<Media>,
     ) : Nft.AlchemyNft(
         contract,
-        tokenId,
-        tokenType,
+        id,
         title,
         description,
         timeLastUpdated,
         metadataError,
-        rawMetadata,
+        metadata,
         tokenUri,
         media
-    ), OwnedNft
+    ), OwnedNft {
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+            if (!super.equals(other)) return false
+
+            other as OwnedAlchemyNft
+
+            if (balance != other.balance) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = super.hashCode()
+            result = 31 * result + balance.hashCode()
+            return result
+        }
+
+        override fun toString(): String {
+            return "OwnedAlchemyNft(balance=$balance, ${super.toString()})"
+        }
+
+    }
 }

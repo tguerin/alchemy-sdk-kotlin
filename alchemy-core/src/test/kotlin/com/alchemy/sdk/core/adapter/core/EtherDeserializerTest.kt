@@ -1,8 +1,7 @@
-package com.alchemy.sdk.core.adapter
+package com.alchemy.sdk.core.adapter.core
 
-import com.alchemy.sdk.core.adapter.core.HexStringDeserializer
-import com.alchemy.sdk.core.util.HexString
-import com.alchemy.sdk.core.util.HexString.Companion.hexString
+import com.alchemy.sdk.core.util.Ether
+import com.alchemy.sdk.core.util.Ether.Companion.wei
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
@@ -12,7 +11,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Rule
 import org.junit.Test
 
-class HexStringDeserializerTest {
+class EtherDeserializerTest {
 
     @get:Rule
     val mockkRule = MockKRule(this)
@@ -22,39 +21,40 @@ class HexStringDeserializerTest {
 
     @Test(expected = IllegalStateException::class)
     fun `should throw exception if value is not a string`() {
-        HexStringDeserializer.deserialize(
+        EtherDeserializer.deserialize(
             JsonPrimitive(2),
-            HexString::class.java,
+            Ether::class.java,
             context
         )
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `should throw exception if value is not a valid hex value`() {
-        HexStringDeserializer.deserialize(
+        EtherDeserializer.deserialize(
             JsonPrimitive("XD"),
-            HexString::class.java,
+            Ether::class.java,
             context
         )
     }
 
     @Test
-    fun `should parse hex value as hex string`() {
-        val data = HexStringDeserializer.deserialize(
+    fun `should parse hex value as ether`() {
+        val data = EtherDeserializer.deserialize(
             JsonPrimitive("0x02"),
-            HexString::class.java,
+            Ether::class.java,
             context
         )
-        data shouldBeEqualTo "0x02".hexString
+        data shouldBeEqualTo "0x02".wei
     }
 
     @Test
     fun `should handle null case`() {
-        val data = HexStringDeserializer.deserialize(
+        val data = EtherDeserializer.deserialize(
             JsonNull.INSTANCE,
-            HexString::class.java,
+            Ether::class.java,
             context
         )
         data shouldBeEqualTo null
     }
+
 }

@@ -2,22 +2,11 @@ package com.alchemy.sdk.core
 
 import com.alchemy.sdk.core.ResourceUtils.Companion.parseFile
 import com.alchemy.sdk.core.model.AlchemySettings
-import com.alchemy.sdk.core.model.core.Address
-import com.alchemy.sdk.core.model.core.Block
+import com.alchemy.sdk.core.model.core.*
 import com.alchemy.sdk.core.model.core.BlockCount.Companion.blockCount
-import com.alchemy.sdk.core.model.core.BlockTag
-import com.alchemy.sdk.core.model.core.BlockTransaction
-import com.alchemy.sdk.core.model.core.FeeHistory
 import com.alchemy.sdk.core.model.core.Index.Companion.index
-import com.alchemy.sdk.core.model.core.Log
-import com.alchemy.sdk.core.model.core.LogFilter
-import com.alchemy.sdk.core.model.core.Network
 import com.alchemy.sdk.core.model.core.Percentile.Companion.percentile
-import com.alchemy.sdk.core.model.core.Proof
-import com.alchemy.sdk.core.model.core.TransactionReceipt
-import com.alchemy.sdk.core.model.core.UncleBlock
 import com.alchemy.sdk.core.util.Ether.Companion.wei
-import com.alchemy.sdk.core.util.GsonUtil
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -32,17 +21,15 @@ class CoreIntegrationTest {
 
     private val alchemy = Alchemy.with(AlchemySettings(network = Network.ETH_MAINNET))
 
-    private val gson = GsonUtil.gson
-
     @Test
-    fun getBalance() = runTest {
+    fun `retrieve balance given an address`() = runTest {
         val result =
             alchemy.core.getBalance(Address.from("0x1188aa75C38E1790bE3768508743FBE7b50b2153"))
         result.getOrThrow() shouldBeEqualTo "0x3529b5834ea3c6".hexString.wei
     }
 
     @Test
-    fun getCode() = runTest {
+    fun `retrieve code given an address`() = runTest {
         val data = alchemy.core.getCode(
             address = Address.from("0x4B076f0E07eED3F1007fB1B5C000F7A08D3208E1")
         )
@@ -51,7 +38,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getStorageAt() = runTest {
+    fun `retrieve storage at specific index given an address`() = runTest {
         val data = alchemy.core.getStorageAt(
             address = Address.from("0x4B076f0E07eED3F1007fB1B5C000F7A08D3208E1"),
             index = 0.index
@@ -60,7 +47,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getProof() = runTest {
+    fun `retrieve proof for an address`() = runTest {
         val data = alchemy.core.getProof(
             address = Address.from("0x4B076f0E07eED3F1007fB1B5C000F7A08D3208E1"),
             keys = listOf("0x41494c616e647363617065000000000000000000000000000000000000000016".hexString)
@@ -77,55 +64,55 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getProtocolVersion() = runTest {
+    fun `retrieve protocol version of the current network`() = runTest {
         val data = alchemy.core.getProtocolVersion()
         data.getOrThrow().decimalValue() shouldBeEqualTo BigInteger("65")
     }
 
     @Test
-    fun getChainId() = runTest {
+    fun `retrieve chain id of the network`() = runTest {
         val data = alchemy.core.getChainId()
         data.getOrThrow() shouldBeEqualTo "0x1".hexString
     }
 
     @Test
-    fun getNetListening() = runTest {
+    fun `check if there is a net listening`() = runTest {
         val data = alchemy.core.getNetListening()
         data.getOrThrow() shouldBeEqualTo true
     }
 
     @Test
-    fun getNetVersion() = runTest {
+    fun `retrieve net version`() = runTest {
         val data = alchemy.core.getNetVersion()
         data.getOrThrow() shouldBeEqualTo "1"
     }
 
     @Test
-    fun getWeb3ClientVersion() = runTest {
+    fun `retrieve web3 client version`() = runTest {
         val data = alchemy.core.getWeb3ClientVersion()
         data.getOrThrow() shouldBeEqualTo "Geth/v1.10.23-stable-d901d853/linux-amd64/go1.18.5"
     }
 
     @Test
-    fun getWeb3Sha3() = runTest {
+    fun `retrieve web3 client sha3`() = runTest {
         val data = alchemy.core.getWeb3Sha3("0x68656c6c6f20776f726c64".hexString)
         data.getOrThrow() shouldBeEqualTo "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad".hexString
     }
 
     @Test
-    fun getAccounts() = runTest {
+    fun `retrieve accounts`() = runTest {
         val data = alchemy.core.getAccounts()
         data.getOrThrow() shouldBeEqualTo emptyList()
     }
 
     @Test
-    fun getBlockNumber() = runTest {
+    fun `retrieve block number`() = runTest {
         val data = alchemy.core.getBlockNumber()
         data.getOrThrow() // No way to check the value, we just check we have a result
     }
 
     @Test
-    fun getBlockByNumber() = runTest {
+    fun `retrieve a block by number`() = runTest {
         val blockTag = BlockTag.BlockTagNumber("0xed14e5".hexString)
 
         val data = alchemy.core.getBlockByNumber(blockTag, true)
@@ -135,7 +122,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getBlockByHash() = runTest {
+    fun `retrieve a block by hash`() = runTest {
         val blockHash =
             "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString
 
@@ -146,7 +133,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getBlockByHashWithoutTransactions() = runTest {
+    fun `retrieve a block by hash without transactions`() = runTest {
         val blockHash =
             "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString
 
@@ -157,7 +144,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getBlockTransactionCountByNumber() = runTest {
+    fun `retrieve block transactions count by block number`() = runTest {
         val blockTag = BlockTag.BlockTagNumber("0xed14e5".hexString)
 
         val data = alchemy.core.getBlockTransactionCountByNumber(blockTag)
@@ -166,7 +153,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getBlockTransactionCountByHash() = runTest {
+    fun `retrieve block transactions count by block hash`() = runTest {
         val data = alchemy.core.getBlockTransactionCountByHash(
             "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString
         )
@@ -175,7 +162,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getUncleByBlockNumberAndIndex() = runTest {
+    fun `retrieve uncle block given a block number and an index`() = runTest {
         val blockTag = BlockTag.BlockTagNumber("0xed14e5".hexString)
 
         val data = alchemy.core.getUncleByBlockNumberAndIndex(blockTag, 0.index)
@@ -185,7 +172,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getUncleByBlockHashAndIndex() = runTest {
+    fun `retrieve uncle block given a block hash and an index`() = runTest {
         val data = alchemy.core.getUncleByBlockHashAndIndex(
             "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString,
             0.index
@@ -196,7 +183,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getUncleCountByBlockNumber() = runTest {
+    fun `retrieve uncle blocks count given a block number`() = runTest {
         val blockTag = BlockTag.BlockTagNumber("0xed14e5".hexString)
 
         val data = alchemy.core.getUncleCountByBlockNumber(blockTag)
@@ -205,7 +192,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getUncleCountByBlockHash() = runTest {
+    fun `retrieve uncle blocks count given a block hash`() = runTest {
         val data = alchemy.core.getUncleCountByBlockHash(
             "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString
         )
@@ -213,7 +200,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getTransactionByBlockNumberAndIndex() = runTest {
+    fun `retrieve a transaction given a block number and a transaction index`() = runTest {
         val blockTag = BlockTag.BlockTagNumber("0xed14e5".hexString)
 
         val data = alchemy.core.getTransactionByBlockNumberAndIndex(blockTag, 0.index)
@@ -224,7 +211,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getTransactionByBlockHashAndIndex() = runTest {
+    fun `retrieve a transaction given a block hash and a transaction index`() = runTest {
         val data = alchemy.core.getTransactionByBlockHashAndIndex(
             "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString,
             0.index
@@ -236,7 +223,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getTransactionCount() = runTest {
+    fun `retrieve transactions count given a block number`() = runTest {
         val data = alchemy.core.getTransactionCount(
             Address.from("0x10ce4cd51b9e95be1c8a9bc665d3ebdfa9762529"),
             BlockTag.BlockTagNumber("0xed14e5".hexString)
@@ -246,7 +233,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getTransactionByHash() = runTest {
+    fun `retrieve transactions count given a block hash`() = runTest {
         val data = alchemy.core.getTransactionByHash(
             "0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString
         )
@@ -257,7 +244,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getTransactionReceipt() = runTest {
+    fun `retrieve transaction receipt given a transaction hash`() = runTest {
         val data = alchemy.core.getTransactionReceipt(
             "0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString
         )
@@ -269,7 +256,7 @@ class CoreIntegrationTest {
 
     @Test
     @Ignore // Returns 503 for now...
-    fun estimateGas() = runTest {
+    fun `estimate gas of a transaction`() = runTest {
         val data =
             alchemy.core.estimateGas(BlockTag.Latest)
         data.getOrThrow().decimalValue() shouldBeGreaterThan BigInteger.valueOf(0)
@@ -277,19 +264,19 @@ class CoreIntegrationTest {
 
 
     @Test
-    fun getGasPrice() = runTest {
+    fun `retrieve current gas price`() = runTest {
         val data = alchemy.core.getGasPrice()
         data.getOrThrow().gigaWei.toDouble() shouldBeGreaterThan 0.0
     }
 
     @Test
-    fun getMaxPriorityFeePerGas() = runTest {
+    fun `retrieve max priority fee per gas`() = runTest {
         val data = alchemy.core.getMaxPriorityFeePerGas()
         data.getOrThrow().gigaWei.toDouble() shouldBeGreaterThan 0.0
     }
 
     @Test
-    fun getFeeHistoryWithoutPercentiles() = runTest {
+    fun `retrieve fee history without percentile`() = runTest {
         val data = alchemy.core.getFeeHistory(
             4.blockCount,
             BlockTag.BlockTagNumber("0xed14e5".hexString)
@@ -300,7 +287,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getFeeHistoryWithPercentiles() = runTest {
+    fun `retrieve fee history with percentiles`() = runTest {
         val data = alchemy.core.getFeeHistory(
             4.blockCount,
             BlockTag.BlockTagNumber("0xed14e5".hexString),
@@ -312,7 +299,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun getLogsWithBlockHash() = runTest {
+    fun `retrieve logs from a block hash`() = runTest {
         val data = alchemy.core.getLogs(
             LogFilter.BlockHashFilter(
                 "0x40c3019758abf6942b29d5efb43d0c26abac7db3c8545232b8a3bdf37c780dc1".hexString
@@ -325,7 +312,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun newFilter() = runTest {
+    fun `add new filter`() = runTest {
         val filterId = alchemy.core.newFilter(LogFilter.BlockRangeFilter())
         val changes = alchemy.core.getFilterChanges(filterId.getOrThrow())
         changes.getOrThrow() shouldNotBeEqualTo null
@@ -334,7 +321,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun newBlockFilter() = runTest {
+    fun `add new block filter`() = runTest {
         val filterId = alchemy.core.newBlockFilter()
         val changes = alchemy.core.getFilterChanges(filterId.getOrThrow())
         changes.getOrThrow() shouldNotBeEqualTo null
@@ -343,7 +330,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    fun newPendingTransactionFilter() = runTest {
+    fun `add new pending transaction filter`() = runTest {
         val filterId = alchemy.core.newPendingTransactionFilter()
         val changes = alchemy.core.getFilterChanges(filterId.getOrThrow())
         changes.getOrThrow() shouldNotBeEqualTo null

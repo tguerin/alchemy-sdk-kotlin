@@ -1,23 +1,6 @@
 package com.alchemy.sdk.core.api
 
-import com.alchemy.sdk.core.model.core.Address
-import com.alchemy.sdk.core.model.core.Block
-import com.alchemy.sdk.core.model.core.BlockCount
-import com.alchemy.sdk.core.model.core.BlockTag
-import com.alchemy.sdk.core.model.core.BlockTransaction
-import com.alchemy.sdk.core.model.core.CancelPrivateTransactionRequest
-import com.alchemy.sdk.core.model.core.FeeHistory
-import com.alchemy.sdk.core.model.core.Index
-import com.alchemy.sdk.core.model.core.Log
-import com.alchemy.sdk.core.model.core.LogFilter
-import com.alchemy.sdk.core.model.core.Percentile
-import com.alchemy.sdk.core.model.core.PrivateTransactionCall
-import com.alchemy.sdk.core.model.core.Proof
-import com.alchemy.sdk.core.model.core.RawInt
-import com.alchemy.sdk.core.model.core.TransactionCall
-import com.alchemy.sdk.core.model.core.TransactionReceipt
-import com.alchemy.sdk.core.model.core.UncleBlock
-import com.alchemy.sdk.core.model.core.Validator
+import com.alchemy.sdk.core.model.core.*
 import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.HexString
 import com.alchemy.sdk.json.rpc.client.annotation.JsonRpc

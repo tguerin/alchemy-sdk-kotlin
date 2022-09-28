@@ -1,6 +1,5 @@
-package com.alchemy.sdk.core.adapter
+package com.alchemy.sdk.core.adapter.core
 
-import com.alchemy.sdk.core.adapter.core.LogFilterSerializer
 import com.alchemy.sdk.core.model.core.Address
 import com.alchemy.sdk.core.model.core.BlockTag
 import com.alchemy.sdk.core.model.core.LogFilter

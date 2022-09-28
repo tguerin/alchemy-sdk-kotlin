@@ -1,0 +1,52 @@
+{
+  "contract": {
+    "address": "0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1"
+  },
+  "id": {
+    "tokenId": "0x0000000000000000000000000000000000000000000000000000000000000001",
+    "tokenMetadata": {
+      "tokenType": "ERC721"
+    }
+  },
+  "title": "The Wanderer Lands #1",
+  "description": "A beautiful and high resolution collection of A.I. generated landscapes",
+  "tokenUri": {
+    "raw": "ipfs://bafybeifcnkipzxl54rk523qhorqw5ysrvdppxg4vykkuhh4vrqqhoeyfiy/1.json",
+    "gateway": "https://alchemy.mypinata.cloud/ipfs/bafybeifcnkipzxl54rk523qhorqw5ysrvdppxg4vykkuhh4vrqqhoeyfiy/1.json"
+  },
+  "media": [
+    {
+      "raw": "ipfs://bafybeifu4nlpuj5dniyvkxmd5fmghab7h2dfooprfpzm752hxhi7iou2yq/1.png",
+      "gateway": "https://ipfs.io/ipfs/bafybeifu4nlpuj5dniyvkxmd5fmghab7h2dfooprfpzm752hxhi7iou2yq/1.png"
+    }
+  ],
+  "metadata": {
+    "date": 1654933547421,
+    "image": "ipfs://bafybeifu4nlpuj5dniyvkxmd5fmghab7h2dfooprfpzm752hxhi7iou2yq/1.png",
+    "dna": "172e42d0fc20a44ad5d2d10dcc09a37b8a75afe087d81c91375a3293b7532ab5",
+    "name": "The Wanderer Lands #1",
+    "description": "A beautiful and high resolution collection of A.I. generated landscapes",
+    "edition": 1,
+    "attributes": [
+      {
+        "value": "The Legend Valley",
+        "trait_type": "Land"
+      },
+      {
+        "value": "ColorFul",
+        "trait_type": "Style"
+      },
+      {
+        "value": "Peeling Paint Lvl 7",
+        "trait_type": "Blend"
+      }
+    ]
+  },
+  "timeLastUpdated": "2022-06-17T20:28:30.339Z",
+  "contractMetadata": {
+    "name": "AILandscape",
+    "symbol": "AILAND",
+    "totalSupply": "9",
+    "tokenType": "ERC721"
+  }
+}

@@ -1,6 +1,5 @@
-package com.alchemy.sdk.core.adapter
+package com.alchemy.sdk.core.adapter.nft
 
-import com.alchemy.sdk.core.adapter.nft.NftTokenTypeDeserializer
 import com.alchemy.sdk.core.model.nft.NftTokenType
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonNull

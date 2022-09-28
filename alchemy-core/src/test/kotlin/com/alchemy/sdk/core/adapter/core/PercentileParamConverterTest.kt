@@ -1,6 +1,5 @@
-package com.alchemy.sdk.core.adapter
+package com.alchemy.sdk.core.adapter.core
 
-import com.alchemy.sdk.core.adapter.core.PercentileSerializer
 import com.alchemy.sdk.core.model.core.Percentile
 import com.alchemy.sdk.core.model.core.Percentile.Companion.percentile
 import com.google.gson.JsonPrimitive

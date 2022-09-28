@@ -1,9 +1,7 @@
-package com.alchemy.sdk.core.adapter
+package com.alchemy.sdk.core.adapter.core
 
-import com.alchemy.sdk.core.adapter.core.EtherSerializer
-import com.alchemy.sdk.core.util.Ether
-import com.alchemy.sdk.core.util.Ether.Companion.ether
-import com.alchemy.sdk.core.util.HexString.Companion.hexString
+import com.alchemy.sdk.core.model.core.RawFloat
+import com.alchemy.sdk.core.model.core.RawFloat.Companion.raw
 import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
@@ -14,7 +12,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Rule
 import org.junit.Test
 
-class EtherSerializerTest {
+class RawFloatSerializerTest {
 
     @get:Rule
     val mockkRule = MockKRule(this)
@@ -23,21 +21,20 @@ class EtherSerializerTest {
     lateinit var context: JsonSerializationContext
 
     @Test
-    fun `should convert ether to string hex representation of its wei value`() = runTest {
-        EtherSerializer.serialize(
-            1.ether,
-            Ether::class.java,
+    fun `should convert raw float to float primitive`() = runTest {
+        RawFloatSerializer.serialize(
+            1f.raw,
+            RawFloatSerializer::class.java,
             context
-        ) shouldBeEqualTo JsonPrimitive(1.ether.wei.hexString.toString())
+        ) shouldBeEqualTo JsonPrimitive(1f)
     }
 
     @Test
     fun `should handle null case`() {
-        EtherSerializer.serialize(
+        RawFloatSerializer.serialize(
             null,
-            Ether::class.java,
+            RawFloat::class.java,
             context
         ) shouldBeEqualTo JsonNull.INSTANCE
     }
-
 }

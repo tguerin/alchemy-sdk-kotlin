@@ -5,20 +5,20 @@ import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
-object OwnedNftDeserializer : JsonDeserializer<OwnedNft?> {
+object NftDeserializer : JsonDeserializer<Nft?> {
     override fun deserialize(
         json: JsonElement,
         typeOfT: Type,
         context: JsonDeserializationContext
-    ): OwnedNft? {
+    ): Nft? {
         return when {
             json == JsonNull.INSTANCE -> null
-            json is JsonObject && (typeOfT == OwnedNft.OwnedAlchemyNft::class.java || isAlchemyNft(
+            json is JsonObject && (typeOfT == Nft.AlchemyNft::class.java || isAlchemyNft(
                 json
             )) -> deserializeAlchemyNft(json, context)
-            typeOfT == OwnedNft.OwnedBaseNft::class.java || json is JsonObject -> context.deserialize(
+            typeOfT == Nft.BaseNft::class.java || json is JsonObject -> context.deserialize(
                 json,
-                OwnedNft.OwnedBaseNft::class.java
+                Nft.BaseNft::class.java
             )
             else -> throw IllegalStateException("Unknown Nft type")
         }
@@ -27,7 +27,7 @@ object OwnedNftDeserializer : JsonDeserializer<OwnedNft?> {
     private fun deserializeAlchemyNft(
         json: JsonObject,
         context: JsonDeserializationContext
-    ): OwnedNft {
+    ): Nft {
         val baseContract = context.deserialize<NftContract.BaseNftContract>(
             json.get("contract"),
             NftContract.BaseNftContract::class.java
@@ -42,8 +42,7 @@ object OwnedNftDeserializer : JsonDeserializer<OwnedNft?> {
             )
         }
 
-        return OwnedNft.OwnedAlchemyNft(
-            json.get("balance").asLong,
+        return Nft.AlchemyNft(
             alchemyContract,
             context.deserialize(json.get("id"), NftId::class.java),
             context.deserialize(json.get("title"), String::class.java),
