@@ -66,9 +66,5 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
 
     companion object {
         fun with(alchemySettings: AlchemySettings) = Alchemy(alchemySettings)
-        fun asyncWith(alchemySettings: AlchemySettings) = callbackFlow {
-            trySendBlocking(Alchemy(alchemySettings))
-            channel.close()
-        }
     }
 }
