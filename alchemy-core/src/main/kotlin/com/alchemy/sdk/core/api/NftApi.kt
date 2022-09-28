@@ -1,10 +1,7 @@
 package com.alchemy.sdk.core.api
 
 import com.alchemy.sdk.core.model.core.Address
-import com.alchemy.sdk.core.model.nft.GetNftsForOwnerOptions
-import com.alchemy.sdk.core.model.nft.Nft
-import com.alchemy.sdk.core.model.nft.NftTokenType
-import com.alchemy.sdk.core.model.nft.OwnedNftsResponse
+import com.alchemy.sdk.core.model.nft.*
 import com.alchemy.sdk.core.util.HexString
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -32,4 +29,12 @@ interface NftApi {
         @Query("tokenType") tokenType: NftTokenType? = null,
         @Query("tokenUriTimeoutInMs") tokenUriTimeoutInMs: Int? = null,
     ): Result<Nft>
+
+    @GET("getContractMetadata")
+    @Headers(
+        "Alchemy-Ethers-Sdk-Method: getContractMetadata"
+    )
+    suspend fun getContractMetadata(
+        @Query("contractAddress") contractAddress: Address.ContractAddress
+    ): Result<NftContractMetadata>
 }

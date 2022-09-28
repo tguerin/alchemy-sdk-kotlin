@@ -1,0 +1,9 @@
+{
+  "address": "0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1",
+  "contractMetadata": {
+    "name": "AILandscape",
+    "symbol": "AILAND",
+    "totalSupply": "9",
+    "tokenType": "ERC721"
+  }
+}

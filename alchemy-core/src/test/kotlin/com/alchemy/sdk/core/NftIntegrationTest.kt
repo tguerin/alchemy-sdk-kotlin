@@ -6,6 +6,7 @@ import com.alchemy.sdk.core.model.core.Address
 import com.alchemy.sdk.core.model.core.Network
 import com.alchemy.sdk.core.model.nft.GetNftsForOwnerOptions
 import com.alchemy.sdk.core.model.nft.Nft
+import com.alchemy.sdk.core.model.nft.NftContractMetadata
 import com.alchemy.sdk.core.model.nft.OwnedNftsResponse
 import com.alchemy.sdk.core.util.GsonUtil.Companion.nftGson
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
@@ -47,6 +48,15 @@ class NftIntegrationTest {
             "0x0000000000000000000000000000000000000000000000000000000000000001".hexString
         )
         val expectedNft = parseFile("nft_metadata_test.json", Nft::class.java, nftGson)
+        nft.getOrThrow() shouldBeEqualTo expectedNft
+    }
+
+    @Test
+    fun `retrieve nft contract metadata`() = runTest {
+        val nft = alchemy.nft.getContractMetadata(
+            Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
+        )
+        val expectedNft = parseFile("contract_metadata_test.json", NftContractMetadata::class.java, nftGson)
         nft.getOrThrow() shouldBeEqualTo expectedNft
     }
 }
