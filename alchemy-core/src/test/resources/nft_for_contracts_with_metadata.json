@@ -44,7 +44,7 @@
           }
         ]
       },
-      "timeLastUpdated": "2022-06-17T20:28:30.339Z",
+      "timeLastUpdated": "2022-10-01T19:58:28.509Z",
       "contractMetadata": {
         "name": "AILandscape",
         "symbol": "AILAND",
@@ -96,7 +96,7 @@
           }
         ]
       },
-      "timeLastUpdated": "2022-06-17T20:28:30.358Z",
+      "timeLastUpdated": "2022-10-01T19:58:28.428Z",
       "contractMetadata": {
         "name": "AILandscape",
         "symbol": "AILAND",
@@ -123,10 +123,7 @@
       "media": [
         {
           "raw": "ipfs://bafybeifu4nlpuj5dniyvkxmd5fmghab7h2dfooprfpzm752hxhi7iou2yq/3.png",
-          "gateway": "https://res.cloudinary.com/alchemyapi/image/upload/mainnet/ce33c978852831f69052f2f731b5bb06.png",
-          "thumbnail": "https://res.cloudinary.com/alchemyapi/image/upload/w_256,h_256/mainnet/ce33c978852831f69052f2f731b5bb06.png",
-          "format": "png",
-          "bytes": 9949026
+          "gateway": "https://ipfs.io/ipfs/bafybeifu4nlpuj5dniyvkxmd5fmghab7h2dfooprfpzm752hxhi7iou2yq/3.png"
         }
       ],
       "metadata": {
@@ -151,7 +148,7 @@
           }
         ]
       },
-      "timeLastUpdated": "2022-09-02T18:20:22.120Z",
+      "timeLastUpdated": "2022-10-01T19:58:28.640Z",
       "contractMetadata": {
         "name": "AILandscape",
         "symbol": "AILAND",
@@ -203,7 +200,7 @@
           }
         ]
       },
-      "timeLastUpdated": "2022-09-01T00:13:36.878Z",
+      "timeLastUpdated": "2022-10-01T19:58:27.968Z",
       "contractMetadata": {
         "name": "AILandscape",
         "symbol": "AILAND",
@@ -255,7 +252,7 @@
           }
         ]
       },
-      "timeLastUpdated": "2022-06-16T21:16:42.322Z",
+      "timeLastUpdated": "2022-10-01T19:58:28.014Z",
       "contractMetadata": {
         "name": "AILandscape",
         "symbol": "AILAND",
@@ -307,7 +304,7 @@
           }
         ]
       },
-      "timeLastUpdated": "2022-09-28T22:55:28.563Z",
+      "timeLastUpdated": "2022-10-01T19:58:28.810Z",
       "contractMetadata": {
         "name": "AILandscape",
         "symbol": "AILAND",
@@ -334,10 +331,7 @@
       "media": [
         {
           "raw": "ipfs://bafybeifu4nlpuj5dniyvkxmd5fmghab7h2dfooprfpzm752hxhi7iou2yq/7.png",
-          "gateway": "https://res.cloudinary.com/alchemyapi/image/upload/mainnet/10bfe7fb4b630068ba87561f4186d805.png",
-          "thumbnail": "https://res.cloudinary.com/alchemyapi/image/upload/w_256,h_256/mainnet/10bfe7fb4b630068ba87561f4186d805.png",
-          "format": "png",
-          "bytes": 16887636
+          "gateway": "https://ipfs.io/ipfs/bafybeifu4nlpuj5dniyvkxmd5fmghab7h2dfooprfpzm752hxhi7iou2yq/7.png"
         }
       ],
       "metadata": {
@@ -362,7 +356,7 @@
           }
         ]
       },
-      "timeLastUpdated": "2022-09-28T19:24:16.061Z",
+      "timeLastUpdated": "2022-10-01T19:58:28.593Z",
       "contractMetadata": {
         "name": "AILandscape",
         "symbol": "AILAND",
@@ -389,10 +383,7 @@
       "media": [
         {
           "raw": "ipfs://bafybeifu4nlpuj5dniyvkxmd5fmghab7h2dfooprfpzm752hxhi7iou2yq/8.png",
-          "gateway": "https://res.cloudinary.com/alchemyapi/image/upload/mainnet/5af4dcd2cdd90fa7452f8d368854e381.png",
-          "thumbnail": "https://res.cloudinary.com/alchemyapi/image/upload/w_256,h_256/mainnet/5af4dcd2cdd90fa7452f8d368854e381.png",
-          "format": "png",
-          "bytes": 5781403
+          "gateway": "https://ipfs.io/ipfs/bafybeifu4nlpuj5dniyvkxmd5fmghab7h2dfooprfpzm752hxhi7iou2yq/8.png"
         }
       ],
       "metadata": {
@@ -417,7 +408,7 @@
           }
         ]
       },
-      "timeLastUpdated": "2022-07-01T06:51:13.153Z",
+      "timeLastUpdated": "2022-10-01T19:58:28.066Z",
       "contractMetadata": {
         "name": "AILandscape",
         "symbol": "AILAND",
@@ -469,7 +460,7 @@
           }
         ]
       },
-      "timeLastUpdated": "2022-09-28T21:53:48.011Z",
+      "timeLastUpdated": "2022-10-01T19:58:28.366Z",
       "contractMetadata": {
         "name": "AILandscape",
         "symbol": "AILAND",
