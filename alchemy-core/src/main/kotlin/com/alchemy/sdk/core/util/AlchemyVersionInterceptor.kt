@@ -5,11 +5,16 @@ import okhttp3.Response
 
 object AlchemyVersionInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        if (chain.request().url.toString().contains("alchemy.com/nft")) {
-            chain.request().newBuilder().addHeader(
-                "Alchemy-Ethers-Sdk-Version", "2.0.3"
-            )
+        return if (chain.request().url.toString().contains("alchemy.com/nft")) {
+            val request = chain.request()
+                .newBuilder()
+                .addHeader(
+                    "Alchemy-Ethers-Sdk-Version", "2.0.3"
+                )
+                .build()
+            chain.proceed(request)
+        } else {
+            chain.proceed(chain.request())
         }
-        return chain.proceed(chain.request())
     }
 }
