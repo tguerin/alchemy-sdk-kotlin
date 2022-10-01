@@ -35,7 +35,7 @@ repositories {
 then just add the dependency to the required module:
 
 ```kotlin
-implementation("com.github.tguerin:alchemy-sdk-kotlin:0.4.0")
+implementation("com.github.tguerin:alchemy-sdk-kotlin:0.5.0")
 ```
 
 ## Using Alchemy sdk
