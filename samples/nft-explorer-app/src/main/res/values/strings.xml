@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Nft Explorer</string>
+    <string name="nfts_loading_failed">Failed to load nfts</string>
+    <string name="nft_no_attribute">No attribute</string>
+    <string name="search">Search</string>
+    <string name="contract_address">Contract address</string>
+</resources>

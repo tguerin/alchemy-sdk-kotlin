@@ -3,7 +3,6 @@ import groovy.util.Node
 
 plugins {
     id("kotlin")
-    id("java-library")
     id("maven-publish")
 }
 

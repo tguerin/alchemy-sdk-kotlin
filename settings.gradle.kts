@@ -17,6 +17,7 @@ dependencyResolutionManagement {
 rootProject.name = "AlchemySdkKotlin"
 include(":alchemy-core")
 include(":json-rpc-client")
+include(":samples:nft-explorer-app")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 enableFeaturePreview("VERSION_CATALOGS")
