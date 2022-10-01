@@ -6,7 +6,7 @@ orbs:
 executors:
   test-executor:
     docker:
-      - image: cimg/openjdk:11.0.16
+      - image: cimg/android:2022.09
 
 workflows:
   gradle_test:
