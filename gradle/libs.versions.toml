@@ -11,10 +11,12 @@ androidxtest = "1.4.0"
 compose = "1.2.1"
 coroutines = "1.6.4"
 gson = "2.9.1"
+hilt = "2.43.2"
 junit = "4.13.2"
 keccak = "1.1.1"
 kluent = "1.68"
 kotlin = "1.7.10"
+landscapist = "2.0.0"
 material = "1.6.1"
 material3 = "1.0.0-beta03"
 mockk = "1.12.8"
@@ -56,8 +58,13 @@ crypto-keccak = { module = "com.github.komputing.khash:keccak", version.ref = "k
 
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
+hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
+
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+
+landscapist = { module = "com.github.skydoves:landscapist-glide", version.ref = "landscapist" }
 
 material = { module = "com.google.android.material:material", version.ref = "material" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }

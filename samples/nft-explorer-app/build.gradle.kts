@@ -57,11 +57,6 @@ android {
 dependencies {
     implementation(projects.alchemyCore)
 
-    implementation("com.google.dagger:hilt-android:2.43.2")
-    kapt("com.google.dagger:hilt-compiler:2.43.2")
-
-    implementation("com.github.skydoves:landscapist-glide:2.0.0")
-
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core)
@@ -72,8 +67,11 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation)
+    implementation(libs.hilt)
+    kapt(libs.hilt.compiler)
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.kotlin.coroutines.android)
+    implementation(libs.landscapist)
     implementation(libs.material)
     implementation(libs.material3)
     implementation(libs.system.ui.controller)
