@@ -1,20 +1,20 @@
 package com.alchemy.sdk.core.model.nft
 
+import com.alchemy.sdk.core.util.HexString
 import com.alchemy.sdk.core.util.ProxyRetrofitQueryMap
 import com.alchemy.sdk.core.util.QueryMapObject
 
 data class GetNftsForContractOptions(
     /**
-     * Optional page key from an existing {@link OwnedBaseNftsResponse} or
-     * {@link OwnedNftsResponse}to use for pagination.
+     * Optional  An offset used for pagination.
      */
-    val pageKey: String? = null,
+    val startToken: HexString? = null,
 
     /**
      * Sets the total number of NFTs to return in the response. Defaults to 100.
-     * Maximum page size is 100.
+     * Maximum limit size is 100.
      */
-    val pageSize: Int? = null,
+    val limit: Int? = null,
 
     /** Optional boolean flag to omit NFT metadata. Defaults to `false`. */
     val omitMetadata: Boolean = false,
@@ -30,11 +30,17 @@ data class GetNftsForContractOptions(
 
     init {
         val queryData = ProxyRetrofitQueryMap()
-        pageKey?.let {
-            queryData["pageKey"] = it
+        startToken?.let {
+            // Somehow this parameter requires a 64 long hex (+2 for 0x)
+            var startTokenAsString = it.toString()
+            val missingDigits = 66 - startTokenAsString.length
+            if(missingDigits > 0) {
+                startTokenAsString = startTokenAsString.replace("0x", "0x" + "0".repeat(missingDigits))
+            }
+            queryData["startToken"] = startTokenAsString
         }
-        pageSize?.let {
-            queryData["pageSize"] = it.toString()
+        limit?.let {
+            queryData["limit"] = it.toString()
         }
         queryData["withMetadata"] = (!omitMetadata).toString()
         tokenUriTimeoutInMs?.let {
