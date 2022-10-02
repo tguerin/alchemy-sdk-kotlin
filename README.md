@@ -46,7 +46,7 @@ This Alchemy sdk relies on coroutines, the api is quite straightforward:
 val alchemy = Alchemy.with(AlchemySettings(network = Network.ETH_MAINNET))
 
 coroutineScope.launch {
-    val result = alchemy.getBalance(Address.from("0x1188aa75c38e1790be3768508743fbe7b50b2153"))
+    val result = alchemy.core.getBalance(Address.from("0x1188aa75c38e1790be3768508743fbe7b50b2153"))
     val balance = result.getOrElse { 
         // handle failure
     }
