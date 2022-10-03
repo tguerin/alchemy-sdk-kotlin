@@ -19,6 +19,12 @@ class HexString private constructor(val data: String) {
             .toByteArray()
     }
 
+    fun toIntArray(): IntArray {
+        return withoutPrefix().chunked(2)
+            .map { it.toInt(16) }
+            .toIntArray()
+    }
+
     operator fun plus(anotherHexString: HexString) = concat(anotherHexString)
 
     private fun concat(anotherHexString: HexString): HexString {
@@ -42,6 +48,20 @@ class HexString private constructor(val data: String) {
 
     override fun hashCode(): Int {
         return data.hashCode()
+    }
+
+    fun hasLength(length: Int): Boolean {
+        require(length > 0)
+        return length() == length
+    }
+
+    fun slice(offset: Int): HexString {
+        require(offset > 0)
+        return withoutPrefix().substring(offset * 2).hexString
+    }
+
+    fun length(): Int {
+        return withoutPrefix().length / 2
     }
 
     companion object {

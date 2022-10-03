@@ -66,4 +66,25 @@ class HexStringTest {
         BigDecimal.valueOf(2.0).hexString.toString() shouldBeEqualTo "0x02"
     }
 
+    @Test
+    fun `should return length of the hexstring`() {
+        "0x2".hexString.length() shouldBeEqualTo 1
+    }
+
+    @Test
+    fun `should check if hexstring has the right length`() {
+        "0x9202".hexString.hasLength(2) shouldBeEqualTo true
+        "0x9202".hexString.hasLength(1) shouldBeEqualTo false
+    }
+
+    @Test
+    fun `should slice the hexstring with the right offset`() {
+        "0x0002".hexString.slice(1) shouldBeEqualTo "0x02".hexString
+    }
+
+    @Test
+    fun `should convert hexstring to int array`() {
+        "0x0102".hexString.toIntArray() shouldBeEqualTo intArrayOf(1, 2)
+    }
+
 }
