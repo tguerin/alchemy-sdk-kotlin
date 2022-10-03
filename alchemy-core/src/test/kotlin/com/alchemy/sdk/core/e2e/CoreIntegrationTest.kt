@@ -7,6 +7,7 @@ import com.alchemy.sdk.core.model.core.*
 import com.alchemy.sdk.core.model.core.BlockCount.Companion.blockCount
 import com.alchemy.sdk.core.model.core.Index.Companion.index
 import com.alchemy.sdk.core.model.core.Percentile.Companion.percentile
+import com.alchemy.sdk.core.util.Ether.Companion.ether
 import com.alchemy.sdk.core.util.Ether.Companion.wei
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import kotlinx.coroutines.test.runTest
@@ -22,11 +23,62 @@ class CoreIntegrationTest {
 
     private val alchemy = Alchemy.with(AlchemySettings(network = Network.ETH_MAINNET))
 
+
+    @Test
+    fun `retrieve network from settings`() = runTest {
+        val result = alchemy.core.getNetwork()
+        result shouldBeEqualTo Network.ETH_MAINNET
+    }
+
     @Test
     fun `retrieve balance given an address`() = runTest {
         val result =
             alchemy.core.getBalance(Address.from("0x1188aa75C38E1790bE3768508743FBE7b50b2153"))
         result.getOrThrow() shouldBeEqualTo "0x3529b5834ea3c6".hexString.wei
+    }
+
+    @Test
+    fun `should resolve ens address`() = runTest {
+        alchemy.core.resolveAddress(Address.from("vitalik.eth")) {
+            this.value shouldBeEqualTo "0xd8da6bf26964af9d7eed9e03e53415d37aa96045".hexString
+            Result.success(1.ether)
+        }
+    }
+
+    @Test
+    fun `should resolve log filter addresses`() = runTest {
+        val addresses = listOf(Address.from("alex.eth"), Address.from("vitalik.eth"))
+        alchemy.core.resolveLogFilterAddresses(LogFilter.BlockRangeFilter(addresses = addresses)) {
+            this shouldBeEqualTo LogFilter.BlockRangeFilter(
+                addresses = listOf(
+                    Address.from("0x4a8f6434499f8c9371a98dB9824b4b8Ae2bA9Fe2"),
+                    Address.from("0xd8da6bf26964af9d7eed9e03e53415d37aa96045"),
+                )
+            )
+            Result.success(1.ether)
+        }
+    }
+
+    @Test
+    fun `should resolve transaction addresses`() = runTest {
+        val fromAddress = Address.from("alex.eth")
+        val toAddress = Address.from("vitalik.eth")
+        val transactionCall = TransactionCall(
+            from = fromAddress,
+            to = toAddress
+        )
+        alchemy.core.resolveTransactionAddresses(transactionCall) {
+            this.from?.value shouldBeEqualTo "0x4a8f6434499f8c9371a98dB9824b4b8Ae2bA9Fe2".hexString
+            this.to.value shouldBeEqualTo "0xd8da6bf26964af9d7eed9e03e53415d37aa96045".hexString
+            Result.success(1.ether)
+        }
+    }
+
+    @Test
+    fun `retrieve balance given an ens address`() = runTest {
+        val result =
+            alchemy.core.getBalance(Address.from("vitalik.eth"))
+        result.getOrThrow().ether.toDouble() shouldBeGreaterThan 0.0
     }
 
     @Test

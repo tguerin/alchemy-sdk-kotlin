@@ -7,7 +7,19 @@ import com.alchemy.sdk.core.model.nft.Nft
 import com.alchemy.sdk.core.model.nft.OwnedNftsResponse
 import com.alchemy.sdk.core.model.nft.RefreshNftMetadataResponse
 
-class Nft(private val nftApi: NftApi) : NftApi by nftApi {
+class Nft(
+    private val core: Core,
+    private val nftApi: NftApi
+) : NftApi by nftApi {
+
+    override suspend fun getNftsForOwner(
+        owner: Address,
+        options: GetNftsForOwnerOptions
+    ): Result<OwnedNftsResponse> {
+        return core.resolveAddress(owner) {
+            nftApi.getNftsForOwner(this, options)
+        }
+    }
 
     override suspend fun getNftsForOwnership(
         owner: Address,
@@ -20,17 +32,19 @@ class Nft(private val nftApi: NftApi) : NftApi by nftApi {
         owner: Address,
         contractAddresses: List<Address.ContractAddress>
     ): Result<Boolean> {
-        val nftsResult = nftApi.getNftsForOwnership(
-            owner,
-            GetNftsForOwnerOptions(
-                contractAddresses = contractAddresses,
-                omitMetadata = true
+        return core.resolveAddress(owner) {
+            val nftsResult = nftApi.getNftsForOwnership(
+                this,
+                GetNftsForOwnerOptions(
+                    contractAddresses = contractAddresses,
+                    omitMetadata = true
+                )
             )
-        )
-        return if (nftsResult.isFailure) {
-            Result.failure(nftsResult.exceptionOrNull()!!)
-        } else {
-            Result.success(nftsResult.getOrThrow().ownedNfts.isNotEmpty())
+            if (nftsResult.isFailure) {
+                Result.failure(nftsResult.exceptionOrNull()!!)
+            } else {
+                Result.success(nftsResult.getOrThrow().ownedNfts.isNotEmpty())
+            }
         }
     }
 

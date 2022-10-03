@@ -13,7 +13,7 @@ data class AlchemySettings(
      */
     val network: Network = Constants.DEFAULT_NETWORK,
 
-    /** The maximum number of retries to attempt if a request fails. Defaults to 5. */
+    /** The maximum number of retries to attempt if a request fails. Defaults to 5. Not used for now*/
     val maxRetries: Int = Constants.DEFAULT_MAX_RETRIES,
 
     /**

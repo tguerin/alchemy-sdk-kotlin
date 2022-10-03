@@ -1,13 +1,6 @@
-package com.alchemy.sdk.core.adapter
+package com.alchemy.sdk.core.adapter.nft
 
-import com.alchemy.sdk.core.adapter.nft.FloorPriceDeserializer
-import com.alchemy.sdk.core.adapter.nft.NftContractDeserializer
-import com.alchemy.sdk.core.model.core.Address
 import com.alchemy.sdk.core.model.nft.FloorPrice
-import com.alchemy.sdk.core.model.nft.NftContract
-import com.alchemy.sdk.core.model.nft.NftContractMetadata
-import com.alchemy.sdk.core.model.nft.NftTokenType
-import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject

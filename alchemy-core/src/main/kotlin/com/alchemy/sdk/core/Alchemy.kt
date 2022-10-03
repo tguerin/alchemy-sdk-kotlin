@@ -4,12 +4,14 @@ import com.alchemy.sdk.core.api.CoreApi
 import com.alchemy.sdk.core.api.NftApi
 import com.alchemy.sdk.core.model.AlchemySettings
 import com.alchemy.sdk.core.proxy.AlchemyProxy
-import com.alchemy.sdk.core.util.*
+import com.alchemy.sdk.core.util.AlchemyVersionInterceptor
+import com.alchemy.sdk.core.util.Constants
+import com.alchemy.sdk.core.util.GsonStringConverter
+import com.alchemy.sdk.core.util.GsonUtil
 import com.alchemy.sdk.core.util.GsonUtil.Companion.nftGson
+import com.alchemy.sdk.core.util.ResultCallAdapter
 import com.alchemy.sdk.json.rpc.client.generator.IncrementalIdGenerator
 import com.alchemy.sdk.json.rpc.client.http.HttpJsonRpcClient
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.callbackFlow
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -48,7 +50,7 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
                     gson
                 )
             )
-        return Core(alchemyProxy.createProxy(CoreApi::class.java))
+        return Core(alchemySettings.network, alchemyProxy.createProxy(CoreApi::class.java))
     }
 
     private fun setupNft(alchemySettings: AlchemySettings): Nft {
@@ -61,7 +63,7 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
             .addConverterFactory(GsonConverterFactory.create(nftGson))
             .addConverterFactory(GsonStringConverter(nftGson))
             .build()
-        return Nft(retrofit.create(NftApi::class.java))
+        return Nft(core, retrofit.create(NftApi::class.java))
     }
 
     companion object {
