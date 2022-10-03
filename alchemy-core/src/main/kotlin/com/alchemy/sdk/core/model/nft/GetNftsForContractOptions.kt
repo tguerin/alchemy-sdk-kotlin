@@ -34,8 +34,9 @@ data class GetNftsForContractOptions(
             // Somehow this parameter requires a 64 long hex (+2 for 0x)
             var startTokenAsString = it.toString()
             val missingDigits = 66 - startTokenAsString.length
-            if(missingDigits > 0) {
-                startTokenAsString = startTokenAsString.replace("0x", "0x" + "0".repeat(missingDigits))
+            if (missingDigits > 0) {
+                startTokenAsString =
+                    startTokenAsString.replace("0x", "0x" + "0".repeat(missingDigits))
             }
             queryData["startToken"] = startTokenAsString
         }
