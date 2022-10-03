@@ -1,7 +1,11 @@
 package com.alchemy.sdk.core.adapter.nft
 
 import com.alchemy.sdk.core.model.nft.NftMetadata
-import com.google.gson.*
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonNull
+import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 

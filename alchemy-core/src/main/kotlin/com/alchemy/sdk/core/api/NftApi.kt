@@ -11,7 +11,6 @@ import com.alchemy.sdk.core.model.nft.NftTokenType
 import com.alchemy.sdk.core.model.nft.OwnedNftsResponse
 import com.alchemy.sdk.core.model.nft.OwnersResponse
 import com.alchemy.sdk.core.model.nft.RefreshContractResponse
-import com.alchemy.sdk.core.util.HexString
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query

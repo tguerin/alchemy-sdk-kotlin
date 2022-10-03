@@ -1,7 +1,13 @@
 package com.alchemy.sdk.core.adapter.core
 
 import com.alchemy.sdk.core.model.core.LogFilter
-import com.google.gson.*
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonNull
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
+import com.google.gson.JsonSerializationContext
+import com.google.gson.JsonSerializer
 import java.lang.reflect.Type
 
 object LogFilterSerializer : JsonSerializer<LogFilter> {
