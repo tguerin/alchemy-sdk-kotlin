@@ -34,7 +34,6 @@ import com.alchemy.sdk.core.model.core.RawInt
 import com.alchemy.sdk.core.model.nft.FloorPrice
 import com.alchemy.sdk.core.model.nft.Nft
 import com.alchemy.sdk.core.model.nft.NftContract
-import com.alchemy.sdk.core.model.nft.NftExcludeFilter
 import com.alchemy.sdk.core.model.nft.NftId
 import com.alchemy.sdk.core.model.nft.NftMetadata
 import com.alchemy.sdk.core.model.nft.NftTokenType
