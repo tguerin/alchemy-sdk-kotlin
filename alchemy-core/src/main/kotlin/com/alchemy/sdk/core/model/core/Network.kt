@@ -1,5 +1,7 @@
 package com.alchemy.sdk.core.model.core
 
+import com.alchemy.sdk.core.util.HexString.Companion.hexString
+
 /**
  * The supported networks by Alchemy. Note that some functions are not available
  * on all networks. Please refer to the Alchemy documentation for which APIs are
@@ -8,13 +10,26 @@ package com.alchemy.sdk.core.model.core
  *
  */
 enum class Network(
-    val networkId: String
+    val networkId: String,
+    val ensAddress: Address.ContractAddress? = null
 ) {
-    ETH_MAINNET("eth-mainnet"),
-    ETH_ROPSTEN("eth-ropsten"),
-    ETH_GOERLI("eth-goerli"),
+    ETH_MAINNET(
+        "eth-mainnet",
+        Address.ContractAddress("0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e".hexString)
+    ),
+    ETH_ROPSTEN(
+        "eth-ropsten",
+        Address.ContractAddress("0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e".hexString)
+    ),
+    ETH_GOERLI(
+        "eth-goerli",
+        Address.ContractAddress("0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e".hexString)
+    ),
     ETH_KOVAN("eth-kovan"),
-    ETH_RINKEBY("eth-rinkeby"),
+    ETH_RINKEBY(
+        "eth-rinkeby",
+        Address.ContractAddress("0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e".hexString)
+    ),
     OPT_MAINNET("opt-mainnet"),
     OPT_KOVAN("opt-kovan"),
     OPT_GOERLI("opt-goerli"),
