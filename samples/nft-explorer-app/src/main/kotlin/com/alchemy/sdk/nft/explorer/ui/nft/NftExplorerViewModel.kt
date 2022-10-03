@@ -3,6 +3,7 @@ package com.alchemy.sdk.nft.explorer.ui.nft
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.alchemy.sdk.core.Alchemy
 import com.alchemy.sdk.core.model.core.Address
 import com.alchemy.sdk.core.model.nft.GetNftsForContractOptions
 import com.alchemy.sdk.core.model.nft.Nft
@@ -10,6 +11,7 @@ import com.alchemy.sdk.core.util.HexString
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import com.alchemy.sdk.nft.explorer.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,11 +19,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.alchemy.sdk.core.Nft as NftService
 
 @HiltViewModel
 class NftExplorerViewModel @Inject constructor(
-    private val nftService: NftService,
+    private val alchemy: Alchemy,
     application: Application
 ) : AndroidViewModel(application) {
     private val addressState = MutableStateFlow("")
@@ -45,12 +46,12 @@ class NftExplorerViewModel @Inject constructor(
         )
 
     fun onContractAddressEntered(contractAddress: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             nextToken = null
             loadingState.emit(true)
             addressState.emit(contractAddress)
             val nftResult =
-                nftService.getNftsForContract(Address.ContractAddress(contractAddress.hexString))
+                alchemy.nft.getNftsForContract(Address.ContractAddress(contractAddress.hexString))
             if (nftResult.isFailure) {
                 errorMessageState.emit(getApplication<Application>().getString(R.string.nfts_loading_failed))
             } else {
@@ -64,8 +65,8 @@ class NftExplorerViewModel @Inject constructor(
 
     fun fetchMoreItems() {
         if (nextToken == null) return
-        viewModelScope.launch {
-            val nftResult = nftService.getNftsForContract(
+        viewModelScope.launch(Dispatchers.IO) {
+            val nftResult = alchemy.nft.getNftsForContract(
                 Address.ContractAddress(addressState.value.hexString),
                 GetNftsForContractOptions(
                     startToken = nextToken

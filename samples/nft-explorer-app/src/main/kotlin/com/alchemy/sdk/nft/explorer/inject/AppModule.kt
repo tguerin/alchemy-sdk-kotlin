@@ -17,7 +17,4 @@ object AppModule {
     @Provides
     fun provideAlchemy() = Alchemy.with(AlchemySettings())
 
-    @Singleton
-    @Provides
-    fun provideAlchemyNft(alchemy: Alchemy) = alchemy.nft
 }
