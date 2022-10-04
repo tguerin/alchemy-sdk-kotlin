@@ -1,22 +1,22 @@
 package com.alchemy.sdk.core
 
+import com.alchemy.sdk.ccip.CcipReadFetcher
 import com.alchemy.sdk.core.api.CoreApi
-import com.alchemy.sdk.core.ccip.CcipReadFetcher
-import com.alchemy.sdk.core.ens.Resolver
-import com.alchemy.sdk.core.model.core.Address
-import com.alchemy.sdk.core.model.core.BlockTag
-import com.alchemy.sdk.core.model.core.Index
-import com.alchemy.sdk.core.model.core.Log
-import com.alchemy.sdk.core.model.core.LogFilter
-import com.alchemy.sdk.core.model.core.Network
-import com.alchemy.sdk.core.model.core.Proof
-import com.alchemy.sdk.core.model.core.TransactionCall
-import com.alchemy.sdk.core.util.Ether
-import com.alchemy.sdk.core.util.Formatters
-import com.alchemy.sdk.core.util.HexString
-import com.alchemy.sdk.core.util.HexString.Companion.hexString
-import com.alchemy.sdk.core.util.encodeBytes
+import com.alchemy.sdk.core.model.Address
+import com.alchemy.sdk.core.model.BlockTag
+import com.alchemy.sdk.core.model.Index
+import com.alchemy.sdk.core.model.Log
+import com.alchemy.sdk.core.model.LogFilter
+import com.alchemy.sdk.core.model.Network
+import com.alchemy.sdk.core.model.Proof
+import com.alchemy.sdk.core.model.TransactionCall
+import com.alchemy.sdk.ens.Resolver
 import com.alchemy.sdk.json.rpc.client.model.JsonRpcException
+import com.alchemy.sdk.util.Ether
+import com.alchemy.sdk.util.Formatters
+import com.alchemy.sdk.util.HexString
+import com.alchemy.sdk.util.HexString.Companion.hexString
+import com.alchemy.sdk.util.encodeBytes
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 

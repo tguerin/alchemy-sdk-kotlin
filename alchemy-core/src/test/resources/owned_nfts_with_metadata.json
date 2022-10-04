@@ -20,7 +20,10 @@
       "media": [
         {
           "raw": "ipfs://bafybeifu4nlpuj5dniyvkxmd5fmghab7h2dfooprfpzm752hxhi7iou2yq/1.png",
-          "gateway": "https://ipfs.io/ipfs/bafybeifu4nlpuj5dniyvkxmd5fmghab7h2dfooprfpzm752hxhi7iou2yq/1.png"
+          "gateway": "https://res.cloudinary.com/alchemyapi/image/upload/mainnet/1c27fc8f2ed5fe191eed72d4fa8fe9f0.png",
+          "thumbnail": "https://res.cloudinary.com/alchemyapi/image/upload/w_256,h_256/mainnet/1c27fc8f2ed5fe191eed72d4fa8fe9f0.png",
+          "format": "png",
+          "bytes": 13468036
         }
       ],
       "metadata": {
@@ -45,7 +48,7 @@
           }
         ]
       },
-      "timeLastUpdated": "2022-10-01T19:58:28.509Z",
+      "timeLastUpdated": "2022-10-04T06:04:20.519Z",
       "contractMetadata": {
         "name": "AILandscape",
         "symbol": "AILAND",
@@ -108,5 +111,5 @@
     }
   ],
   "totalCount": 2,
-  "blockHash": "0x13bdf05702fb68abe73dc95ca121f2ac82427cd88f9cad6e7c0b8d7dfc17504d"
+  "blockHash": "0x5d2ed0bd321f9c69d19282faecd50f10780c25edd08f536de0438546af61727d"
 }

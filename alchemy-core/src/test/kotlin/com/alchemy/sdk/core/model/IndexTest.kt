@@ -1,6 +1,6 @@
 package com.alchemy.sdk.core.model
 
-import com.alchemy.sdk.core.model.core.Index.Companion.index
+import com.alchemy.sdk.core.model.Index.Companion.index
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 

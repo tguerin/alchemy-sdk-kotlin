@@ -1,6 +1,6 @@
 package com.alchemy.sdk.core.model
 
-import com.alchemy.sdk.core.model.core.BlockCount.Companion.blockCount
+import com.alchemy.sdk.core.model.BlockCount.Companion.blockCount
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 

@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.alchemy.sdk.core.model.nft.Nft
+import com.alchemy.sdk.nft.model.Nft
 import com.alchemy.sdk.nft.explorer.R
 import com.skydoves.landscapist.glide.GlideImage
 

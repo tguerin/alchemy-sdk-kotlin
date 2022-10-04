@@ -1,6 +1,5 @@
 package com.alchemy.sdk.core.model
 
-import com.alchemy.sdk.core.model.core.Address
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.Test

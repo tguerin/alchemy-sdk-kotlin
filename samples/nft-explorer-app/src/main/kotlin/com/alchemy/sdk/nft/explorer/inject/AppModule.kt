@@ -1,12 +1,11 @@
 package com.alchemy.sdk.nft.explorer.inject
 
-import com.alchemy.sdk.core.Alchemy
-import com.alchemy.sdk.core.model.AlchemySettings
+import com.alchemy.sdk.Alchemy
+import com.alchemy.sdk.AlchemySettings
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
