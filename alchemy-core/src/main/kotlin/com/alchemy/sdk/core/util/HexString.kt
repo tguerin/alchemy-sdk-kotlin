@@ -55,9 +55,41 @@ class HexString private constructor(val data: String) {
         return length() == length
     }
 
-    fun slice(offset: Int): HexString {
-        require(offset > 0)
-        return withoutPrefix().substring(offset * 2).hexString
+    fun slice(startIndex: Int): HexString {
+        val withoutPrefix = withoutPrefix()
+        require(startIndex >= 0 && startIndex < withoutPrefix.length * 2) {
+            "Invalid start index $startIndex"
+        }
+        return withoutPrefix.substring(startIndex * 2).hexString
+    }
+
+    fun slice(startIndex: Int, endIndex: Int): HexString {
+        val withoutPrefix = withoutPrefix()
+        require(startIndex >= 0 && startIndex < withoutPrefix.length * 2) {
+            "Invalid start index $startIndex"
+        }
+        require(endIndex >= startIndex && endIndex <= withoutPrefix.length * 2) {
+            "Invalid end index $endIndex"
+        }
+        return withoutPrefix.substring(startIndex * 2, endIndex * 2).hexString
+    }
+
+    fun parseString(start: Int): String? {
+        try {
+            val parseBytes = parseBytes(start)
+            return if (parseBytes == null) null else String(parseBytes.toByteArray())
+        } catch (_: Exception) {
+        }
+        return null
+    }
+
+    fun parseBytes(start: Int): HexString? {
+        if (this == "0x".hexString) return null
+
+        val offset = slice(start, start + 32).intValue()
+        val length = slice(offset, offset + 32).intValue()
+
+        return slice(offset + 32, offset + 32 + length)
     }
 
     fun length(): Int {
@@ -104,7 +136,28 @@ class HexString private constructor(val data: String) {
                 val hexRepresentation = joinToString(separator = "", prefix = "0x") { eachByte ->
                     "%02x".format(eachByte)
                 }
-                return HexString(hexRepresentation)
+
+                return HexString(
+                    if (hexRepresentation.length % 2 != 0) {
+                        hexRepresentation.replace("0x", "0x0")
+                    } else {
+                        hexRepresentation
+                    }
+                )
+            }
+
+        val IntArray.hexString: HexString
+            get() {
+                val hexRepresentation = joinToString(separator = "", prefix = "0x") { eachInt ->
+                    eachInt.toString(16)
+                }
+                return HexString(
+                    if (hexRepresentation.length % 2 != 0) {
+                        hexRepresentation.replace("0x", "0x0")
+                    } else {
+                        hexRepresentation
+                    }
+                )
             }
 
         val String.hexString: HexString

@@ -1,5 +1,6 @@
 package com.alchemy.sdk.core.model.core
 
+import com.alchemy.sdk.core.util.Constants.NONTRANSITIONAL_TO_UNICODE
 import com.alchemy.sdk.core.util.HexString
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import org.komputing.khash.keccak.Keccak
@@ -49,8 +50,6 @@ sealed class Address private constructor(
     }
 
     companion object {
-        private val dnsRegex =
-            "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$".toRegex()
         private val checksumRegex = "([A-F].*[a-f])|([a-f].*[A-F])".toRegex()
         fun from(rawAddress: String): Address {
             if (rawAddress.isEmpty()) {
@@ -70,12 +69,14 @@ sealed class Address private constructor(
                     }
                     EthereumAddress(result.hexString)
                 }
-                dnsRegex.matches(rawAddress) -> {
+                else -> {
                     val sanitizedAddress = rawAddress.lowercase()
-                    val normalizedName = IDN.toUnicode(sanitizedAddress, IDN.USE_STD3_ASCII_RULES)
+                    val normalizedName = IDN.toUnicode(
+                        sanitizedAddress,
+                        IDN.USE_STD3_ASCII_RULES or NONTRANSITIONAL_TO_UNICODE
+                    )
                     EnsAddress(normalizedName, nameHash(normalizedName))
                 }
-                else -> throw IllegalArgumentException("Unknown address type $rawAddress")
             }
         }
 

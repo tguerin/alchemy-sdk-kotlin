@@ -46,6 +46,20 @@ class CoreIntegrationTest {
     }
 
     @Test
+    fun `should resolve ens address with wildcard`() = runTest {
+        alchemy.core.resolveAddress(Address.from("1.offchainexample.eth")) {
+            this.value shouldBeEqualTo "0x41563129cDbbD0c5D3e1c86cf9563926b243834d".hexString
+            Result.success(1.ether)
+        }
+    }
+
+    @Test
+    fun `should get resolver with emojis`() = runTest {
+        val resolver = alchemy.core.getResolver(Address.from("🚀🚀🚀.eth") as Address.EnsAddress)
+        resolver.getAddress().value shouldBeEqualTo "0x7D6f9C1Ac2c86575DBa42Ac7C587d5D2dC04103a".hexString
+    }
+
+    @Test
     fun `should resolve log filter addresses`() = runTest {
         val addresses = listOf(Address.from("alex.eth"), Address.from("vitalik.eth"))
         alchemy.core.resolveLogFilterAddresses(LogFilter.BlockRangeFilter(addresses = addresses)) {
@@ -64,8 +78,7 @@ class CoreIntegrationTest {
         val fromAddress = Address.from("alex.eth")
         val toAddress = Address.from("vitalik.eth")
         val transactionCall = TransactionCall(
-            from = fromAddress,
-            to = toAddress
+            from = fromAddress, to = toAddress
         )
         alchemy.core.resolveTransactionAddresses(transactionCall) {
             this.from?.value shouldBeEqualTo "0x4a8f6434499f8c9371a98dB9824b4b8Ae2bA9Fe2".hexString
@@ -76,8 +89,7 @@ class CoreIntegrationTest {
 
     @Test
     fun `retrieve balance given an ens address`() = runTest {
-        val result =
-            alchemy.core.getBalance(Address.from("vitalik.eth"))
+        val result = alchemy.core.getBalance(Address.from("vitalik.eth"))
         result.getOrThrow().ether.toDouble() shouldBeGreaterThan 0.0
     }
 
@@ -93,8 +105,7 @@ class CoreIntegrationTest {
     @Test
     fun `retrieve storage at specific index given an address`() = runTest {
         val data = alchemy.core.getStorageAt(
-            address = Address.from("0x4B076f0E07eED3F1007fB1B5C000F7A08D3208E1"),
-            index = 0.index
+            address = Address.from("0x4B076f0E07eED3F1007fB1B5C000F7A08D3208E1"), index = 0.index
         )
         data.getOrThrow() shouldBeEqualTo "0x41494c616e647363617065000000000000000000000000000000000000000016".hexString
     }
@@ -227,8 +238,7 @@ class CoreIntegrationTest {
     @Test
     fun `retrieve uncle block given a block hash and an index`() = runTest {
         val data = alchemy.core.getUncleByBlockHashAndIndex(
-            "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString,
-            0.index
+            "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString, 0.index
         )
 
         val expectedBlock = parseFile("uncle_block_test.json", UncleBlock::class.java)
@@ -266,8 +276,7 @@ class CoreIntegrationTest {
     @Test
     fun `retrieve a transaction given a block hash and a transaction index`() = runTest {
         val data = alchemy.core.getTransactionByBlockHashAndIndex(
-            "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString,
-            0.index
+            "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString, 0.index
         )
 
         val expectedBlockTransaction =
@@ -310,8 +319,7 @@ class CoreIntegrationTest {
     @Test
     @Ignore // Returns 503 for now...
     fun `estimate gas of a transaction`() = runTest {
-        val data =
-            alchemy.core.estimateGas(BlockTag.Latest)
+        val data = alchemy.core.estimateGas(BlockTag.Latest)
         data.getOrThrow().decimalValue() shouldBeGreaterThan BigInteger.valueOf(0)
     }
 
@@ -331,8 +339,7 @@ class CoreIntegrationTest {
     @Test
     fun `retrieve fee history without percentile`() = runTest {
         val data = alchemy.core.getFeeHistory(
-            4.blockCount,
-            BlockTag.BlockTagNumber("0xed14e5".hexString)
+            4.blockCount, BlockTag.BlockTagNumber("0xed14e5".hexString)
         )
 
         val expectedFeeHistory = parseFile("fee_history_test.json", FeeHistory::class.java)

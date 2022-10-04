@@ -30,7 +30,7 @@ class ProxyRetrofitQueryMap(m: Map<String, Any> = emptyMap()) : HashMap<String, 
                                         return value
                                     }
                                 }
-                                newSet.add(newEntry);
+                                newSet.add(newEntry)
                             }
                         }
                     }
@@ -45,7 +45,7 @@ class ProxyRetrofitQueryMap(m: Map<String, Any> = emptyMap()) : HashMap<String, 
                                 return value
                             }
                         }
-                        newSet.add(newEntry);
+                        newSet.add(newEntry)
                     }
                 }
             }

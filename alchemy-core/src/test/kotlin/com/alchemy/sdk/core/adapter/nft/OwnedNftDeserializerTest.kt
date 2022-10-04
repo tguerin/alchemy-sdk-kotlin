@@ -2,7 +2,13 @@ package com.alchemy.sdk.core.adapter.nft
 
 import com.alchemy.sdk.core.ResourceUtils.Companion.parseFile
 import com.alchemy.sdk.core.model.core.Address
-import com.alchemy.sdk.core.model.nft.*
+import com.alchemy.sdk.core.model.nft.NftContract
+import com.alchemy.sdk.core.model.nft.NftId
+import com.alchemy.sdk.core.model.nft.NftMetadata
+import com.alchemy.sdk.core.model.nft.NftTokenType
+import com.alchemy.sdk.core.model.nft.OwnedNft
+import com.alchemy.sdk.core.model.nft.TokenMetadata
+import com.alchemy.sdk.core.model.nft.TokenUri
 import com.alchemy.sdk.core.util.GsonUtil.Companion.nftGson
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import com.google.gson.JsonDeserializationContext

@@ -50,7 +50,11 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
                     gson
                 )
             )
-        return Core(alchemySettings.network, alchemyProxy.createProxy(CoreApi::class.java))
+        return Core(
+            alchemySettings.network,
+            CcipReadFetcher(okHttpClient, gson),
+            alchemyProxy.createProxy(CoreApi::class.java)
+        )
     }
 
     private fun setupNft(alchemySettings: AlchemySettings): Nft {

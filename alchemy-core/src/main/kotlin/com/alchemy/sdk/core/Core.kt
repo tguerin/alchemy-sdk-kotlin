@@ -13,14 +13,15 @@ import com.alchemy.sdk.core.util.Ether
 import com.alchemy.sdk.core.util.Formatters
 import com.alchemy.sdk.core.util.HexString
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
+import com.alchemy.sdk.core.util.encodeBytes
+import com.alchemy.sdk.json.rpc.client.model.JsonRpcException
+import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 
+@Suppress("ThrowableNotThrown")
 class Core(
     private val network: Network,
+    private val ccipReadFetcher: CcipReadFetcher,
     private val coreApi: CoreApi
 ) : CoreApi by coreApi {
 
@@ -67,12 +68,99 @@ class Core(
         }
     }
 
-    override suspend fun call(transactionCall: TransactionCall): Result<HexString> {
+    override suspend fun call(
+        transactionCall: TransactionCall,
+        blockTag: BlockTag,
+    ): Result<HexString> {
+        return call(transactionCall, blockTag, 0)
+    }
+
+    private suspend fun call(
+        transactionCall: TransactionCall,
+        blockTag: BlockTag,
+        attempt: Int
+    ): Result<HexString> {
         return resolveTransactionAddresses(transactionCall) {
-            coreApi.call(this)
+            if (attempt >= MAX_CCIP_REDIRECTS) {
+                Result.failure(IOException("error.too.many.ccip.redirects"))
+            } else {
+                val result = coreApi.call(this)
+                if (result.isFailure) {
+                    handleCallFailure(transactionCall, blockTag, result, attempt)
+                } else {
+                    result
+                }
+            }
         }
     }
 
+    private suspend fun handleCallFailure(
+        transactionCall: TransactionCall,
+        blockTag: BlockTag,
+        result: Result<HexString>,
+        attempt: Int
+    ): Result<HexString> {
+        return when {
+            result.exceptionOrNull() is JsonRpcException -> {
+                val jsonRpcError = (result.exceptionOrNull() as JsonRpcException).jsonRpcError
+                val errorData = jsonRpcError.data?.hexString ?: "0x".hexString
+                if (
+                    blockTag == BlockTag.Latest &&
+                    errorData.data.substring(0, 10) == "0x556f1830" &&
+                    errorData.length() % 32 == 4
+                ) {
+                    val newResult = try {
+                        val data = errorData.slice(4)
+
+                        // Check the sender of the OffchainLookup matches the transaction
+                        /*val sender = data.slice(0, 32)
+                        if (sender != transactionCall.to.value) {
+                            // TODO log the issue
+                        }*/
+
+                        // Read the URLs from the response
+                        val urls: MutableList<String?> = mutableListOf()
+                        val urlsOffset = data.slice(32, 64).intValue()
+                        val urlsLength = data.slice(urlsOffset, urlsOffset + 32).intValue()
+                        val urlsData = data.slice(urlsOffset + 32)
+                        for (u in 0 until urlsLength) {
+                            val url = urlsData.parseString(u * 32)
+                            urls.add(url)
+                        }
+
+                        // Get the CCIP calldata to forward
+                        val calldata = data.parseBytes(64)
+
+                        val callbackSelector = data.slice(96, 100)
+
+                        // Get the extra data to send back to the contract as context
+                        val extraData = data.parseBytes(128)
+
+                        val ccipResult = ccipReadFetcher.fetchCcipRead(
+                            transactionCall,
+                            calldata,
+                            urls.filterNotNull()
+                        )
+
+                        val params = listOfNotNull(ccipResult, extraData)
+                        val newTransaction = TransactionCall(
+                            to = transactionCall.to,
+                            data = callbackSelector + encodeBytes(*params.toTypedArray())
+                        )
+                        call(newTransaction, blockTag, attempt + 1)
+                    } catch (e: Exception) {
+                        Result.failure(e)
+                    }
+                    newResult
+                } else {
+                    Result.failure(result.exceptionOrNull()!!)
+                }
+            }
+            else -> {
+                Result.failure(result.exceptionOrNull()!!)
+            }
+        }
+    }
 
     override suspend fun estimateGas(transactionCall: TransactionCall): Result<HexString> {
         return resolveTransactionAddresses(transactionCall) {
@@ -164,8 +252,8 @@ class Core(
         }
     }
 
-    private suspend fun getResolver(ensAddress: Address.EnsAddress): Resolver {
-        var currentEnsAddress = ensAddress;
+    internal suspend fun getResolver(ensAddress: Address.EnsAddress): Resolver {
+        var currentEnsAddress = ensAddress
         while (true) {
             if (currentEnsAddress.rawAddress == "" || currentEnsAddress.rawAddress == ".") {
                 throw IllegalArgumentException("Invalid address: ${ensAddress.rawAddress}")
@@ -178,11 +266,11 @@ class Core(
             }
 
             // Check the current node for a resolver
-            val resolverAddress = getResolverAddress(currentEnsAddress);
+            val resolverAddress = getResolverAddress(currentEnsAddress)
 
             // Found a resolver!
             if (resolverAddress != null) {
-                val resolver = Resolver(this, resolverAddress, ensAddress);
+                val resolver = Resolver(this, resolverAddress, ensAddress)
 
                 // Legacy resolver found, using EIP-2544 so it isn't safe to use
                 if (currentEnsAddress != ensAddress && !resolver.supportsWildcard()) {
@@ -202,7 +290,7 @@ class Core(
     }
 
     private suspend fun getResolverAddress(ensAddress: Address.EnsAddress): Address.ContractAddress? {
-        val network = getNetwork();
+        val network = getNetwork()
         if (network.ensAddress == null) {
             throw IllegalArgumentException("${network.networkId} doesn't support ens resolution")
         }
@@ -214,10 +302,12 @@ class Core(
             )
         )
         val resolverAddress = resolverAddressResult.getOrThrow()
-        val formattedAddress =
-            Formatters.formatCallAddress(resolverAddress)
-                ?: throw IllegalStateException("Can't format resolver address $resolverAddress")
-        return Address.ContractAddress(formattedAddress.hexString)
+        val formattedAddress = Formatters.formatCallAddress(resolverAddress)
+        return if (formattedAddress == null) null else Address.ContractAddress(formattedAddress.hexString)
+    }
+
+    companion object {
+        private const val MAX_CCIP_REDIRECTS = 10
     }
 
 }

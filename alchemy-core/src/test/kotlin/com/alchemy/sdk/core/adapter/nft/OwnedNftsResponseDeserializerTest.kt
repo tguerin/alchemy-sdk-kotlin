@@ -1,10 +1,21 @@
 package com.alchemy.sdk.core.adapter.nft
 
 import com.alchemy.sdk.core.model.core.Address
-import com.alchemy.sdk.core.model.nft.*
+import com.alchemy.sdk.core.model.nft.NftContract
+import com.alchemy.sdk.core.model.nft.NftId
+import com.alchemy.sdk.core.model.nft.NftMetadata
+import com.alchemy.sdk.core.model.nft.NftTokenType
+import com.alchemy.sdk.core.model.nft.OwnedNft
+import com.alchemy.sdk.core.model.nft.OwnedNftsResponse
+import com.alchemy.sdk.core.model.nft.TokenMetadata
+import com.alchemy.sdk.core.model.nft.TokenUri
 import com.alchemy.sdk.core.util.GsonUtil.Companion.gson
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
-import com.google.gson.*
+import com.google.gson.JsonArray
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonNull
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule

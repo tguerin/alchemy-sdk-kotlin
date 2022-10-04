@@ -6,6 +6,7 @@ import com.alchemy.sdk.core.util.HexString.Companion.hexString
 internal object Constants {
     const val DEFAULT_ALCHEMY_API_KEY = "demo"
     const val DEFAULT_MAX_RETRIES = 5
+    const val NONTRANSITIONAL_TO_UNICODE = 32
 
     val DEFAULT_NETWORK = Network.ETH_MAINNET
 
@@ -15,10 +16,10 @@ internal object Constants {
 
 
     fun getAlchemyHttpUrl(network: Network, apiKey: String): String {
-        return "https://${network.networkId}.g.alchemy.com/v2/${apiKey}";
+        return "https://${network.networkId}.g.alchemy.com/v2/${apiKey}"
     }
 
     fun getAlchemyNftUrl(network: Network, apiKey: String): String {
-        return "https://${network.networkId}.g.alchemy.com/nft/v2/${apiKey}/";
+        return "https://${network.networkId}.g.alchemy.com/nft/v2/${apiKey}/"
     }
 }

@@ -172,7 +172,7 @@ class NftIntegrationTest {
             Address.ContractAddress("0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d".hexString),
             1L
         )
-        refreshNftMetadataResponse.getOrThrow() shouldNotBeEqualTo  null
+        refreshNftMetadataResponse.getOrThrow() shouldNotBeEqualTo null
     }
 
     @Test
@@ -180,6 +180,6 @@ class NftIntegrationTest {
         val refreshContractResponse = alchemy.nft.refreshContract(
             Address.ContractAddress("0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d".hexString)
         )
-        refreshContractResponse.getOrThrow() shouldNotBeEqualTo  null
+        refreshContractResponse.getOrThrow() shouldNotBeEqualTo null
     }
 }

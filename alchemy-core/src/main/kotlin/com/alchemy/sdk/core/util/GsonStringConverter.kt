@@ -14,7 +14,7 @@ class GsonStringConverter(private val gson: Gson) : Converter.Factory() {
         annotations: Array<out Annotation>,
         retrofit: Retrofit
     ): Converter<*, String> {
-        val typeAdapter = gson.getAdapter(TypeToken.get(type));
+        val typeAdapter = gson.getAdapter(TypeToken.get(type))
         return StringConverter(typeAdapter)
     }
 

@@ -26,7 +26,8 @@ class ProxyRetrofitQueryMapTest {
     @Test
     fun `should let non list value untouched`() {
         val queryMap = ProxyRetrofitQueryMap().apply {
-            this["contractAddress"] = Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
+            this["contractAddress"] =
+                Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
         }
         val entriesList = queryMap.entries.toList()
         entriesList.size shouldBeEqualTo 1

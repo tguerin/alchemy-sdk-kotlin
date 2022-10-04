@@ -126,7 +126,10 @@ interface CoreApi {
     ): Result<TransactionReceipt>
 
     @JsonRpc("eth_call")
-    suspend fun call(transactionCall: TransactionCall): Result<HexString>
+    suspend fun call(
+        transactionCall: TransactionCall,
+        blockTag: BlockTag = BlockTag.Latest
+    ): Result<HexString>
 
     @JsonRpc("eth_sendRawTransaction")
     suspend fun sendRawTransaction(signedTransaction: HexString): Result<HexString>
