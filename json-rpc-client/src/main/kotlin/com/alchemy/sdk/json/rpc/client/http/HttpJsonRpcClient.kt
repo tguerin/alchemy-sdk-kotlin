@@ -1,6 +1,7 @@
 package com.alchemy.sdk.json.rpc.client.http
 
 import com.alchemy.sdk.json.rpc.client.JsonRpcClient
+import com.alchemy.sdk.json.rpc.client.model.JsonRpcException
 import com.alchemy.sdk.json.rpc.client.model.JsonRpcRequest
 import com.alchemy.sdk.json.rpc.client.model.JsonRpcResponse
 import com.google.gson.Gson
@@ -33,7 +34,7 @@ class HttpJsonRpcClient(
                         continuation.resume(Result.failure(e), onCancellation = null)
                     }
 
-                    @Suppress("UNCHECKED_CAST", "BlockingMethodInNonBlockingContext")
+                    @Suppress("UNCHECKED_CAST")
                     override fun onResponse(call: Call, response: Response) {
                         // TODO better error handling
                         val data = response.body?.use {
@@ -57,10 +58,17 @@ class HttpJsonRpcClient(
                         }
                         if (response.isSuccessful) {
                             if (data != null) {
-                                continuation.resume(
-                                    Result.success(data.result),
-                                    onCancellation = null
-                                )
+                                if (data.result == null) {
+                                    continuation.resume(
+                                        Result.failure(JsonRpcException(data.error!!)),
+                                        onCancellation = null
+                                    )
+                                } else {
+                                    continuation.resume(
+                                        Result.success(data.result),
+                                        onCancellation = null
+                                    )
+                                }
                             } else {
                                 continuation.resume(
                                     Result.failure(RuntimeException("error.invalid.body")),
@@ -79,6 +87,6 @@ class HttpJsonRpcClient(
         }
 
     companion object {
-        internal const val JSON = "application/json; charset=UTF-8"
+        const val JSON = "application/json; charset=UTF-8"
     }
 }
