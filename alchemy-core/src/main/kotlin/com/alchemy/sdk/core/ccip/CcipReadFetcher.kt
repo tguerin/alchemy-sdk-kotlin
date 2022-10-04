@@ -1,4 +1,4 @@
-package com.alchemy.sdk.core
+package com.alchemy.sdk.core.ccip
 
 import com.alchemy.sdk.core.model.core.CcipReadResponse
 import com.alchemy.sdk.core.model.core.TransactionCall
@@ -15,7 +15,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
 
-class CcipReadFetcher(
+class CcipReadFetcher internal constructor(
     private val okHttpClient: OkHttpClient,
     private val gson: Gson
 ) {

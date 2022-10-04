@@ -1,6 +1,8 @@
 package com.alchemy.sdk.core
 
 import com.alchemy.sdk.core.api.CoreApi
+import com.alchemy.sdk.core.ccip.CcipReadFetcher
+import com.alchemy.sdk.core.ens.Resolver
 import com.alchemy.sdk.core.model.core.Address
 import com.alchemy.sdk.core.model.core.BlockTag
 import com.alchemy.sdk.core.model.core.Index

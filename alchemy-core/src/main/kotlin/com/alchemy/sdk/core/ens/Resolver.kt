@@ -1,9 +1,10 @@
-package com.alchemy.sdk.core
+package com.alchemy.sdk.core.ens
 
+import com.alchemy.sdk.core.Core
 import com.alchemy.sdk.core.model.core.Address
 import com.alchemy.sdk.core.model.core.TransactionCall
 import com.alchemy.sdk.core.util.Constants.HASH_ZERO
-import com.alchemy.sdk.core.util.DnsEncoder.dnsEncode
+import com.alchemy.sdk.core.ens.DnsEncoder.dnsEncode
 import com.alchemy.sdk.core.util.Formatters
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import com.alchemy.sdk.core.util.encodeBytes

@@ -22,4 +22,8 @@ internal object Constants {
     fun getAlchemyNftUrl(network: Network, apiKey: String): String {
         return "https://${network.networkId}.g.alchemy.com/nft/v2/${apiKey}/"
     }
+
+    fun getAlchemyWebsocketUrl(network: Network, apiKey: String): String {
+        return "wss://${network.networkId}.g.alchemy.com/v2/$apiKey";
+    }
 }

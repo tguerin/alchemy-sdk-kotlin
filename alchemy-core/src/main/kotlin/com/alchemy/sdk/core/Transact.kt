@@ -4,7 +4,7 @@ import com.alchemy.sdk.core.model.core.CancelPrivateTransactionRequest
 import com.alchemy.sdk.core.model.core.PrivateTransactionCall
 import com.alchemy.sdk.core.util.HexString
 
-class Transact(
+class Transact internal constructor(
     private val core: Core
 ) {
 

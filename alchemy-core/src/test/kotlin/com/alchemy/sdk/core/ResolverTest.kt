@@ -1,5 +1,6 @@
 package com.alchemy.sdk.core
 
+import com.alchemy.sdk.core.ens.Resolver
 import com.alchemy.sdk.core.model.core.Address
 import com.alchemy.sdk.core.model.core.Network
 import com.alchemy.sdk.core.model.core.TransactionCall

@@ -1,5 +1,6 @@
 package com.alchemy.sdk.core.util
 
+import com.alchemy.sdk.core.ens.DnsEncoder
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test

@@ -1,6 +1,9 @@
-package com.alchemy.sdk.core.util
+package com.alchemy.sdk.core.ens
 
+import com.alchemy.sdk.core.util.Constants
+import com.alchemy.sdk.core.util.HexString
 import com.alchemy.sdk.core.util.HexString.Companion.hexString
+import com.alchemy.sdk.core.util.set
 import java.net.IDN
 
 object DnsEncoder {

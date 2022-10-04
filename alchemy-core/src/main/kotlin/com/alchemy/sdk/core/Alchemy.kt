@@ -2,12 +2,13 @@ package com.alchemy.sdk.core
 
 import com.alchemy.sdk.core.api.CoreApi
 import com.alchemy.sdk.core.api.NftApi
+import com.alchemy.sdk.core.ccip.CcipReadFetcher
 import com.alchemy.sdk.core.model.AlchemySettings
 import com.alchemy.sdk.core.proxy.AlchemyProxy
 import com.alchemy.sdk.core.util.AlchemyVersionInterceptor
 import com.alchemy.sdk.core.util.Constants
 import com.alchemy.sdk.core.util.GsonStringConverter
-import com.alchemy.sdk.core.util.GsonUtil
+import com.alchemy.sdk.core.util.GsonUtil.Companion.gson
 import com.alchemy.sdk.core.util.GsonUtil.Companion.nftGson
 import com.alchemy.sdk.core.util.ResultCallAdapter
 import com.alchemy.sdk.json.rpc.client.generator.IncrementalIdGenerator
@@ -20,11 +21,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Suppress("UNCHECKED_CAST")
 class Alchemy private constructor(alchemySettings: AlchemySettings) {
 
-    private val gson = GsonUtil.gson
-
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(AlchemyVersionInterceptor)
         .build()
+
+    private val idGenerator = IncrementalIdGenerator()
 
     val core by lazy {
         setupCore(alchemySettings)
@@ -38,12 +39,24 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
         Transact(core)
     }
 
+    val ws by lazy {
+        Websocket(
+            idGenerator = idGenerator,
+            gson = gson,
+            websocketUrl = Constants.getAlchemyWebsocketUrl(
+                alchemySettings.network,
+                alchemySettings.apiKey
+            ),
+            okHttpClientBuilder = OkHttpClient.Builder()
+        )
+    }
+
     private fun setupCore(alchemySettings: AlchemySettings): Core {
         val alchemyUrl =
             Constants.getAlchemyHttpUrl(alchemySettings.network, alchemySettings.apiKey)
         val alchemyProxy =
             AlchemyProxy(
-                idGenerator = IncrementalIdGenerator(),
+                idGenerator = idGenerator,
                 jsonRpcClient = HttpJsonRpcClient(
                     alchemyUrl,
                     okHttpClient,

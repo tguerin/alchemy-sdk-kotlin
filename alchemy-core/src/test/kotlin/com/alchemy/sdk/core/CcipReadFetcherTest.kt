@@ -1,5 +1,6 @@
 package com.alchemy.sdk.core
 
+import com.alchemy.sdk.core.ccip.CcipReadFetcher
 import com.alchemy.sdk.core.model.core.Network
 import com.alchemy.sdk.core.model.core.TransactionCall
 import com.alchemy.sdk.core.util.GsonUtil
