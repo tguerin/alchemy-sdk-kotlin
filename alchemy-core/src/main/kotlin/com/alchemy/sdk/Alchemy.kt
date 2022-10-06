@@ -16,7 +16,7 @@ import com.alchemy.sdk.util.GsonStringConverter
 import com.alchemy.sdk.util.GsonUtil.Companion.gson
 import com.alchemy.sdk.util.GsonUtil.Companion.nftGson
 import com.alchemy.sdk.util.ResultCallAdapter
-import com.alchemy.sdk.ws.Websocket
+import com.alchemy.sdk.ws.WebSocket
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -67,7 +67,7 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
     }
 
     val ws by lazy {
-        Websocket(
+        WebSocket(
             idGenerator = idGenerator,
             gson = gson,
             websocketUrl = Constants.getAlchemyWebsocketUrl(
