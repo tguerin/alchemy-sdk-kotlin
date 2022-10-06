@@ -28,6 +28,8 @@ internal class AutoConnectWebsocket(
 
     private val isConnected = AtomicBoolean(false)
 
+    private val isReConnected = AtomicBoolean(false)
+
     private val isConnecting = AtomicBoolean(false)
 
     /**
@@ -36,6 +38,7 @@ internal class AutoConnectWebsocket(
     val status: WebsocketStatus
         get() = when {
             isConnected.get() -> WebsocketStatus.Connected
+            isReConnected.get() -> WebsocketStatus.Reconnected
             isConnecting.get() -> WebsocketStatus.Connecting
             else -> WebsocketStatus.Disconnected
         }
@@ -57,6 +60,7 @@ internal class AutoConnectWebsocket(
     private val webSocketListener = object : WebSocketListener() {
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             isConnected.compareAndSet(true, false)
+            isReConnected.compareAndSet(true, false)
             onConnectStatusChangeListener.invoke(webSocket, status)
             if (code != 1000) {
                 doReconnect()
@@ -70,6 +74,7 @@ internal class AutoConnectWebsocket(
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             isConnected.compareAndSet(true, false)
+            isReConnected.compareAndSet(true, false)
             onConnectStatusChangeListener.invoke(webSocket, status)
             doReconnect()
             listener.onFailure(webSocket, t, response)
@@ -84,7 +89,11 @@ internal class AutoConnectWebsocket(
         }
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
-            isConnected.compareAndSet(false, true)
+            if (isConnecting.get()) {
+                isReConnected.compareAndSet(false, true)
+            } else {
+                isConnected.compareAndSet(false, true)
+            }
             isConnecting.compareAndSet(true, false)
 
             onConnectStatusChangeListener.invoke(webSocket, status)
@@ -105,7 +114,7 @@ internal class AutoConnectWebsocket(
     }
 
     private fun doReconnect() {
-        if (isConnected.get() || isConnecting.get()) {
+        if (isConnected.get() || isReConnected.get() || isConnecting.get()) {
             return
         }
         isConnecting.compareAndSet(false, true)

@@ -14,6 +14,7 @@ import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -50,11 +51,32 @@ class WebSocket internal constructor(
     }
 
     fun <T> on(method: WebsocketMethod<T>): Flow<Result<T>> {
-        return websocketConnection.flow.parseResponse(method).dataOnly()
+        return on(method, 0)
     }
 
     fun <T> once(method: WebsocketMethod<T>): Flow<Result<T>> {
-        return websocketConnection.flow.parseResponse(method).take(1).dataOnly()
+        return on(method, 1)
+    }
+
+    private fun <T> on(method: WebsocketMethod<T>, numberOfEvents: Int): Flow<Result<T>> {
+        val flow = websocketConnection.flow
+            .parseResponse(method)
+            .dataOnly<T>()
+            .combine(status()) { data, status ->
+                if (status == WebsocketStatus.Reconnected) {
+                    mapSubscriptionByMethod.keys.forEach {
+                        // Reconnect all subscriptions
+                        websocketConnection.send(forgeEvent(it))
+                        // TODO here we could backfill missing data
+                    }
+                }
+                data
+            }
+        return if (numberOfEvents > 0) {
+            flow.take(numberOfEvents)
+        } else {
+            flow
+        }
     }
 
     private fun <T> StateFlow<WebsocketEvent.RawMessage>.parseResponse(
