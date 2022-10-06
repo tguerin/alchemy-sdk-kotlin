@@ -42,6 +42,8 @@ implementation("com.github.tguerin:alchemy-sdk-kotlin:0.6.0")
 
 This Alchemy sdk relies on coroutines, the api is quite straightforward:
 
+### Core
+
 ```kotlin
 val alchemy = Alchemy.with(AlchemySettings(network = Network.ETH_MAINNET))
 
@@ -52,6 +54,42 @@ coroutineScope.launch {
     }
 }
 ```
+
+### Websocket
+
+The websocket api returns a ```Flow``` that emits ```WebsocketEvent```. A ```WebsocketEvent``` can either be ```Data``` or ```Status```
+information about the connection:
+
+```kotlin
+val alchemy = Alchemy.with(AlchemySettings(network = Network.ETH_MAINNET))
+
+coroutineScope.launch {
+    alchemy.ws.on(WebsocketMethod.Block).collect { event ->
+        when(event) {
+            is WebsocketEvent.Data -> {
+                event.data // you can consume the data
+            }
+            is WebsocketEvent.Status -> {
+                event.status // you got information about the connection
+            }
+        }
+    }
+}
+```
+
+If you only want to listen to data, a ```dataOnly``` extension is available:
+
+```kotlin
+val alchemy = Alchemy.with(AlchemySettings(network = Network.ETH_MAINNET))
+
+coroutineScope.launch {
+    alchemy.ws.on(WebsocketMethod.Block).dataOnly.collect { data ->
+        // Consume the data 
+    }
+}
+```
+
+The websocket will automatically close if the coroutine context is cancelled or if the flow is disposed.
 
 Have a look at the [e2e tests](./alchemy-core/src/test/kotlin/com/alchemy/sdk/core/e2e) for samples.
 
