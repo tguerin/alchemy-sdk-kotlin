@@ -77,13 +77,13 @@ coroutineScope.launch {
 }
 ```
 
-If you only want to listen to data, a ```dataOnly``` extension is available:
+If you only want to listen to data, a ```dataOnly()``` extension is available:
 
 ```kotlin
 val alchemy = Alchemy.with(AlchemySettings(network = Network.ETH_MAINNET))
 
 coroutineScope.launch {
-    alchemy.ws.on(WebsocketMethod.Block).dataOnly.collect { data ->
+    alchemy.ws.on(WebsocketMethod.Block).dataOnly().collect { data ->
         // Consume the data 
     }
 }
