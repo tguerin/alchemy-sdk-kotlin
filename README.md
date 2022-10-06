@@ -35,7 +35,7 @@ repositories {
 then just add the dependency to the required module:
 
 ```kotlin
-implementation("com.github.tguerin:alchemy-sdk-kotlin:0.6.0")
+implementation("com.github.tguerin:alchemy-sdk-kotlin:0.7.0")
 ```
 
 ## Using Alchemy sdk
@@ -72,7 +72,8 @@ coroutineScope.launch {
 }
 ```
 
-The websocket will automatically close if no subscriber is registered.
+The websocket will automatically close if no subscriber is registered. Also it will transparently
+resubscribe to previous topics when websocket is reconnected.
 
 Have a look at the [e2e tests](./alchemy-core/src/test/kotlin/com/alchemy/sdk/core/e2e) for samples.
 
