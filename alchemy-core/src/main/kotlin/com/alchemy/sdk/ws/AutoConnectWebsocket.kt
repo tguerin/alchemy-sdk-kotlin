@@ -1,5 +1,6 @@
 package com.alchemy.sdk.ws
 
+import com.alchemy.sdk.ws.model.WebsocketStatus
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -15,20 +16,15 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Adapted from https://github.com/VinsonGuo/ReconnectWebSocketWrapper
  */
-class AutoConnectWebsocket(
+internal class AutoConnectWebsocket(
     private val okHttpClient: OkHttpClient,
     private val request: Request,
     listener: WebSocketListener,
+    private val onConnectStatusChangeListener: ConnectionStatusListener,
     private val config: Config = Config(),
 ) : WebSocket {
 
     data class Config(val reconnectInterval: Long = TimeUnit.SECONDS.toMillis(1))
-
-    enum class Status {
-        Connected,
-        Connecting,
-        Disconnected
-    }
 
     private val isConnected = AtomicBoolean(false)
 
@@ -37,17 +33,12 @@ class AutoConnectWebsocket(
     /**
      * get the status of reconnection
      */
-    val status: Status
+    val status: WebsocketStatus
         get() = when {
-            isConnected.get() -> Status.Connected
-            isConnecting.get() -> Status.Connecting
-            else -> Status.Disconnected
+            isConnected.get() -> WebsocketStatus.Connected
+            isConnecting.get() -> WebsocketStatus.Connecting
+            else -> WebsocketStatus.Disconnected
         }
-
-    /**
-     * if you want to listen the reconnection status change, you can set this listener
-     */
-    var onConnectStatusChangeListener: ((status: Status) -> Unit) = { }
 
     /**
      * this listener will be invoked before on reconnection
@@ -142,6 +133,7 @@ class AutoConnectWebsocket(
     }
 
     override fun close(code: Int, reason: String?): Boolean {
+        onConnectStatusChangeListener.invoke(WebsocketStatus.Disconnected)
         return webSocket.close(code, reason)
     }
 
@@ -159,6 +151,10 @@ class AutoConnectWebsocket(
 
     override fun send(bytes: ByteString): Boolean {
         return webSocket.send(bytes)
+    }
+
+    interface ConnectionStatusListener {
+        operator fun invoke(status: WebsocketStatus)
     }
 
 }
