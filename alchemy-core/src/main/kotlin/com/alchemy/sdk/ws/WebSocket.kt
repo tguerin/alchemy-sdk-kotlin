@@ -46,9 +46,8 @@ class WebSocket internal constructor(
 
     private val websocketConnection = WebSocketConnection(websocketUrl, okHttpClientBuilder)
 
-    fun status(): Flow<WebsocketStatus> {
-        return websocketConnection.status.map { it.status }
-    }
+    val status: Flow<WebsocketStatus>
+        get() = websocketConnection.status.map { it.status }
 
     fun <T> on(method: WebsocketMethod<T>): Flow<Result<T>> {
         return on(method, 0)
@@ -62,7 +61,7 @@ class WebSocket internal constructor(
         val flow = websocketConnection.flow
             .parseResponse(method)
             .dataOnly<T>()
-            .combine(status()) { data, status ->
+            .combine(status) { data, status ->
                 if (status == WebsocketStatus.Reconnected) {
                     mapSubscriptionByMethod.keys.forEach {
                         // Reconnect all subscriptions

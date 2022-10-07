@@ -35,7 +35,7 @@ class WebSocketIntegrationTest {
     @Test
     fun `should listen to websocket status`() = runTest {
         val statusList = mutableListOf<WebsocketStatus>()
-        alchemy.ws.status().take(2).toList(statusList)
+        alchemy.ws.status.take(2).toList(statusList)
         statusList shouldBeEqualTo listOf(WebsocketStatus.Disconnected, WebsocketStatus.Connected)
     }
 }
