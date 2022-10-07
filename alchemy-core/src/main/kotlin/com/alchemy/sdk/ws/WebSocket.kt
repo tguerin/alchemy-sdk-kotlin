@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onSubscription
-import kotlinx.coroutines.flow.take
 import okhttp3.OkHttpClient
 import java.io.StringReader
 
@@ -50,15 +49,7 @@ class WebSocket internal constructor(
         get() = websocketConnection.status.map { it.status }
 
     fun <T> on(method: WebsocketMethod<T>): Flow<Result<T>> {
-        return on(method, 0)
-    }
-
-    fun <T> once(method: WebsocketMethod<T>): Flow<Result<T>> {
-        return on(method, 1)
-    }
-
-    private fun <T> on(method: WebsocketMethod<T>, numberOfEvents: Int): Flow<Result<T>> {
-        val flow = websocketConnection.flow
+        return websocketConnection.flow
             .parseResponse(method)
             .dataOnly<T>()
             .combine(status) { data, status ->
@@ -71,11 +62,6 @@ class WebSocket internal constructor(
                 }
                 data
             }
-        return if (numberOfEvents > 0) {
-            flow.take(numberOfEvents)
-        } else {
-            flow
-        }
     }
 
     private fun <T> StateFlow<WebsocketEvent.RawMessage>.parseResponse(
