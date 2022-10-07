@@ -42,6 +42,8 @@ import com.alchemy.sdk.nft.model.OwnedNftsResponse
 import com.alchemy.sdk.nft.model.RefreshState
 import com.alchemy.sdk.nft.model.TokenMetadata
 import com.alchemy.sdk.util.HexString.Companion.hexString
+import com.alchemy.sdk.ws.adapter.PendingTransactionDeserializer
+import com.alchemy.sdk.ws.model.PendingTransaction
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.InstanceCreator
@@ -59,14 +61,24 @@ internal class GsonUtil {
                     override fun createInstance(type: Type): Address {
                         return Address.from("0x")
                     }
-                })
+                }
+                )
                 .registerTypeAdapter(
                     BlockTransaction::class.java,
                     object : InstanceCreator<BlockTransaction> {
                         override fun createInstance(type: Type): BlockTransaction {
                             return BlockTransaction.Unknown
                         }
-                    })
+                    }
+                )
+                .registerTypeAdapter(
+                    PendingTransaction::class.java,
+                    object : InstanceCreator<PendingTransaction> {
+                        override fun createInstance(type: Type): PendingTransaction {
+                            return PendingTransaction.HashOnly("0x".hexString)
+                        }
+                    }
+                )
                 .registerTypeAdapter(Address::class.java, AddressDeserializer)
                 .registerTypeAdapter(Address.ContractAddress::class.java, AddressDeserializer)
                 .registerTypeAdapter(Address.EthereumAddress::class.java, AddressDeserializer)
@@ -94,6 +106,7 @@ internal class GsonUtil {
                 .registerTypeAdapter(RawInt::class.java, RawIntSerializer)
                 .registerTypeAdapter(Index::class.java, RawFloatSerializer)
                 .registerTypeAdapter(Percentile::class.java, PercentileSerializer)
+                .registerTypeAdapter(PendingTransaction::class.java, PendingTransactionDeserializer)
                 .create()
         }
 

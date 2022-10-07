@@ -69,6 +69,7 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
     val ws by lazy {
         WebSocket(
             idGenerator = idGenerator,
+            core = core,
             gson = gson,
             websocketUrl = Constants.getAlchemyWebsocketUrl(
                 alchemySettings.network,

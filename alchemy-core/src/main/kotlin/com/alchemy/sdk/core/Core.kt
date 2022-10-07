@@ -240,7 +240,7 @@ class Core(
         }
     }
 
-    private suspend fun resolveAddress(address: Address): Result<Address> {
+    internal suspend fun resolveAddress(address: Address): Result<Address> {
         return try {
             val resolvedAddress = when (address) {
                 is Address.EnsAddress -> {

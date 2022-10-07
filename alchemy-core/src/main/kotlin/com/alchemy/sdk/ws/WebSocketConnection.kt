@@ -40,23 +40,8 @@ internal class WebSocketConnection(
     )
 
     val flow = responseFlow
-        .filter(::ignoreFirstEmptyMessage)
-        .stateIn(
-            scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = WebsocketEvent.RawMessage("")
-        )
 
     val status = statusFlow
-        .distinctUntilChanged { old, new -> old == new }
-        .stateIn(
-            scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = WebsocketEvent.Status(WebsocketStatus.Disconnected)
-        )
-
-    private fun ignoreFirstEmptyMessage(event: WebsocketEvent) =
-        !(event is WebsocketEvent.RawMessage && event.message.isEmpty())
 
     fun send(event: String) {
         websocket.send(event)
@@ -65,7 +50,7 @@ internal class WebSocketConnection(
     private inner class ConnectionStatusListener : AutoConnectWebsocket.ConnectionStatusListener {
         override fun invoke(webSocket: WebSocket, status: WebsocketStatus) {
             coroutineScope.launch {
-                statusFlow.tryEmit(WebsocketEvent.Status(status))
+                statusFlow.emit(WebsocketEvent.Status(status))
             }
         }
     }
@@ -74,13 +59,13 @@ internal class WebSocketConnection(
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             coroutineScope.launch {
-                responseFlow.tryEmit(WebsocketEvent.RawMessage(text))
+                responseFlow.emit(WebsocketEvent.RawMessage(text))
             }
         }
 
         override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
             coroutineScope.launch {
-                responseFlow.tryEmit(WebsocketEvent.RawMessage(bytes.toAsciiUppercase().toString()))
+                responseFlow.emit(WebsocketEvent.RawMessage(bytes.toAsciiUppercase().toString()))
             }
         }
 
