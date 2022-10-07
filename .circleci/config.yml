@@ -1,48 +1,24 @@
 version: 2.1
 
-orbs:
-  gradle: circleci/gradle@3.0.0
-
 executors:
   test-executor:
     docker:
       - image: cimg/android:2022.09
 
 jobs:
-  upload-code-coverage:
+  build:
     executor: test-executor
     steps:
+      - checkout
+      - run:
+          name: Build and execute tests
+          command: ./gradlew :json-rpc-client:test
       - run:
           name: Upload code coverage
           when: on_success
-          command: |
-            curl -H "Circle-Token: ${CIRCLE_TOKEN}" https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/:build_num/artifacts \
-            | grep -o 'https://[^"]*' \
-            | wget --verbose --header "Circle-Token: ${CIRCLE_TOKEN}" --input-file -
-      - run:
-          name: Upload code coverage
-          when: on_success
-          command: |
-            curl -Os https://uploader.codecov.io/latest/linux/codecov
-            chmod +x codecov
-            ./codecov -t ${CODECOV_TOKEN}
+          command: bash <(curl -s https://codecov.io/bash)
 
 workflows:
   gradle_test:
     jobs:
-      - gradle/test:
-          name: json-rpc-client
-          test_command: ":json-rpc-client:test"
-          reports_path: json-rpc-client/build/reports/
-          test_results_path: json-rpc-client/build/test-results/
-          executor: test-executor
-#      - gradle/test:
-#          name: alchemy-core
-#          test_command: ":alchemy-core:test"
-#          reports_path: alchemy-core/build/reports/
-#          test_results_path: alchemy-core/build/test-results/
-#          executor: test-executor
-      - upload-code-coverage:
-          requires:
-            - json-rpc-client
-#            - alchemy-core
+      - build
