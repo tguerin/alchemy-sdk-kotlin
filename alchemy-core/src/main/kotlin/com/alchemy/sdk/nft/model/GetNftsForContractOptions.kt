@@ -32,7 +32,7 @@ data class GetNftsForContractOptions(
         val queryData = ProxyRetrofitQueryMap()
         startToken?.let {
             // Somehow this parameter requires a 64 long hex (+2 for 0x)
-            var startTokenAsString = it.toString()
+            var startTokenAsString = it.data
             val missingDigits = 66 - startTokenAsString.length
             if (missingDigits > 0) {
                 startTokenAsString =

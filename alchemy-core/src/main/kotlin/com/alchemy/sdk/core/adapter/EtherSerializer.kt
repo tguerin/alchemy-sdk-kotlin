@@ -15,7 +15,7 @@ object EtherSerializer : JsonSerializer<Ether?> {
         context: JsonSerializationContext
     ): JsonElement {
         return if (src != null) {
-            JsonPrimitive(src.weiHexValue.toString())
+            JsonPrimitive(src.weiHexValue.data)
         } else {
             JsonNull.INSTANCE
         }

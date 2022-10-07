@@ -19,10 +19,10 @@ object LogFilterSerializer : JsonSerializer<LogFilter> {
         return when (src) {
             is LogFilter.BlockHashFilter -> {
                 val jsonObject = JsonObject()
-                jsonObject.add("blockHash", JsonPrimitive(src.blockHash.toString()))
+                jsonObject.add("blockHash", JsonPrimitive(src.blockHash.data))
                 if (src.addresses.isNotEmpty()) {
                     val jsonArray = JsonArray()
-                    src.addresses.forEach { jsonArray.add(it.value.toString()) }
+                    src.addresses.forEach { jsonArray.add(it.value.data) }
                     jsonObject.add("addresses", jsonArray)
                 }
                 jsonObject
@@ -33,7 +33,7 @@ object LogFilterSerializer : JsonSerializer<LogFilter> {
                 jsonObject.add("to", JsonPrimitive(src.to.value))
                 if (src.addresses.isNotEmpty()) {
                     val jsonArray = JsonArray()
-                    src.addresses.forEach { jsonArray.add(it.value.toString()) }
+                    src.addresses.forEach { jsonArray.add(it.value.data) }
                     jsonObject.add("addresses", jsonArray)
                 }
                 jsonObject

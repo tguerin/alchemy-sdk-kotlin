@@ -15,12 +15,12 @@ class HexStringTest {
 
     @Test
     fun `should parse valid hex value and add missing prefix`() {
-        "04BC".hexString.toString() shouldBeEqualTo "0x04bc"
+        "04BC".hexString.data shouldBeEqualTo "0x04bc"
     }
 
     @Test
     fun `should parse valid hex value and lowercase it`() {
-        "0x04BC".hexString.toString() shouldBeEqualTo "0x04bc"
+        "0x04BC".hexString.data shouldBeEqualTo "0x04bc"
     }
 
     @Test
@@ -48,22 +48,22 @@ class HexStringTest {
 
     @Test
     fun `should be able to parse integer`() {
-        2.hexString.toString() shouldBeEqualTo "0x02"
+        2.hexString.data shouldBeEqualTo "0x02"
     }
 
     @Test
     fun `should be able to parse Long`() {
-        2L.hexString.toString() shouldBeEqualTo "0x02"
+        2L.hexString.data shouldBeEqualTo "0x02"
     }
 
     @Test
     fun `should be able to parse big integer`() {
-        BigInteger.valueOf(2).hexString.toString() shouldBeEqualTo "0x02"
+        BigInteger.valueOf(2).hexString.data shouldBeEqualTo "0x02"
     }
 
     @Test
     fun `should be able to parse integer part of big decimal`() {
-        BigDecimal.valueOf(2.0).hexString.toString() shouldBeEqualTo "0x02"
+        BigDecimal.valueOf(2.0).hexString.data shouldBeEqualTo "0x02"
     }
 
     @Test

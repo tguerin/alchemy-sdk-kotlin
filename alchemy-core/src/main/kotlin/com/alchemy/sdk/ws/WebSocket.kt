@@ -288,6 +288,11 @@ class WebSocket internal constructor(
         }
     }
 
+    /** For test purpose */
+    fun emit(message: String) {
+        websocketConnection.emit(message)
+    }
+
     private class Subscription(
         var subscriptionId: HexString? = null,
         var subscriptionCount: Int

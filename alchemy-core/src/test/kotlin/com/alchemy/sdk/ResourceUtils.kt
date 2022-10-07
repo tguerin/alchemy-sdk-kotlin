@@ -18,6 +18,12 @@ class ResourceUtils {
             )
         }
 
+        fun readFile(fileName: String): String {
+            return File("src/test/resources/$fileName").useLines {
+                it.joinToString("")
+            }
+        }
+
         private fun jsonReaderFromFileName(fileName: String): JsonReader {
             return JsonReader(
                 InputStreamReader(

@@ -12,7 +12,7 @@ jobs:
       - checkout
       - run:
           name: Build and execute tests
-          command: ./gradlew :json-rpc-client:test
+          command: ./gradlew test
       - run:
           name: Upload code coverage
           when: on_success

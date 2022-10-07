@@ -69,9 +69,9 @@ class OwnedNftDeserializerTest {
     fun `should parse owned nft as alchemy nft`() {
         val ownedNft = parseFile(
             "owned_nft_with_metadata.json",
-            OwnedNft.OwnedAlchemyNft::class.java,
+            OwnedNft::class.java,
             nftGson
-        )
+        ) as OwnedNft.OwnedAlchemyNft
         ownedNft.contract.address.value shouldBeEqualTo "0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString
         ownedNft.tokenId shouldBeEqualTo "0x0000000000000000000000000000000000000000000000000000000000000001".hexString
         ownedNft.tokenType shouldBeEqualTo NftTokenType.Erc721

@@ -5,18 +5,11 @@ class ProxyRetrofitQueryMap(m: Map<String, Any> = emptyMap()) : HashMap<String, 
 
     override val entries: MutableSet<MutableMap.MutableEntry<String, Any>>
         get() {
-            val originSet: Set<Map.Entry<String?, Any?>> = super.entries
+            val originSet: Set<Map.Entry<String, Any>> = super.entries
             val newSet: MutableSet<MutableMap.MutableEntry<String, Any>> = LinkedHashSet()
-
             for (entry in originSet) {
-                val entryKey =
-                    entry.key ?: throw IllegalArgumentException("Query map contained null key")
+                val entryKey = entry.key
                 when (val entryValue = entry.value) {
-                    null -> {
-                        throw IllegalArgumentException(
-                            "Query map contained null value for key '$entryKey'."
-                        )
-                    }
                     is List<*> -> {
                         for (arrayValue in entryValue) {
                             if (arrayValue != null) { // Skip null values

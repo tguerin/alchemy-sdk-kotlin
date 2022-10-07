@@ -67,9 +67,14 @@ publishing {
     }
 }
 
-tasks.test {
-    finalizedBy(tasks.jacocoTestReport)
-}
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
+tasks.withType<JacocoReport> {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.map {
+            fileTree(it).apply {
+                exclude("com/alchemy/sdk/**/model")
+                // https://github.com/jacoco/jacoco/issues/1036
+                exclude("com/alchemy/sdk/transact")
+            }
+        }))
+    }
 }

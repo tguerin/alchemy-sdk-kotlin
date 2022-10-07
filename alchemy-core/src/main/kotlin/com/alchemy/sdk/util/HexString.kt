@@ -31,25 +31,6 @@ class HexString private constructor(val data: String) {
         return HexString("0x" + withoutPrefix() + anotherHexString.withoutPrefix())
     }
 
-    override fun toString(): String {
-        return data
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as HexString
-
-        if (data != other.data) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return data.hashCode()
-    }
-
     fun hasLength(length: Int): Boolean {
         require(length > 0)
         return length() == length
@@ -94,6 +75,25 @@ class HexString private constructor(val data: String) {
 
     fun length(): Int {
         return withoutPrefix().length / 2
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as HexString
+
+        if (data != other.data) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return data.hashCode()
+    }
+
+    override fun toString(): String {
+        return "HexString(data='$data')"
     }
 
     companion object {

@@ -15,7 +15,7 @@ object HexStringSerializer : JsonSerializer<HexString> {
         context: JsonSerializationContext
     ): JsonElement {
         return if (src != null) {
-            JsonPrimitive(src.toString())
+            JsonPrimitive(src.data)
         } else {
             JsonNull.INSTANCE
         }

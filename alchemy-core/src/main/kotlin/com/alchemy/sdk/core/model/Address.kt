@@ -131,4 +131,9 @@ sealed class Address private constructor(
         return value.hashCode()
     }
 
+    override fun toString(): String {
+        return "${this::class.java.simpleName}(value=$value)"
+    }
+
+
 }

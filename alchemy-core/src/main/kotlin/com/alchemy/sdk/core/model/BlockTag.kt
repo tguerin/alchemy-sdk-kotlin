@@ -8,5 +8,5 @@ sealed class BlockTag(val value: String) {
     object Safe : BlockTag("safe")
     object Finalized : BlockTag("finalized")
     object Earliest : BlockTag("earlies")
-    class BlockTagNumber(blockTagNumber: HexString) : BlockTag(blockTagNumber.toString())
+    class BlockTagNumber(blockTagNumber: HexString) : BlockTag(blockTagNumber.data)
 }

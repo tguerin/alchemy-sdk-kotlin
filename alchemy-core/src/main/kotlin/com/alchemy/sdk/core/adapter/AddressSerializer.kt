@@ -15,7 +15,7 @@ object AddressSerializer : JsonSerializer<Address?> {
         context: JsonSerializationContext
     ): JsonElement {
         return if (src != null) {
-            JsonPrimitive(src.value.toString())
+            JsonPrimitive(src.value.data)
         } else {
             JsonNull.INSTANCE
         }

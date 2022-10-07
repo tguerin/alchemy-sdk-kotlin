@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Adapted from https://github.com/VinsonGuo/ReconnectWebSocketWrapper
  */
-internal class AutoConnectWebsocket(
+internal class AutoConnectWebSocket(
     private val okHttpClient: OkHttpClient,
     private val request: Request,
     listener: WebSocketListener,
@@ -162,6 +162,10 @@ internal class AutoConnectWebsocket(
 
     override fun send(bytes: ByteString): Boolean {
         return webSocket.send(bytes)
+    }
+
+    fun emit(message: String) {
+        webSocketListener.onMessage(webSocket, message)
     }
 
     interface ConnectionStatusListener {

@@ -22,10 +22,14 @@ import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import java.net.SocketTimeoutException
+import java.util.concurrent.TimeUnit
+
 
 class HttpJsonRpcClientTest {
 
-    private val okHttpClient = OkHttpClient()
+    private val okHttpClient = OkHttpClient.Builder()
+        .build()
 
     private val gson = Gson()
 
@@ -174,6 +178,29 @@ class HttpJsonRpcClientTest {
         val exception = result.exceptionOrNull()
         exception shouldBeInstanceOf RuntimeException::class.java
         exception?.message shouldBeEqualTo "error.invalid.body"
+    }
+
+    @Test
+    fun `should return failure on connection failure`() = runTest {
+        httpJsonRpcClient = HttpJsonRpcClient(
+            mockWebServer.url("/").toString(),
+            OkHttpClient.Builder().readTimeout(1, TimeUnit.MILLISECONDS).build(),
+            gson
+        )
+        val jsonRpcRequest = JsonRpcRequest(
+            "1",
+            "2.0",
+            "eth_getBalance",
+            listOf("0x1188aa75c38e1790be3768508743fbe7b50b2153")
+        )
+        val result = httpJsonRpcClient.call<String>(jsonRpcRequest, String::class.java)
+
+        val request = withContext(Dispatchers.IO) { mockWebServer.takeRequest() }
+        request.body.peek()
+            .readString(Charsets.UTF_8) shouldBeEqualTo "{\"id\":\"1\",\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0x1188aa75c38e1790be3768508743fbe7b50b2153\"]}"
+        result.isFailure shouldBeEqualTo true
+        val exception = result.exceptionOrNull()
+        exception shouldBeInstanceOf SocketTimeoutException::class
     }
 
 }

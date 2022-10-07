@@ -18,7 +18,6 @@ class Transact internal constructor(
     suspend fun sendPrivateTransaction(privateTransactionCall: PrivateTransactionCall) =
         core.sendPrivateTransaction(privateTransactionCall)
 
-    suspend fun sendPrivateTransaction(cancelPrivateTransactionRequest: CancelPrivateTransactionRequest) =
+    suspend fun cancelPrivateTransaction(cancelPrivateTransactionRequest: CancelPrivateTransactionRequest) =
         core.cancelPrivateTransaction(cancelPrivateTransactionRequest)
-
 }

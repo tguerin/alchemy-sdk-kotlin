@@ -57,7 +57,7 @@ class CcipReadFetcherTest {
             urls = listOf(mockWebServer.url("/").toString() + "{sender}/{data}")
         )
 
-        mockWebServer.takeRequest().requestUrl.toString() shouldBeEqualTo "${mockWebServer.url("/")}${Network.ETH_MAINNET.ensAddress!!.value}/0x02"
+        mockWebServer.takeRequest().requestUrl.toString() shouldBeEqualTo "${mockWebServer.url("/")}${Network.ETH_MAINNET.ensAddress!!.value.data}/0x02"
     }
 
     @Test

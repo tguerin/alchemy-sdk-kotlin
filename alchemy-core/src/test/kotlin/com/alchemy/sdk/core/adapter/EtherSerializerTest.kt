@@ -27,7 +27,7 @@ class EtherSerializerTest {
             1.ether,
             Ether::class.java,
             context
-        ) shouldBeEqualTo JsonPrimitive(1.ether.wei.hexString.toString())
+        ) shouldBeEqualTo JsonPrimitive(1.ether.wei.hexString.data)
     }
 
     @Test

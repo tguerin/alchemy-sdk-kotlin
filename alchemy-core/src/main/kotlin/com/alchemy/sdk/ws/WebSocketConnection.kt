@@ -5,10 +5,6 @@ import com.alchemy.sdk.ws.model.WebsocketStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -28,7 +24,7 @@ internal class WebSocketConnection(
 
     private val statusFlow = MutableStateFlow(WebsocketEvent.Status(WebsocketStatus.Disconnected))
 
-    private val websocket = AutoConnectWebsocket(
+    private val websocket = AutoConnectWebSocket(
         okHttpClient = okHttpClientBuilder
             .readTimeout(0, TimeUnit.MILLISECONDS)
             .build(),
@@ -47,7 +43,11 @@ internal class WebSocketConnection(
         websocket.send(event)
     }
 
-    private inner class ConnectionStatusListener : AutoConnectWebsocket.ConnectionStatusListener {
+    fun emit(message: String) {
+        websocket.emit(message)
+    }
+
+    private inner class ConnectionStatusListener : AutoConnectWebSocket.ConnectionStatusListener {
         override fun invoke(webSocket: WebSocket, status: WebsocketStatus) {
             coroutineScope.launch {
                 statusFlow.emit(WebsocketEvent.Status(status))
