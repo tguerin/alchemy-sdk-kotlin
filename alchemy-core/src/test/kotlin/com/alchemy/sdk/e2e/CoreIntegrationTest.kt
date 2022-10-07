@@ -328,7 +328,7 @@ class CoreIntegrationTest {
     }
 
     @Test
-    @Ignore // Returns 503 for now...
+    @Ignore("Returns 503 for now")
     fun `estimate gas of a transaction`() = runTest {
         val data = alchemy.core.estimateGas(BlockTag.Latest)
         data.getOrThrow().decimalValue() shouldBeGreaterThan BigInteger.valueOf(0)

@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
+import org.junit.Ignore
 import org.junit.Test
 
 class WebSocketIntegrationTest {
@@ -37,6 +38,7 @@ class WebSocketIntegrationTest {
     }
 
     @Test
+    @Ignore("Sometime there is no pending transaction")
     fun `should listen to pending transactions hash only`() = runTest {
         val pendingTransactionResult = alchemy.ws.on(
             WebsocketMethod.PendingTransactions(
@@ -50,7 +52,8 @@ class WebSocketIntegrationTest {
     }
 
     @Test
-    fun `should listen to transactions`() = runTest {
+    @Ignore("Sometime there is no pending transaction")
+    fun `should listen to pending transactions`() = runTest {
         val pendingTransactionResult = alchemy.ws.on(WebsocketMethod.PendingTransactions())
             .take(1)
             .single()

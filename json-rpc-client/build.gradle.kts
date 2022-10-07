@@ -1,5 +1,6 @@
 plugins {
     id("kotlin")
+    id("jacoco")
 }
 
 dependencies {
@@ -13,4 +14,11 @@ dependencies {
     testImplementation(libs.test.mock.webserver)
     testImplementation(libs.test.mockk)
     testImplementation(libs.test.mockk.agent)
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
 }

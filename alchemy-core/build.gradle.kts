@@ -4,6 +4,7 @@ import groovy.util.Node
 plugins {
     id("kotlin")
     id("maven-publish")
+    id("jacoco")
 }
 
 dependencies {
@@ -64,4 +65,11 @@ publishing {
             }
         }
     }
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
 }
