@@ -16,6 +16,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
+    implementation("io.michaelrocks.bimap:bimap:1.1.0")
 
     testImplementation(libs.test.fluent.assertions)
     testImplementation(libs.test.junit)

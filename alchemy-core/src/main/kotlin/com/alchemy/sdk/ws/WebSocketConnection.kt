@@ -4,7 +4,9 @@ import com.alchemy.sdk.ws.model.WebsocketEvent
 import com.alchemy.sdk.ws.model.WebsocketStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -20,22 +22,27 @@ internal class WebSocketConnection(
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
-    private val responseFlow = MutableStateFlow(WebsocketEvent.RawMessage(""))
+    private val responseFlow = MutableSharedFlow<WebsocketEvent.RawMessage>(replay = 1)
 
     private val statusFlow = MutableStateFlow(WebsocketEvent.Status(WebsocketStatus.Disconnected))
 
-    private val websocket = AutoConnectWebSocket(
-        okHttpClient = okHttpClientBuilder
-            .readTimeout(0, TimeUnit.MILLISECONDS)
-            .build(),
-        request = Request.Builder()
-            .url(websocketUrl)
-            .build(),
-        listener = ChannelWebsocketListener(),
-        onConnectStatusChangeListener = ConnectionStatusListener()
-    )
+    private val websocket by lazy {
+        AutoConnectWebSocket(
+            okHttpClient = okHttpClientBuilder
+                .readTimeout(0, TimeUnit.MILLISECONDS)
+                .build(),
+            request = Request.Builder()
+                .url(websocketUrl)
+                .build(),
+            listener = ChannelWebsocketListener(),
+            onConnectStatusChangeListener = ConnectionStatusListener()
+        )
+    }
 
     val flow = responseFlow
+        .filter {
+            it.message.isNotEmpty()
+        }
 
     val status = statusFlow
 
@@ -45,6 +52,14 @@ internal class WebSocketConnection(
 
     fun emit(message: String) {
         websocket.emit(message)
+    }
+
+    fun close(code: Int, message: String) {
+        websocket.close(code, message)
+    }
+
+    fun connect() {
+        websocket.connect()
     }
 
     private inner class ConnectionStatusListener : AutoConnectWebSocket.ConnectionStatusListener {

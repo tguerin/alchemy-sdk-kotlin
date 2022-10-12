@@ -1,0 +1,8 @@
+{
+  "jsonrpc": "2.0",
+  "method": "eth_subscription",
+  "params": {
+    "result": "0xebff6b88c246f69ae42fbb9886f33b5091fb838526a9acbc9441e3c7f14154da",
+    "subscription": "0xef1b1958c8799cff1a0db6cdad6b0949"
+  }
+}

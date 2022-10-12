@@ -15,7 +15,7 @@ sealed class WebsocketMethod<R>(
     )
 
     data class PendingTransactions(
-        val fromAddress:Address? = null,
+        val fromAddress: Address? = null,
         val toAddresses: List<Address> = emptyList(),
         val hashesOnly: Boolean = false,
     ) : WebsocketMethod<PendingTransaction>(

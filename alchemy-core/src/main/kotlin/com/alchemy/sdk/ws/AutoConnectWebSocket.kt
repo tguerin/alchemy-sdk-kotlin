@@ -24,13 +24,13 @@ internal class AutoConnectWebSocket(
     private val config: Config = Config(),
 ) : WebSocket {
 
-    data class Config(val reconnectInterval: Long = TimeUnit.SECONDS.toMillis(1))
+    data class Config(val reconnectInterval: Long = TimeUnit.SECONDS.toMillis(5))
 
     private val isConnected = AtomicBoolean(false)
 
-    private val isReConnected = AtomicBoolean(false)
-
     private val isConnecting = AtomicBoolean(false)
+
+    private val isStopped = AtomicBoolean(false)
 
     /**
      * get the status of reconnection
@@ -38,8 +38,7 @@ internal class AutoConnectWebSocket(
     val status: WebsocketStatus
         get() = when {
             isConnected.get() -> WebsocketStatus.Connected
-            isReConnected.get() -> WebsocketStatus.Reconnected
-            isConnecting.get() -> WebsocketStatus.Connecting
+            isConnecting.get() -> WebsocketStatus.Reconnecting
             else -> WebsocketStatus.Disconnected
         }
 
@@ -55,17 +54,18 @@ internal class AutoConnectWebSocket(
      */
     val reconnectAttemptCount = AtomicInteger(0)
 
-    private val timer: Timer by lazy { Timer() }
+    private var timer: Timer? = null
 
     private val webSocketListener = object : WebSocketListener() {
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             isConnected.compareAndSet(true, false)
-            isReConnected.compareAndSet(true, false)
-            onConnectStatusChangeListener.invoke(webSocket, status)
+            onConnectStatusChangeListener(webSocket, status)
+            listener.onClosed(webSocket, code, reason)
             if (code != 1000) {
                 doReconnect()
+            } else {
+                isStopped.compareAndSet(false, true)
             }
-            listener.onClosed(webSocket, code, reason)
         }
 
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
@@ -74,8 +74,7 @@ internal class AutoConnectWebSocket(
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             isConnected.compareAndSet(true, false)
-            isReConnected.compareAndSet(true, false)
-            onConnectStatusChangeListener.invoke(webSocket, status)
+            onConnectStatusChangeListener(webSocket, status)
             doReconnect()
             listener.onFailure(webSocket, t, response)
         }
@@ -89,17 +88,15 @@ internal class AutoConnectWebSocket(
         }
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
-            if (isConnecting.get()) {
-                isReConnected.compareAndSet(false, true)
-            } else {
-                isConnected.compareAndSet(false, true)
-            }
+            isConnected.compareAndSet(false, true)
             isConnecting.compareAndSet(true, false)
+            isStopped.compareAndSet(true, false)
 
-            onConnectStatusChangeListener.invoke(webSocket, status)
+            onConnectStatusChangeListener(webSocket, status)
 
             synchronized(this) {
-                timer.cancel()
+                timer?.cancel()
+                timer = null
             }
             reconnectAttemptCount.set(0)
             listener.onOpen(webSocket, response)
@@ -110,41 +107,47 @@ internal class AutoConnectWebSocket(
 
     init {
         webSocket = okHttpClient.newWebSocket(request, webSocketListener)
-        onConnectStatusChangeListener.invoke(webSocket, status)
+        onConnectStatusChangeListener(webSocket, status)
     }
 
     private fun doReconnect() {
-        if (isConnected.get() || isReConnected.get() || isConnecting.get()) {
+        if (isConnected.get() || isConnecting.get()) {
             return
         }
+        isStopped.compareAndSet(true, false)
         isConnecting.compareAndSet(false, true)
 
-        onConnectStatusChangeListener.invoke(webSocket, status)
+        println("Reconnecting")
+        onConnectStatusChangeListener(webSocket, status)
 
         synchronized(this) {
-            timer.scheduleAtFixedRate(
-                object : TimerTask() {
-                    override fun run() {
-                        webSocket.cancel()
-                        val reconnectRequest = onPreReconnectListener.invoke(request)
-                        webSocket = okHttpClient.newWebSocket(reconnectRequest, webSocketListener)
-                    }
-                },
-                0,
-                config.reconnectInterval
-            )
+            timer = Timer().also {
+                it.scheduleAtFixedRate(
+                    object : TimerTask() {
+                        override fun run() {
+                            webSocket.cancel()
+                            val reconnectRequest = onPreReconnectListener(request)
+                            webSocket =
+                                okHttpClient.newWebSocket(reconnectRequest, webSocketListener)
+                        }
+                    },
+                    0,
+                    config.reconnectInterval
+                )
+            }
         }
     }
 
     override fun cancel() {
         isConnected.compareAndSet(true, false)
-        onConnectStatusChangeListener.invoke(webSocket, status)
-        timer.cancel()
+        onConnectStatusChangeListener(webSocket, status)
+        timer?.cancel()
+        timer = null
         webSocket.cancel()
     }
 
     override fun close(code: Int, reason: String?): Boolean {
-        onConnectStatusChangeListener.invoke(webSocket, WebsocketStatus.Disconnected)
+        onConnectStatusChangeListener(webSocket, WebsocketStatus.Disconnected)
         return webSocket.close(code, reason)
     }
 
@@ -166,6 +169,12 @@ internal class AutoConnectWebSocket(
 
     fun emit(message: String) {
         webSocketListener.onMessage(webSocket, message)
+    }
+
+    fun connect() {
+        if (isStopped.get()) {
+            doReconnect()
+        }
     }
 
     interface ConnectionStatusListener {

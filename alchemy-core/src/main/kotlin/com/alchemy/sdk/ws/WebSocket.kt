@@ -5,9 +5,10 @@ import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.json.rpc.client.generator.IdGenerator
 import com.alchemy.sdk.json.rpc.client.model.JsonRpcException
 import com.alchemy.sdk.json.rpc.client.model.JsonRpcRequest
-import com.alchemy.sdk.json.rpc.client.model.JsonRpcResponse
 import com.alchemy.sdk.util.HexString
+import com.alchemy.sdk.util.HexString.Companion.hexString
 import com.alchemy.sdk.util.pmap
+import com.alchemy.sdk.ws.WebSocket.MessageWithMetadata.Companion.DefaultSubscriptionId
 import com.alchemy.sdk.ws.model.PendingTransaction
 import com.alchemy.sdk.ws.model.WebSocketJsonRpcResponse
 import com.alchemy.sdk.ws.model.WebsocketEvent
@@ -20,17 +21,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import java.io.StringReader
 
@@ -49,151 +52,172 @@ class WebSocket internal constructor(
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
-    private val mapSubscriptionByMethod = mutableMapOf<WebsocketMethod<*>, Subscription>()
+    private val flowCache = mutableMapOf<WebsocketMethod<*>, Flow<*>>()
+    private val mapMethodBySubscription = mutableMapOf<HexString, WebsocketMethod<*>>()
+    private val mapSubscriptionByMethodId = mutableMapOf<String, HexString>()
 
     private val websocketConnection = WebSocketConnection(websocketUrl, okHttpClientBuilder)
 
     val status by lazy {
-        websocketConnection.status.map { it.status }
+        websocketConnection.status
+            .map { it.status }
             .stateIn(
                 scope = coroutineScope,
-                started = SharingStarted.WhileSubscribed(5_000),
+                started = SharingStarted.WhileSubscribed(),
                 initialValue = WebsocketStatus.Disconnected
             )
             .distinctUntilChanged { old, new -> old == new }
     }
 
-    private val reconnectionAwareFlow = websocketConnection.flow
-        .combine(status) { data, status ->
-            resubscribeIfNecessary(status)
-            data
-        }
-        .stateIn(
+    private val connectionTrigger = flowOf(true)
+        .shareIn(
             scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = WebsocketEvent.RawMessage("")
+            replay = 1,
+            started = SharingStarted.WhileSubscribed(),
         )
-
-    private suspend fun resubscribeIfNecessary(status: WebsocketStatus) {
-        if (status == WebsocketStatus.Reconnected) {
-            mapSubscriptionByMethod.keys.forEach {
-                // Reconnect all subscriptions
-                websocketConnection.send(forgeEvent(it))
-                // TODO here we could backfill missing data
-            }
+        .onStart {
+            websocketConnection.connect()
         }
+        .onCompletion {
+            websocketConnection.close(1000, "no subscribers")
+        }
+
+    private val reconnectionAwareFlow by lazy {
+        websocketConnection.flow
+            .map(::parseMetadata)
+            .mapNotNull(::parse)
+            .shareIn(
+                scope = coroutineScope,
+                started = SharingStarted.WhileSubscribed()
+            )
     }
 
-
-    private fun ignoreFirstEmptyMessage(event: WebsocketEvent) =
-        !(event is WebsocketEvent.RawMessage && event.message.isEmpty())
-
-    suspend fun <T> on(method: WebsocketMethod<T>): Flow<Result<T>> {
-        val resolvedMethod = resolveMethod(method)
-        return reconnectionAwareFlow
-            .onSubscription {
-                subscribeToEventOnce(resolvedMethod)
+    private fun parseMetadata(rawMessage: WebsocketEvent.RawMessage): MessageWithMetadata {
+        val subscriptionMatchResult = when {
+            rawMessage.message.contains("subscription") -> {
+                subscriptionRegex.find(rawMessage.message)
             }
-            .parseResponse(resolvedMethod)
-            .dataOnly<T>()
-            .filter {
-                filterResponse(resolvedMethod, it)
-            }
-            .catch { e ->
-                Result.failure<T>(e)
-            }
-    }
-
-    private fun <T> Flow<WebsocketEvent.RawMessage>.parseResponse(
-        method: WebsocketMethod<T>
-    ): Flow<WebsocketEvent> {
-        return this
-            .filter(::ignoreFirstEmptyMessage)
-            .mapNotNull { event ->
-                parse(method, event)
-            }
-            .onEach { event ->
-                updateSubscriptionId(method, event)
-            }
-            .onCompletion {
-                unsubscribeIfNoSubscribers(method)
-            }
-    }
-
-    private fun <T> parse(
-        method: WebsocketMethod<T>,
-        event: WebsocketEvent.RawMessage
-    ): WebsocketEvent? {
-        return when {
-            event.message.contains("params") -> {
-                WebsocketEvent.Data(parseWebSocketResponseContent(method.responseType, event))
-            }
-            event.message.contains("true") || event.message.contains("false") -> {
-                WebsocketEvent.UnSubscription(event.message.contains("true"))
+            rawMessage.message.contains("result") -> {
+                resultRegex.find(rawMessage.message)
             }
             else -> {
-                val subscriptionId = parseSubscriptionContent(event)
-                if (subscriptionId != null) {
-                    WebsocketEvent.Subscription(subscriptionId)
-                } else {
-                    null
-                }
+                null
             }
+        }
+        val idMatchResult = idRegex.find(rawMessage.message)
+        return MessageWithMetadata(
+            rawMessage.message,
+            idMatchResult?.groupValues?.getOrNull(1) ?: "",
+            subscriptionMatchResult?.groupValues?.getOrNull(1)?.hexString ?: DefaultSubscriptionId
+        )
+    }
+
+    private fun updateSubscriptionState(
+        event: WebsocketEvent.Subscription,
+        method: WebsocketMethod<*>
+    ) {
+        mapMethodBySubscription[event.subscriptionId] = method
+        mapSubscriptionByMethodId[event.methodId] = event.subscriptionId
+    }
+
+    private fun parse(messageWithMetadata: MessageWithMetadata): WebsocketEvent? {
+        return when {
+            messageWithMetadata.methodId.isNotEmpty() && messageWithMetadata.subscriptionId != DefaultSubscriptionId -> {
+                WebsocketEvent.Subscription(
+                    messageWithMetadata.methodId,
+                    messageWithMetadata.subscriptionId
+                )
+            }
+            messageWithMetadata.methodId.isNotEmpty() &&
+                    (messageWithMetadata.message.contains("true")
+                            || messageWithMetadata.message.contains("false")) -> {
+                WebsocketEvent.UnSubscription(
+                    messageWithMetadata.methodId,
+                    messageWithMetadata.message.contains("true")
+                )
+            }
+            messageWithMetadata.subscriptionId != DefaultSubscriptionId &&
+                    messageWithMetadata.message.contains("params") -> {
+                WebsocketEvent.Data(
+                    messageWithMetadata.subscriptionId,
+                    parseWebSocketResponseContent(
+                        mapMethodBySubscription[messageWithMetadata.subscriptionId]?.responseType!!,
+                        messageWithMetadata.message
+                    )
+                )
+            }
+            else -> null // TODO log something
         }
     }
 
-    private suspend fun <T> unsubscribeIfNoSubscribers(method: WebsocketMethod<T>) {
-        mapSubscriptionByMethod[method]?.let { subscription ->
-            subscription.subscriptionCount -= 1
-            if (subscription.subscriptionCount == 0) {
-                mapSubscriptionByMethod.remove(method)
-                subscription.subscriptionId?.let { subscriptionId ->
-                    websocketConnection.send(forgeEvent(WebsocketMethod.UnSubscribe(subscriptionId)))
+    suspend fun <T> on(method: WebsocketMethod<T>): Flow<Result<T>> = with(Dispatchers.IO) {
+        val resolvedMethod = resolveMethod(method)
+        return flowCache.getOrPut(resolvedMethod) {
+            val methodId = idGenerator.generateId()
+            connectionTrigger
+                .flatMapLatest {
+                    status
                 }
-            }
-        }
+                .filter { it == WebsocketStatus.Connected }
+                .distinctUntilChanged()
+                .onEach {
+                    subscribeToEvent(methodId, resolvedMethod)
+                }
+                .flatMapLatest {
+                    reconnectionAwareFlow
+                        .onEach { event ->
+                            if (event is WebsocketEvent.Subscription && methodId == event.methodId) {
+                                updateSubscriptionState(event, method)
+                            }
+                        }
+                        .filterIsInstance<WebsocketEvent.Data<*>>()
+                        .onCompletion {
+                            coroutineScope.launch {
+                                mapSubscriptionByMethodId[methodId]?.let { subscriptionId ->
+                                    unsubscribeFromEvent(methodId, subscriptionId)
+                                }
+                            }
+                        }
+
+                }
+                .shareIn(
+                    coroutineScope,
+                    started = SharingStarted.WhileSubscribed(),
+                    replay = 1
+                )
+                .dataOnly<T>()
+                .filter {
+                    filterResponse(resolvedMethod, it)
+                }
+        } as Flow<Result<T>>
     }
 
-    private suspend fun <T> subscribeToEventOnce(
+    private suspend fun unsubscribeFromEvent(methodId: String, subscriptionId: HexString) {
+        mapMethodBySubscription.remove(subscriptionId)
+        mapSubscriptionByMethodId.remove(methodId)
+        websocketConnection.send(
+            forgeEvent(
+                idGenerator.generateId(),
+                WebsocketMethod.UnSubscribe(subscriptionId)
+            )
+        )
+    }
+
+    private suspend fun <T> subscribeToEvent(
+        methodId: String,
         method: WebsocketMethod<T>
     ) {
-        mapSubscriptionByMethod.getOrPut(method) {
-            websocketConnection.send(forgeEvent(method))
-            Subscription(null, 0)
-        }.also {
-            it.subscriptionCount += 1
-        }
-    }
-
-    private fun <T> updateSubscriptionId(
-        method: WebsocketMethod<T>,
-        event: WebsocketEvent
-    ) {
-        if (event is WebsocketEvent.Subscription) {
-            mapSubscriptionByMethod[method]?.subscriptionId = event.id
-        }
-    }
-
-    private fun parseSubscriptionContent(
-        event: WebsocketEvent.RawMessage
-    ): HexString? {
-        val typeToken = TypeToken.getParameterized(
-            JsonRpcResponse::class.java,
-            HexString::class.java
-        ) as TypeToken<JsonRpcResponse<HexString>>
-        val (content, _) = parseContent(typeToken, event)
-        return content?.result
+        websocketConnection.send(forgeEvent(methodId, method))
     }
 
     private fun <T> parseWebSocketResponseContent(
         type: Class<T>,
-        event: WebsocketEvent.RawMessage
+        message: String
     ): Result<T> {
         val typeToken = TypeToken.getParameterized(
-            WebSocketJsonRpcResponse::class.java,
-            type
+            WebSocketJsonRpcResponse::class.java, type
         ) as TypeToken<WebSocketJsonRpcResponse<T>>
-        val (content, exception) = parseContent(typeToken, event)
+        val (content, exception) = parseContent(typeToken, message)
         return when {
             content != null && content.params.result != null -> {
                 Result.success(content.params.result)
@@ -211,10 +235,9 @@ class WebSocket internal constructor(
     }
 
     private fun <T> parseContent(
-        typeToken: TypeToken<T>,
-        event: WebsocketEvent.RawMessage
+        typeToken: TypeToken<T>, message: String
     ): Pair<T?, Throwable?> {
-        val jsonReader = gson.newJsonReader(StringReader(event.message))
+        val jsonReader = gson.newJsonReader(StringReader(message))
         val adapter = gson.getAdapter(typeToken)
         var dataRead: T?
         var exception: Throwable? = null
@@ -231,12 +254,10 @@ class WebSocket internal constructor(
         return Pair(dataRead, exception)
     }
 
-    private suspend fun <T> forgeEvent(method: WebsocketMethod<T>): String {
+    private suspend fun <T> forgeEvent(id: String, method: WebsocketMethod<T>): String {
         return gson.toJson(
             JsonRpcRequest(
-                id = idGenerator.generateId(),
-                method = method.name,
-                params = resolveParam(method.params)
+                id = id, method = method.name, params = resolveParam(method.params)
             )
         )
     }
@@ -246,8 +267,11 @@ class WebSocket internal constructor(
             method is WebsocketMethod.PendingTransactions && result.isSuccess -> {
                 val pendingTransaction = result.getOrThrow()
                 if (pendingTransaction is PendingTransaction.FullPendingTransaction) {
-                    val validFrom = method.fromAddress == null ||pendingTransaction.from == method.fromAddress
-                    val validTo = method.toAddresses.isEmpty() || method.toAddresses.map { it.value }.contains(pendingTransaction.to)
+                    val validFrom =
+                        method.fromAddress == null || pendingTransaction.from == method.fromAddress
+                    val validTo =
+                        method.toAddresses.isEmpty() || method.toAddresses.map { it.value }
+                            .contains(pendingTransaction.to)
                     validFrom && validTo
                 } else {
                     true
@@ -256,6 +280,7 @@ class WebSocket internal constructor(
             else -> true
         }
     }
+
     private suspend fun <T> resolveMethod(method: WebsocketMethod<T>): WebsocketMethod<T> {
         return if (method is WebsocketMethod.PendingTransactions) {
             method.copy(
@@ -263,8 +288,7 @@ class WebSocket internal constructor(
                     core.resolveAddress(method.fromAddress).getOrThrow()
                 } else {
                     null
-                },
-                toAddresses = resolveParam(method.toAddresses) as List<Address>
+                }, toAddresses = resolveParam(method.toAddresses) as List<Address>
             ) as WebsocketMethod<T>
         } else {
             method
@@ -288,14 +312,35 @@ class WebSocket internal constructor(
         }
     }
 
-    /** For test purpose */
-    fun emit(message: String) {
+    /** For test purpose only */
+    internal fun emit(message: String) {
         websocketConnection.emit(message)
     }
 
-    private class Subscription(
-        var subscriptionId: HexString? = null,
-        var subscriptionCount: Int
-    )
+    /** For test purpose only*/
+    internal fun close(code: Int, message: String) {
+        websocketConnection.close(code, message)
+    }
 
+    /** For test purpose only*/
+    internal fun connect() {
+        websocketConnection.connect()
+    }
+
+    private class MessageWithMetadata(
+        val message: String = "",
+        val methodId: String = "",
+        val subscriptionId: HexString = DefaultSubscriptionId
+    ) {
+        companion object {
+            val DefaultSubscriptionId = "0x0".hexString
+        }
+    }
+
+
+    companion object {
+        private val subscriptionRegex = "\"subscription\":\"(0x[0-9a-fA-F]+)\"".toRegex()
+        private val resultRegex = "\"result\":\"(0x[0-9a-fA-F]+)\"".toRegex()
+        private val idRegex = "\"id\":\"([0-9]+)\".*".toRegex()
+    }
 }
