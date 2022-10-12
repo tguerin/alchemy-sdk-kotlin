@@ -10,6 +10,7 @@ class BytesTest {
     fun `should mimic ethers arraify`() {
         1.arrayify() shouldBeEqualTo intArrayOf(1)
         10000000.arrayify() shouldBeEqualTo intArrayOf(152, 150, 128)
+        0.arrayify() shouldBeEqualTo intArrayOf(0)
     }
 
     @Test

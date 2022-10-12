@@ -30,6 +30,12 @@ class HexStringTest {
     }
 
     @Test
+    fun `should parse byte array as hex string`() {
+        val byteArray = "0x4BC".hexString.toByteArray()
+        byteArray.hexString shouldBeEqualTo "0x04bc".hexString
+    }
+
+    @Test
     fun `should parse valid hex value and give byte array`() {
         val byteArray = "0x04BC".hexString.toByteArray()
         byteArray.size shouldBeEqualTo 2
@@ -81,6 +87,31 @@ class HexStringTest {
     @Test
     fun `should slice the hexstring with the right offset`() {
         "0x0002".hexString.slice(1) shouldBeEqualTo "0x02".hexString
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `should throw exception if start index is invalid for slice`() {
+        "0x0002".hexString.slice(-1)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `should throw exception if end index is invalid for slice`() {
+        "0x0002".hexString.slice(100)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `should throw exception if end index is lesser than start index for slice`() {
+        "0x0002".hexString.slice(2, 1)
+    }
+
+    @Test
+    fun `should return null if start index is invalid for parse string`() {
+        "0x0002".hexString.parseString(1000) shouldBeEqualTo null
+    }
+
+    @Test
+    fun `should return null for parsing 0x hexstring`() {
+        "0x".hexString.parseString(0) shouldBeEqualTo null
     }
 
     @Test

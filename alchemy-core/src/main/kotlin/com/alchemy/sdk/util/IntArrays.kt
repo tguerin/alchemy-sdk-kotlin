@@ -16,6 +16,7 @@ fun IntArray.set(other: IntArray, offset: Int = 0): IntArray {
 }
 
 fun IntArray.hexConcat(): HexString {
+    if(isEmpty()) return "0x".hexString
     return this.map { value ->
         if (value in 0..255) {
             value.hexString

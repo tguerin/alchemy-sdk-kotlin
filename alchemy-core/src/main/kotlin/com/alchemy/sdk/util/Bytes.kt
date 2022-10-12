@@ -17,9 +17,6 @@ fun Int.arrayify(): IntArray {
 
 fun Int.numPad(): IntArray {
     val result = this.arrayify()
-    if (result.size > 32) {
-        throw IllegalArgumentException("internal; should not happen")
-    }
     val padded = IntArray(32)
     padded.set(result, 32 - result.size)
     return padded
@@ -44,9 +41,6 @@ fun List<IntArray>.hexConcat(): HexString {
 
 fun encodeBytes(vararg data: HexString): HexString {
     val dataSize = data.size
-    require(dataSize >= 0) {
-        "Data size must be at least 1 was $dataSize"
-    }
     val result = mutableListOf<IntArray>()
 
     var byteCount = 32 * dataSize
