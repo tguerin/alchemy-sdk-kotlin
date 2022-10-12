@@ -42,7 +42,7 @@ publishing {
             from(components["java"])
             groupId = "com.github.tguerin"
             artifactId = "alchemy-sdk-kotlin"
-            version = "0.8.0"
+            version = "0.9.0"
             pom.withXml {
                 val artifactsToExclude = listOf("json-rpc-client")
                 asNode().depthFirst().toList()
