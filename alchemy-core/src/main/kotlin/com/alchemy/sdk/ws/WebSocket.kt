@@ -17,6 +17,7 @@ import com.alchemy.sdk.ws.model.WebsocketStatus
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonToken
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -50,7 +51,7 @@ class WebSocket internal constructor(
     okHttpClientBuilder: OkHttpClient.Builder
 ) {
 
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + CoroutineName("WebSocket"))
 
     private val flowCache = mutableMapOf<WebsocketMethod<*>, Flow<*>>()
     private val mapMethodBySubscription = mutableMapOf<HexString, WebsocketMethod<*>>()

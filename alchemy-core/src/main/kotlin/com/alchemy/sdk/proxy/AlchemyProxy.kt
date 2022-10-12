@@ -2,6 +2,7 @@ package com.alchemy.sdk.proxy
 
 import com.alchemy.sdk.json.rpc.client.generator.IdGenerator
 import com.alchemy.sdk.json.rpc.client.http.HttpJsonRpcClient
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,7 +30,7 @@ internal class AlchemyProxy(
         ) { _, method, args ->
             val nonNullArgs = args ?: arrayOf()
             val originalContinuation = args.lastOrNull() as Continuation<Any?>
-            CoroutineScope(originalContinuation.context).launch(Dispatchers.IO) {
+            CoroutineScope(originalContinuation.context + CoroutineName("AlchemyProxy")).launch(Dispatchers.IO) {
                 val argumentsWithoutContinuation = nonNullArgs.take(nonNullArgs.size - 1)
                 val result = loadServiceMethod(method)
                     .invoke(argumentsWithoutContinuation.toTypedArray())

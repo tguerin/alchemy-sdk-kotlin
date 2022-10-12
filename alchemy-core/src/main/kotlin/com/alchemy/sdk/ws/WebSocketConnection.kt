@@ -2,6 +2,7 @@ package com.alchemy.sdk.ws
 
 import com.alchemy.sdk.ws.model.WebsocketEvent
 import com.alchemy.sdk.ws.model.WebsocketStatus
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,7 +21,7 @@ internal class WebSocketConnection(
     okHttpClientBuilder: OkHttpClient.Builder
 ) {
 
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + CoroutineName("WebSocketConnection"))
 
     private val responseFlow = MutableSharedFlow<WebsocketEvent.RawMessage>(replay = 1)
 
