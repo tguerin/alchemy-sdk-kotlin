@@ -328,6 +328,15 @@ class CoreIntegrationTest {
     }
 
     @Test
+    fun `returns null if transaction hash is not mined`() = runTest {
+        val data = alchemy.core.getTransactionReceipt(
+            "0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deed".hexString
+        )
+        data.isSuccess shouldBeEqualTo true
+        data.getOrThrow() shouldBeEqualTo null
+    }
+
+    @Test
     @Ignore("Returns 503 for now")
     fun `estimate gas of a transaction`() = runTest {
         val data = alchemy.core.estimateGas(BlockTag.Latest)

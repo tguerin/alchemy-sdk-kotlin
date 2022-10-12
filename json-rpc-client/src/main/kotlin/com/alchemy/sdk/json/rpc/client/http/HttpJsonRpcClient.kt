@@ -62,9 +62,9 @@ class HttpJsonRpcClient(
                         }
                         if (response.isSuccessful) {
                             if (data != null) {
-                                if (data.result == null) {
+                                if (data.result == null && data.error != null) {
                                     continuation.resume(
-                                        Result.failure(JsonRpcException(data.error!!)),
+                                        Result.failure(JsonRpcException(data.error)),
                                         onCancellation = null
                                     )
                                 } else {

@@ -123,7 +123,7 @@ interface CoreApi {
     @JsonRpc("eth_getTransactionReceipt")
     suspend fun getTransactionReceipt(
         transactionHash: HexString,
-    ): Result<TransactionReceipt>
+    ): Result<TransactionReceipt?>
 
     @JsonRpc("eth_call")
     suspend fun call(
