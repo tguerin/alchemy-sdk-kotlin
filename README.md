@@ -10,7 +10,7 @@ Support Alchemy on Android devices and java based projects. This is a side proje
 - [x] nft api
 - [x] ens support
 - [x] transact api (missing wait for transaction that requires ws)
-- [ ] websocket api
+- [x] websocket api
 - [ ] wallet api
 
 The API is subject to heavy changes in the upcoming releases
