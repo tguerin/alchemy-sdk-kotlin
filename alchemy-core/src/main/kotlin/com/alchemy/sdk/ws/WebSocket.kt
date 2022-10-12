@@ -129,14 +129,6 @@ class WebSocket internal constructor(
                     messageWithMetadata.subscriptionId
                 )
             }
-            messageWithMetadata.methodId.isNotEmpty() &&
-                    (messageWithMetadata.message.contains("true")
-                            || messageWithMetadata.message.contains("false")) -> {
-                WebsocketEvent.UnSubscription(
-                    messageWithMetadata.methodId,
-                    messageWithMetadata.message.contains("true")
-                )
-            }
             messageWithMetadata.subscriptionId != DefaultSubscriptionId &&
                     messageWithMetadata.message.contains("params") -> {
                 WebsocketEvent.Data(

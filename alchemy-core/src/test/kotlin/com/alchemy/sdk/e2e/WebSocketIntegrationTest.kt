@@ -6,7 +6,6 @@ import com.alchemy.sdk.ResourceUtils.Companion.parseFile
 import com.alchemy.sdk.ResourceUtils.Companion.readFile
 import com.alchemy.sdk.core.Core
 import com.alchemy.sdk.core.model.Address
-import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.core.model.TransactionReceipt
 import com.alchemy.sdk.json.rpc.client.generator.IncrementalIdGenerator

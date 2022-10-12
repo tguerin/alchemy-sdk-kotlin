@@ -7,5 +7,4 @@ internal sealed interface WebsocketEvent {
     data class RawMessage(val message: String) : WebsocketEvent
     data class Status(val status: WebsocketStatus) : WebsocketEvent
     data class Subscription(val methodId: String, val subscriptionId: HexString) : WebsocketEvent
-    data class UnSubscription(val methodId: String, val successful: Boolean) : WebsocketEvent
 }
