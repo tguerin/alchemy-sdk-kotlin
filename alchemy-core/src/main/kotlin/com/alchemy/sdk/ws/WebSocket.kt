@@ -152,6 +152,22 @@ class WebSocket internal constructor(
     }
 
     suspend fun <T> on(method: WebsocketMethod<T>): Flow<Result<T>> = with(Dispatchers.IO) {
+        if (method is WebsocketMethod.Transaction) {
+            val receiptResult = core.getTransactionReceipt(method.hash)
+            return if (receiptResult.isSuccess && receiptResult.getOrThrow() != null) {
+                flowOf(receiptResult)
+            } else {
+                flowCache.getOrPut(method) {
+                    on(WebsocketMethod.Block)
+                        .map {
+                            core.getTransactionReceipt(method.hash)
+                        }
+                        .filter { receiptResult ->
+                            receiptResult.isSuccess && receiptResult.getOrThrow() != null
+                        }
+                }
+            } as Flow<Result<T>>
+        }
         val resolvedMethod = resolveMethod(method)
         return flowCache.getOrPut(resolvedMethod) {
             val methodId = idGenerator.generateId()

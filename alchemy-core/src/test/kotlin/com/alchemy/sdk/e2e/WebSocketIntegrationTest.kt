@@ -2,12 +2,22 @@ package com.alchemy.sdk.e2e
 
 import com.alchemy.sdk.Alchemy
 import com.alchemy.sdk.AlchemySettings
+import com.alchemy.sdk.ResourceUtils.Companion.parseFile
 import com.alchemy.sdk.ResourceUtils.Companion.readFile
+import com.alchemy.sdk.core.Core
 import com.alchemy.sdk.core.model.Network
+import com.alchemy.sdk.core.model.TransactionReceipt
+import com.alchemy.sdk.json.rpc.client.generator.IncrementalIdGenerator
+import com.alchemy.sdk.util.Constants
+import com.alchemy.sdk.util.GsonUtil
+import com.alchemy.sdk.util.HexString.Companion.hexString
+import com.alchemy.sdk.ws.WebSocket
 import com.alchemy.sdk.ws.model.BlockHead
 import com.alchemy.sdk.ws.model.PendingTransaction
 import com.alchemy.sdk.ws.model.WebsocketMethod
 import com.alchemy.sdk.ws.model.WebsocketStatus
+import io.mockk.coEvery
+import io.mockk.mockk
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancelAndJoin
@@ -20,6 +30,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import okhttp3.OkHttpClient
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.Test
@@ -146,5 +157,34 @@ class WebSocketIntegrationTest {
             WebsocketStatus.Reconnecting,
             WebsocketStatus.Connected
         )
+    }
+
+    @Test
+    fun `should retrieve directly the transaction receipt if already mined`() = runTest {
+        val result = alchemy.ws
+            .on(WebsocketMethod.Transaction("0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString))
+            .single()
+        result.getOrThrow() shouldBeEqualTo parseFile("transaction_receipt_test.json", TransactionReceipt::class.java)
+    }
+
+    @Test
+    fun `should retrieve the transaction receipt when a block number is emitted`() = runTest {
+        val core = mockk<Core>()
+        val expectedReceipt = parseFile("transaction_receipt_test.json", TransactionReceipt::class.java)
+        coEvery {
+            core.getTransactionReceipt("0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString)
+        } returns Result.success(null) andThen Result.success(expectedReceipt)
+        val ws = WebSocket(
+            IncrementalIdGenerator(),
+            core,
+            GsonUtil.gson,
+            Constants.getAlchemyWebsocketUrl(Network.ETH_MAINNET, Constants.DEFAULT_ALCHEMY_API_KEY),
+            OkHttpClient.Builder()
+        )
+        val result = ws
+            .on(WebsocketMethod.Transaction("0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString))
+            .take(1)
+            .single()
+        result.getOrThrow() shouldBeEqualTo expectedReceipt
     }
 }
