@@ -117,7 +117,6 @@ internal class AutoConnectWebSocket(
         isStopped.compareAndSet(true, false)
         isConnecting.compareAndSet(false, true)
 
-        println("Reconnecting")
         onConnectStatusChangeListener(webSocket, status)
 
         synchronized(this) {

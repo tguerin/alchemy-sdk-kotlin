@@ -21,7 +21,6 @@ plugins {
 }
 
 subprojects {
-    println(this)
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
         kotlinOptions {
             // Treat all Kotlin warnings as errors
