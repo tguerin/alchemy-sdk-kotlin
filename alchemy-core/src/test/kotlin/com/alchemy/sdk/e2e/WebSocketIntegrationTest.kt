@@ -10,12 +10,14 @@ import com.alchemy.sdk.ws.model.WebsocketMethod
 import com.alchemy.sdk.ws.model.WebsocketStatus
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -42,30 +44,33 @@ class WebSocketIntegrationTest {
 
     @Test
     fun `should listen to pending transactions hash only`() = runTest {
+        val job = launch {
+            // Wait for a real transaction to be emitted or otherwise fake one
+            delay(1_000L)
+            if (isActive) {
+                alchemy.ws.emit(readFile("ws_hash_only_transaction_message_test.json"))
+            }
+        }
         val pendingTransactionResult = alchemy.ws.on(
             WebsocketMethod.PendingTransactions(
                 hashesOnly = true
             )
         )
-            .onStart {
-                launch {
-                    // Wait for a real transaction to be emitted or otherwise fake one
-                    delay(500L)
-                    alchemy.ws.emit(readFile("ws_hash_only_transaction_message_test.json"))
-                }
-            }
             .take(1)
             .single()
+        job.cancelAndJoin()
         pendingTransactionResult.isSuccess shouldBeEqualTo true
         pendingTransactionResult.getOrThrow() shouldBeInstanceOf PendingTransaction.HashOnly::class.java
     }
 
     @Test
     fun `should listen to pending transactions`() = runTest {
-        val job = async {
+        val job = launch {
             // Wait for a real transaction to be emitted or otherwise fake one
             delay(1_000L)
-            alchemy.ws.emit(readFile("ws_full_transaction_message.json"))
+            if (isActive) {
+                alchemy.ws.emit(readFile("ws_full_transaction_message.json"))
+            }
         }
         val pendingTransactionResult = alchemy.ws.on(WebsocketMethod.PendingTransactions())
             .take(1)
@@ -73,7 +78,7 @@ class WebSocketIntegrationTest {
                 job.cancel()
             }
             .single()
-
+        job.cancelAndJoin()
         pendingTransactionResult.isSuccess shouldBeEqualTo true
         pendingTransactionResult.getOrThrow() shouldBeInstanceOf PendingTransaction.FullPendingTransaction::class.java
     }
@@ -82,10 +87,12 @@ class WebSocketIntegrationTest {
     fun `should call different ws methods without issue`() = runTest {
         val result = awaitAll(
             async {
-                val job = async {
+                val job = launch {
                     // Wait for a real transaction to be emitted or otherwise fake one
-                    delay(1_500L)
-                    alchemy.ws.emit(readFile("ws_full_transaction_message.json"))
+                    delay(1_000L)
+                    if (isActive) {
+                        alchemy.ws.emit(readFile("ws_full_transaction_message.json"))
+                    }
                 }
                 alchemy.ws.on(WebsocketMethod.PendingTransactions())
                     .take(1)
@@ -93,6 +100,9 @@ class WebSocketIntegrationTest {
                         job.cancel()
                     }
                     .single()
+                    .also {
+                        job.cancelAndJoin()
+                    }
             },
             async {
                 alchemy.ws.on(WebsocketMethod.Block).take(1).single()
