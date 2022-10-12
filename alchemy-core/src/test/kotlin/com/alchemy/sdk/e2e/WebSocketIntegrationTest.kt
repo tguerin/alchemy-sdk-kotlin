@@ -5,12 +5,15 @@ import com.alchemy.sdk.AlchemySettings
 import com.alchemy.sdk.ResourceUtils.Companion.parseFile
 import com.alchemy.sdk.ResourceUtils.Companion.readFile
 import com.alchemy.sdk.core.Core
+import com.alchemy.sdk.core.model.Address
+import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.core.model.TransactionReceipt
 import com.alchemy.sdk.json.rpc.client.generator.IncrementalIdGenerator
 import com.alchemy.sdk.util.Constants
 import com.alchemy.sdk.util.GsonUtil
 import com.alchemy.sdk.util.HexString.Companion.hexString
+import com.alchemy.sdk.util.HexString.Companion.id
 import com.alchemy.sdk.ws.WebSocket
 import com.alchemy.sdk.ws.model.BlockHead
 import com.alchemy.sdk.ws.model.PendingTransaction
@@ -33,6 +36,7 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
+import org.amshove.kluent.shouldContainAll
 import org.junit.Test
 
 class WebSocketIntegrationTest {
@@ -96,29 +100,24 @@ class WebSocketIntegrationTest {
 
     @Test
     fun `should call different ws methods without issue`() = runTest {
+        val job = launch {
+            // Wait for a real transaction to be emitted or otherwise fake one
+            delay(1_000L)
+            if (isActive) {
+                alchemy.ws.emit(readFile("ws_full_transaction_message.json"))
+            }
+        }
         val result = awaitAll(
             async {
-                val job = launch {
-                    // Wait for a real transaction to be emitted or otherwise fake one
-                    delay(1_000L)
-                    if (isActive) {
-                        alchemy.ws.emit(readFile("ws_full_transaction_message.json"))
-                    }
-                }
                 alchemy.ws.on(WebsocketMethod.PendingTransactions())
                     .take(1)
-                    .onEach {
-                        job.cancel()
-                    }
                     .single()
-                    .also {
-                        job.cancelAndJoin()
-                    }
             },
             async {
                 alchemy.ws.on(WebsocketMethod.Block).take(1).single()
             }
         )
+        job.cancelAndJoin()
         result.size shouldBeEqualTo 2
         (result[0] as Result<*>).isSuccess shouldBeEqualTo true
         (result[1] as Result<*>).isSuccess shouldBeEqualTo true
@@ -164,13 +163,17 @@ class WebSocketIntegrationTest {
         val result = alchemy.ws
             .on(WebsocketMethod.Transaction("0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString))
             .single()
-        result.getOrThrow() shouldBeEqualTo parseFile("transaction_receipt_test.json", TransactionReceipt::class.java)
+        result.getOrThrow() shouldBeEqualTo parseFile(
+            "transaction_receipt_test.json",
+            TransactionReceipt::class.java
+        )
     }
 
     @Test
     fun `should retrieve the transaction receipt when a block number is emitted`() = runTest {
         val core = mockk<Core>()
-        val expectedReceipt = parseFile("transaction_receipt_test.json", TransactionReceipt::class.java)
+        val expectedReceipt =
+            parseFile("transaction_receipt_test.json", TransactionReceipt::class.java)
         coEvery {
             core.getTransactionReceipt("0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString)
         } returns Result.success(null) andThen Result.success(expectedReceipt)
@@ -178,7 +181,10 @@ class WebSocketIntegrationTest {
             IncrementalIdGenerator(),
             core,
             GsonUtil.gson,
-            Constants.getAlchemyWebsocketUrl(Network.ETH_MAINNET, Constants.DEFAULT_ALCHEMY_API_KEY),
+            Constants.getAlchemyWebsocketUrl(
+                Network.ETH_MAINNET,
+                Constants.DEFAULT_ALCHEMY_API_KEY
+            ),
             OkHttpClient.Builder()
         )
         val result = ws
@@ -186,5 +192,22 @@ class WebSocketIntegrationTest {
             .take(1)
             .single()
         result.getOrThrow() shouldBeEqualTo expectedReceipt
+    }
+
+    @Test
+    fun `should get log corresponding to filter`() = runTest {
+        val topics = listOf("Transfer(address,address,uint256)".id)
+        val logResult = alchemy.ws.on(
+            WebsocketMethod.LogFilter(
+                address = Address.from("dai.tokens.ethers.eth"),
+                topics = topics,
+            )
+        )
+            .take(1)
+            .single()
+        logResult.isSuccess shouldBeEqualTo true
+        val log = logResult.getOrThrow()
+        log.address shouldBeEqualTo Address.from("0x6b175474e89094c44da98b954eedeac495271d0f")
+        log.topics shouldContainAll topics
     }
 }

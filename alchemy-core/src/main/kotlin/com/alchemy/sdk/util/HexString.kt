@@ -1,5 +1,7 @@
 package com.alchemy.sdk.util
 
+import org.komputing.khash.keccak.Keccak
+import org.komputing.khash.keccak.KeccakParameter
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -178,6 +180,11 @@ class HexString private constructor(val data: String) {
                 } else {
                     throw IllegalArgumentException("No a valid hexadecimal string")
                 }
+            }
+
+        val String.id: HexString
+            get() {
+                return Keccak.digest(this.toByteArray(), KeccakParameter.KECCAK_256).hexString
             }
     }
 }

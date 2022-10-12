@@ -299,16 +299,28 @@ class WebSocket internal constructor(
     }
 
     private suspend fun <T> resolveMethod(method: WebsocketMethod<T>): WebsocketMethod<T> {
-        return if (method is WebsocketMethod.PendingTransactions) {
-            method.copy(
-                fromAddress = if (method.fromAddress != null) {
-                    core.resolveAddress(method.fromAddress).getOrThrow()
-                } else {
-                    null
-                }, toAddresses = resolveParam(method.toAddresses) as List<Address>
-            ) as WebsocketMethod<T>
-        } else {
-            method
+        return when (method) {
+            is WebsocketMethod.PendingTransactions -> {
+                method.copy(
+                    fromAddress = if (method.fromAddress != null) {
+                        core.resolveAddress(method.fromAddress).getOrThrow()
+                    } else {
+                        null
+                    }, toAddresses = resolveParam(method.toAddresses) as List<Address>
+                ) as WebsocketMethod<T>
+            }
+            is WebsocketMethod.LogFilter -> {
+                method.copy(
+                    address = if (method.address != null) {
+                        core.resolveAddress(method.address).getOrThrow()
+                    } else {
+                        null
+                    }
+                ) as WebsocketMethod<T>
+            }
+            else -> {
+                method
+            }
         }
 
     }

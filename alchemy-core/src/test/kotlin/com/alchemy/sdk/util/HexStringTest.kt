@@ -1,6 +1,7 @@
 package com.alchemy.sdk.util
 
 import com.alchemy.sdk.util.HexString.Companion.hexString
+import com.alchemy.sdk.util.HexString.Companion.id
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 import java.math.BigDecimal
@@ -85,6 +86,11 @@ class HexStringTest {
     @Test
     fun `should convert hexstring to int array`() {
         "0x0102".hexString.toIntArray() shouldBeEqualTo intArrayOf(1, 2)
+    }
+
+    @Test
+    fun `should keccak 256 the string as an id`() {
+        "124".id shouldBeEqualTo "0xac09810740600c31fa69f9db79ed6fc3e3281f758a950fe1fb254a3a3ae571b6".hexString
     }
 
 }
