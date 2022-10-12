@@ -38,6 +38,7 @@ subprojects {
             version = "0.8.8"
         }
         tasks.withType<Test> {
+            maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
             finalizedBy(tasks.withType<JacocoReport>())
         }
         tasks.withType<JacocoReport> {
