@@ -66,7 +66,7 @@ coroutineScope.launch {
     alchemy.ws.on(WebsocketMethod.Block).collect { event ->
         // handle data
     }
-    alchemy.ws.status().collect { connectionStatus ->
+    alchemy.ws.status.collect { connectionStatus ->
         // You can display if you are connected or not to the websocket
     }
 }
@@ -76,8 +76,5 @@ The websocket will automatically close if no subscriber is registered. Also it w
 resubscribe to previous topics when websocket is reconnected.
 
 Have a look at the [e2e tests](./alchemy-core/src/test/kotlin/com/alchemy/sdk/core/e2e) for samples.
-
-No benchmark has been made but the init can take some time. The alchemy object is thread safe so 
-you can do the init off the main thread.
 
 
