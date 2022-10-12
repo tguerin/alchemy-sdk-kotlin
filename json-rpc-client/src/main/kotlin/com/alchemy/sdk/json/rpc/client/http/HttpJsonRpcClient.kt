@@ -4,9 +4,8 @@ import com.alchemy.sdk.json.rpc.client.JsonRpcClient
 import com.alchemy.sdk.json.rpc.client.model.JsonRpcException
 import com.alchemy.sdk.json.rpc.client.model.JsonRpcRequest
 import com.alchemy.sdk.json.rpc.client.model.JsonRpcResponse
+import com.alchemy.sdk.json.rpc.client.util.parseContent
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.google.gson.stream.JsonToken
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
 import okhttp3.Callback
@@ -42,22 +41,11 @@ class HttpJsonRpcClient(
                     override fun onResponse(call: Call, response: Response) {
                         // TODO better error handling
                         val data = response.body?.use {
-                            val jsonReader = gson.newJsonReader(response.body?.charStream())
-                            val typeToken =
-                                TypeToken.getParameterized(
-                                    JsonRpcResponse::class.java,
-                                    returnType
-                                )
-                            val adapter = gson.getAdapter(typeToken)
-                            var dataRead: JsonRpcResponse<T>?
-                            try {
-                                dataRead = adapter.read(jsonReader) as JsonRpcResponse<T>
-                                if (jsonReader.peek() !== JsonToken.END_DOCUMENT) {
-                                    dataRead = null
-                                }
-                            } catch (e: Exception) {
-                                dataRead = null
-                            }
+                            val (dataRead, _) = gson.parseContent<JsonRpcResponse<T>>(
+                                JsonRpcResponse::class.java,
+                                returnType,
+                                it.charStream()
+                            )
                             dataRead
                         }
                         if (response.isSuccessful) {

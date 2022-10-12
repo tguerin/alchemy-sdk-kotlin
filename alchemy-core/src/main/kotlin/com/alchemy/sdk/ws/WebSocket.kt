@@ -5,6 +5,7 @@ import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.json.rpc.client.generator.IdGenerator
 import com.alchemy.sdk.json.rpc.client.model.JsonRpcException
 import com.alchemy.sdk.json.rpc.client.model.JsonRpcRequest
+import com.alchemy.sdk.json.rpc.client.util.parseContent
 import com.alchemy.sdk.util.HexString
 import com.alchemy.sdk.util.HexString.Companion.hexString
 import com.alchemy.sdk.util.pmap
@@ -223,10 +224,11 @@ class WebSocket internal constructor(
         type: Class<T>,
         message: String
     ): Result<T> {
-        val typeToken = TypeToken.getParameterized(
-            WebSocketJsonRpcResponse::class.java, type
-        ) as TypeToken<WebSocketJsonRpcResponse<T>>
-        val (content, exception) = parseContent(typeToken, message)
+        val (content, exception) = gson.parseContent<WebSocketJsonRpcResponse<T>>(
+            WebSocketJsonRpcResponse::class.java,
+            type,
+            StringReader(message)
+        )
         return when {
             content != null && content.params.result != null -> {
                 Result.success(content.params.result)
@@ -234,17 +236,16 @@ class WebSocket internal constructor(
             content != null && content.params.error != null -> {
                 Result.failure(JsonRpcException(content.params.error))
             }
-            exception != null -> {
-                Result.failure(exception)
-            }
             else -> {
-                Result.failure(RuntimeException("can't happen"))
+                Result.failure(exception ?: RuntimeException("can't happen"))
             }
         }
     }
 
     private fun <T> parseContent(
-        typeToken: TypeToken<T>, message: String
+        gson: Gson,
+        typeToken: TypeToken<T>,
+        message: String
     ): Pair<T?, Throwable?> {
         val jsonReader = gson.newJsonReader(StringReader(message))
         val adapter = gson.getAdapter(typeToken)
