@@ -23,6 +23,7 @@ import com.alchemy.sdk.util.Ether.Companion.wei
 import com.alchemy.sdk.util.HexString.Companion.hexString
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeGreaterOrEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
 import org.amshove.kluent.shouldHaveSize
 import org.amshove.kluent.shouldNotBeEqualTo
@@ -197,6 +198,16 @@ class CoreIntegrationTest {
     }
 
     @Test
+    fun `retrieve a block by number without transactions`() = runTest {
+        val blockTag = BlockTag.BlockTagNumber("0xed14e5".hexString)
+
+        val data = alchemy.core.getBlockByNumber(blockTag)
+
+        val expectedBlock = parseFile("block_without_transactions_test.json", Block::class.java)
+        data.getOrThrow() shouldBeEqualTo expectedBlock
+    }
+
+    @Test
     fun `retrieve a block by hash`() = runTest {
         val blockHash =
             "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString
@@ -301,8 +312,15 @@ class CoreIntegrationTest {
             Address.from("0x10ce4cd51b9e95be1c8a9bc665d3ebdfa9762529"),
             BlockTag.BlockTagNumber("0xed14e5".hexString)
         )
-
         data.getOrThrow().intValue() shouldBeEqualTo 6185
+    }
+
+    @Test
+    fun `retrieve transactions count from latest`() = runTest {
+        val data = alchemy.core.getTransactionCount(
+            Address.from("0x10ce4cd51b9e95be1c8a9bc665d3ebdfa9762529"),
+        )
+        data.getOrThrow().intValue() shouldBeGreaterOrEqualTo  6185
     }
 
     @Test
