@@ -50,35 +50,21 @@ import com.google.gson.InstanceCreator
 import java.lang.Double
 import java.lang.Float
 import java.lang.Long
-import java.lang.reflect.Type
 
 internal class GsonUtil {
 
     companion object {
-        val gson: Gson by lazy {
+        internal val addressCreator = InstanceCreator { Constants.ADDRESS_ZERO }
+        internal val blockTransactionCreator =
+            InstanceCreator<BlockTransaction> { BlockTransaction.Unknown }
+        internal val pendingTransactionCreator = InstanceCreator<PendingTransaction> {
+            PendingTransaction.HashOnly("0x".hexString)
+        }
+        internal val gson: Gson by lazy {
             GsonBuilder()
-                .registerTypeAdapter(Address::class.java, object : InstanceCreator<Address> {
-                    override fun createInstance(type: Type): Address {
-                        return Address.from("0x")
-                    }
-                }
-                )
-                .registerTypeAdapter(
-                    BlockTransaction::class.java,
-                    object : InstanceCreator<BlockTransaction> {
-                        override fun createInstance(type: Type): BlockTransaction {
-                            return BlockTransaction.Unknown
-                        }
-                    }
-                )
-                .registerTypeAdapter(
-                    PendingTransaction::class.java,
-                    object : InstanceCreator<PendingTransaction> {
-                        override fun createInstance(type: Type): PendingTransaction {
-                            return PendingTransaction.HashOnly("0x".hexString)
-                        }
-                    }
-                )
+                .registerTypeAdapter(Address::class.java, addressCreator)
+                .registerTypeAdapter(BlockTransaction::class.java, blockTransactionCreator)
+                .registerTypeAdapter(PendingTransaction::class.java, pendingTransactionCreator)
                 .registerTypeAdapter(Address::class.java, AddressDeserializer)
                 .registerTypeAdapter(Address.ContractAddress::class.java, AddressDeserializer)
                 .registerTypeAdapter(Address.EthereumAddress::class.java, AddressDeserializer)
@@ -110,42 +96,31 @@ internal class GsonUtil {
                 .create()
         }
 
-        val nftGson: Gson by lazy {
+        internal val ownedNftsCreator = InstanceCreator<OwnedNftsResponse> {
+            OwnedNftsResponse.OwnedBaseNftsResponse(
+                ownedNfts = emptyList(),
+                pageKey = null,
+                totalCount = 0
+            )
+        }
+        internal val ownedNftCreator = InstanceCreator<OwnedNft> {
+            OwnedNft.OwnedBaseNft(
+                0L,
+                contract = NftContract.BaseNftContract(Address.ContractAddress("0x0".hexString)),
+                id = NftId("0".hexString, TokenMetadata(NftTokenType.Unknown)),
+            )
+        }
+        internal val nftContractCreator = InstanceCreator<NftContract> {
+            NftContract.BaseNftContract(Address.ContractAddress("0x0".hexString))
+        }
+
+        internal val nftGson: Gson by lazy {
+
             GsonBuilder()
-                .registerTypeAdapter(Address::class.java, object : InstanceCreator<Address> {
-                    override fun createInstance(type: Type): Address {
-                        return Address.from("0x")
-                    }
-                })
-                .registerTypeAdapter(
-                    OwnedNftsResponse::class.java,
-                    object : InstanceCreator<OwnedNftsResponse> {
-                        override fun createInstance(type: Type): OwnedNftsResponse {
-                            return OwnedNftsResponse.OwnedBaseNftsResponse(
-                                ownedNfts = emptyList(),
-                                pageKey = null,
-                                totalCount = 0
-                            )
-                        }
-                    })
-                .registerTypeAdapter(
-                    OwnedNft::class.java,
-                    object : InstanceCreator<OwnedNft> {
-                        override fun createInstance(type: Type): OwnedNft {
-                            return OwnedNft.OwnedBaseNft(
-                                0L,
-                                contract = NftContract.BaseNftContract(Address.ContractAddress("0x0".hexString)),
-                                id = NftId("0".hexString, TokenMetadata(NftTokenType.Unknown)),
-                            )
-                        }
-                    })
-                .registerTypeAdapter(
-                    NftContract::class.java,
-                    object : InstanceCreator<NftContract> {
-                        override fun createInstance(type: Type): NftContract {
-                            return NftContract.BaseNftContract(Address.ContractAddress("0x0".hexString))
-                        }
-                    })
+                .registerTypeAdapter(Address::class.java, addressCreator)
+                .registerTypeAdapter(OwnedNftsResponse::class.java, ownedNftsCreator)
+                .registerTypeAdapter(OwnedNft::class.java, ownedNftCreator)
+                .registerTypeAdapter(NftContract::class.java, nftContractCreator)
                 .registerTypeAdapter(Address::class.java, AddressDeserializer)
                 .registerTypeAdapter(Address.ContractAddress::class.java, AddressDeserializer)
                 .registerTypeAdapter(Address.EthereumAddress::class.java, AddressDeserializer)
