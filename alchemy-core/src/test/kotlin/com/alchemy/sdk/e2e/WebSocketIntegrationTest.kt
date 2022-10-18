@@ -13,6 +13,7 @@ import com.alchemy.sdk.util.Constants
 import com.alchemy.sdk.util.GsonUtil
 import com.alchemy.sdk.util.HexString.Companion.hexString
 import com.alchemy.sdk.util.HexString.Companion.id
+import com.alchemy.sdk.ws.DelayRetryPolicy
 import com.alchemy.sdk.ws.WebSocket
 import com.alchemy.sdk.ws.model.BlockHead
 import com.alchemy.sdk.ws.model.PendingTransaction
@@ -36,6 +37,7 @@ import okhttp3.OkHttpClient
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldContainAll
+import org.junit.Ignore
 import org.junit.Test
 
 class WebSocketIntegrationTest {
@@ -180,11 +182,12 @@ class WebSocketIntegrationTest {
             IncrementalIdGenerator(),
             core,
             GsonUtil.gson,
+            DelayRetryPolicy(),
             Constants.getAlchemyWebsocketUrl(
                 Network.ETH_MAINNET,
                 Constants.DEFAULT_ALCHEMY_API_KEY
             ),
-            OkHttpClient.Builder()
+            OkHttpClient.Builder(),
         )
         val result = ws
             .on(WebsocketMethod.Transaction("0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString))

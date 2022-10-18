@@ -18,7 +18,8 @@ import java.util.concurrent.TimeUnit
 
 internal class WebSocketConnection(
     websocketUrl: String,
-    okHttpClientBuilder: OkHttpClient.Builder
+    okHttpClientBuilder: OkHttpClient.Builder,
+    retryPolicy: RetryPolicy
 ) {
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO + CoroutineName("WebSocketConnection"))
@@ -36,7 +37,8 @@ internal class WebSocketConnection(
                 .url(websocketUrl)
                 .build(),
             listener = ChannelWebsocketListener(),
-            onConnectStatusChangeListener = ConnectionStatusListener()
+            onConnectStatusChangeListener = ConnectionStatusListener(),
+            retryPolicy = retryPolicy
         )
     }
 

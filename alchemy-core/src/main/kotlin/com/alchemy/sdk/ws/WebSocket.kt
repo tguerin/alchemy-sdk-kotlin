@@ -48,6 +48,7 @@ class WebSocket internal constructor(
     private val idGenerator: IdGenerator,
     private val core: Core,
     private val gson: Gson,
+    private val retryPolicy: RetryPolicy,
     websocketUrl: String,
     okHttpClientBuilder: OkHttpClient.Builder
 ) {
@@ -58,7 +59,11 @@ class WebSocket internal constructor(
     private val mapMethodBySubscription = mutableMapOf<HexString, WebsocketMethod<*>>()
     private val mapSubscriptionByMethodId = mutableMapOf<String, HexString>()
 
-    private val websocketConnection = WebSocketConnection(websocketUrl, okHttpClientBuilder)
+    private val websocketConnection = WebSocketConnection(
+        websocketUrl,
+        okHttpClientBuilder,
+        retryPolicy
+    )
 
     val status by lazy {
         websocketConnection.status
@@ -131,7 +136,8 @@ class WebSocket internal constructor(
                 )
             }
             messageWithMetadata.subscriptionId != DefaultSubscriptionId &&
-                    messageWithMetadata.message.contains("params") -> {
+                    messageWithMetadata.message.contains("params") &&
+                    mapMethodBySubscription[messageWithMetadata.subscriptionId] != null -> {
                 WebsocketEvent.Data(
                     messageWithMetadata.subscriptionId,
                     parseWebSocketResponseContent(

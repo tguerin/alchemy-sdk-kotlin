@@ -1,15 +1,16 @@
 package com.alchemy.sdk.ws
 
 import com.alchemy.sdk.ws.model.WebsocketStatus
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
-import java.util.Timer
-import java.util.TimerTask
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -21,16 +22,17 @@ internal class AutoConnectWebSocket(
     private val request: Request,
     listener: WebSocketListener,
     private val onConnectStatusChangeListener: ConnectionStatusListener,
-    private val config: Config = Config(),
+    private val retryPolicy: RetryPolicy
 ) : WebSocket {
-
-    data class Config(val reconnectInterval: Long = TimeUnit.SECONDS.toMillis(5))
 
     private val isConnected = AtomicBoolean(false)
 
     private val isConnecting = AtomicBoolean(false)
 
     private val isStopped = AtomicBoolean(false)
+
+    private val coroutineScope =
+        CoroutineScope(Dispatchers.IO.limitedParallelism(1) + CoroutineName("Ws retry context"))
 
     /**
      * get the status of reconnection
@@ -54,17 +56,17 @@ internal class AutoConnectWebSocket(
      */
     val reconnectAttemptCount = AtomicInteger(0)
 
-    private var timer: Timer? = null
-
     private val webSocketListener = object : WebSocketListener() {
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-            isConnected.compareAndSet(true, false)
-            onConnectStatusChangeListener(webSocket, status)
-            listener.onClosed(webSocket, code, reason)
-            if (code != 1000) {
-                doReconnect()
-            } else {
-                isStopped.compareAndSet(false, true)
+            coroutineScope.launch {
+                isConnected.compareAndSet(true, false)
+                onConnectStatusChangeListener(webSocket, status)
+                listener.onClosed(webSocket, code, reason)
+                if (code != 1000) {
+                    doReconnect()
+                } else {
+                    isStopped.compareAndSet(false, true)
+                }
             }
         }
 
@@ -73,10 +75,12 @@ internal class AutoConnectWebSocket(
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-            isConnected.compareAndSet(true, false)
-            onConnectStatusChangeListener(webSocket, status)
-            doReconnect()
-            listener.onFailure(webSocket, t, response)
+            coroutineScope.launch {
+                isConnected.compareAndSet(true, false)
+                onConnectStatusChangeListener(webSocket, status)
+                doReconnect()
+                listener.onFailure(webSocket, t, response)
+            }
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
@@ -88,19 +92,18 @@ internal class AutoConnectWebSocket(
         }
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
-            isConnected.compareAndSet(false, true)
-            isConnecting.compareAndSet(true, false)
-            isStopped.compareAndSet(true, false)
+            coroutineScope.launch {
+                isConnected.compareAndSet(false, true)
+                isConnecting.compareAndSet(true, false)
+                isStopped.compareAndSet(true, false)
 
-            onConnectStatusChangeListener(webSocket, status)
+                onConnectStatusChangeListener(webSocket, status)
 
-            synchronized(this) {
-                timer?.cancel()
-                timer = null
+                reconnectAttemptCount.set(0)
+                listener.onOpen(webSocket, response)
             }
-            reconnectAttemptCount.set(0)
-            listener.onOpen(webSocket, response)
         }
+
     }
 
     private var webSocket: WebSocket
@@ -110,39 +113,25 @@ internal class AutoConnectWebSocket(
         onConnectStatusChangeListener(webSocket, status)
     }
 
-    private fun doReconnect() {
-        if (isConnected.get() || isConnecting.get()) {
-            return
-        }
-        isStopped.compareAndSet(true, false)
-        isConnecting.compareAndSet(false, true)
+    private suspend fun doReconnect() {
+        while (!isConnected.get() && !isConnecting.get() && retryPolicy.retryConnection()) {
+            isStopped.compareAndSet(true, false)
+            isConnecting.compareAndSet(false, true)
 
-        onConnectStatusChangeListener(webSocket, status)
+            webSocket.cancel()
+            val reconnectRequest = onPreReconnectListener(request)
+            webSocket = okHttpClient.newWebSocket(reconnectRequest, webSocketListener)
 
-        synchronized(this) {
-            timer = Timer().also {
-                it.scheduleAtFixedRate(
-                    object : TimerTask() {
-                        override fun run() {
-                            webSocket.cancel()
-                            val reconnectRequest = onPreReconnectListener(request)
-                            webSocket =
-                                okHttpClient.newWebSocket(reconnectRequest, webSocketListener)
-                        }
-                    },
-                    0,
-                    config.reconnectInterval
-                )
-            }
+            onConnectStatusChangeListener(webSocket, status)
         }
     }
 
     override fun cancel() {
-        isConnected.compareAndSet(true, false)
-        onConnectStatusChangeListener(webSocket, status)
-        timer?.cancel()
-        timer = null
-        webSocket.cancel()
+        coroutineScope.launch {
+            isConnected.compareAndSet(true, false)
+            onConnectStatusChangeListener(webSocket, status)
+            webSocket.cancel()
+        }
     }
 
     override fun close(code: Int, reason: String?): Boolean {
@@ -171,8 +160,10 @@ internal class AutoConnectWebSocket(
     }
 
     fun connect() {
-        if (isStopped.get()) {
-            doReconnect()
+        coroutineScope.launch {
+            if (isStopped.get()) {
+                doReconnect()
+            }
         }
     }
 
