@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import java.io.StringReader
 
@@ -48,12 +49,14 @@ class WebSocket internal constructor(
     private val idGenerator: IdGenerator,
     private val core: Core,
     private val gson: Gson,
-    private val retryPolicy: RetryPolicy,
+    retryPolicy: RetryPolicy,
     websocketUrl: String,
     okHttpClientBuilder: OkHttpClient.Builder
 ) {
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO + CoroutineName("WebSocket"))
+    private val singleThreadDispatcher =
+        (Dispatchers.IO.limitedParallelism(1) + CoroutineName("Websocket single thread"))
 
     private val flowCache = mutableMapOf<WebsocketMethod<*>, Flow<*>>()
     private val mapMethodBySubscription = mutableMapOf<HexString, WebsocketMethod<*>>()
@@ -150,62 +153,66 @@ class WebSocket internal constructor(
         }
     }
 
-    suspend fun <T> on(method: WebsocketMethod<T>): Flow<Result<T>> = with(Dispatchers.IO) {
+    suspend fun <T> on(method: WebsocketMethod<T>): Flow<Result<T>> = withContext(Dispatchers.IO) {
         if (method is WebsocketMethod.Transaction) {
             val receiptResult = core.getTransactionReceipt(method.hash)
-            return if (receiptResult.isSuccess && receiptResult.getOrThrow() != null) {
+            return@withContext if (receiptResult.isSuccess && receiptResult.getOrThrow() != null) {
                 flowOf(receiptResult)
             } else {
-                flowCache.getOrPut(method) {
-                    on(WebsocketMethod.Block)
-                        .map {
-                            core.getTransactionReceipt(method.hash)
-                        }
-                        .filter { receiptResult ->
-                            receiptResult.isSuccess && receiptResult.getOrThrow() != null
-                        }
+                withContext(singleThreadDispatcher) {
+                    flowCache.getOrPut(method) {
+                        on(WebsocketMethod.Block)
+                            .map {
+                                core.getTransactionReceipt(method.hash)
+                            }
+                            .filter { receiptResult ->
+                                receiptResult.isSuccess && receiptResult.getOrThrow() != null
+                            }
+                    }
                 }
             } as Flow<Result<T>>
         }
         val resolvedMethod = resolveMethod(method)
-        return flowCache.getOrPut(resolvedMethod) {
-            val methodId = idGenerator.generateId()
-            connectionTrigger
-                .flatMapLatest {
-                    status
-                }
-                .filter { it == WebsocketStatus.Connected }
-                .distinctUntilChanged()
-                .onEach {
-                    subscribeToEvent(methodId, resolvedMethod)
-                }
-                .flatMapLatest {
-                    reconnectionAwareFlow
-                        .onEach { event ->
-                            if (event is WebsocketEvent.Subscription && methodId == event.methodId) {
-                                updateSubscriptionState(event, method)
-                            }
-                        }
-                        .filterIsInstance<WebsocketEvent.Data<*>>()
-                        .onCompletion {
-                            coroutineScope.launch {
-                                mapSubscriptionByMethodId[methodId]?.let { subscriptionId ->
-                                    unsubscribeFromEvent(methodId, subscriptionId)
+        return@withContext withContext(singleThreadDispatcher) {
+            flowCache.getOrPut(resolvedMethod) {
+                val methodId = idGenerator.generateId()
+                connectionTrigger
+                    .flatMapLatest {
+                        status
+                    }
+                    .filter { it == WebsocketStatus.Connected }
+                    .distinctUntilChanged()
+                    .onEach {
+                        subscribeToEvent(methodId, resolvedMethod)
+                    }
+                    .flatMapLatest {
+                        reconnectionAwareFlow
+                            .onEach { event ->
+                                if (event is WebsocketEvent.Subscription && methodId == event.methodId) {
+                                    updateSubscriptionState(event, method)
                                 }
                             }
-                        }
+                            .filterIsInstance<WebsocketEvent.Data<*>>()
+                            .onCompletion {
+                                coroutineScope.launch {
+                                    mapSubscriptionByMethodId[methodId]?.let { subscriptionId ->
+                                        unsubscribeFromEvent(methodId, subscriptionId)
+                                    }
+                                }
+                            }
 
-                }
-                .shareIn(
-                    coroutineScope,
-                    started = SharingStarted.WhileSubscribed(),
-                    replay = 1
-                )
-                .dataOnly<T>()
-                .filter {
-                    filterResponse(resolvedMethod, it)
-                }
-        } as Flow<Result<T>>
+                    }
+                    .shareIn(
+                        coroutineScope,
+                        started = SharingStarted.WhileSubscribed(),
+                        replay = 1
+                    )
+                    .dataOnly<T>()
+                    .filter {
+                        filterResponse(resolvedMethod, it)
+                    }
+            } as Flow<Result<T>>
+        }
     }
 
     private suspend fun unsubscribeFromEvent(methodId: String, subscriptionId: HexString) {
