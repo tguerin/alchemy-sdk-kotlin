@@ -16,6 +16,8 @@ import com.alchemy.sdk.util.GsonStringConverter
 import com.alchemy.sdk.util.GsonUtil.Companion.gson
 import com.alchemy.sdk.util.GsonUtil.Companion.nftGson
 import com.alchemy.sdk.util.ResultCallAdapter
+import com.alchemy.sdk.wallet.Wallet
+import com.alchemy.sdk.wallet.WalletConnectProvider
 import com.alchemy.sdk.ws.DelayRetryPolicy
 import com.alchemy.sdk.ws.RetryPolicy
 import com.alchemy.sdk.ws.WebSocket
@@ -86,6 +88,10 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
             okHttpClientBuilder = OkHttpClient.Builder(),
             retryPolicy = alchemySettings.wsSettings.retryPolicy
         )
+    }
+
+    fun wallet(walletConnectProvider: WalletConnectProvider): Wallet {
+        return Wallet(core, walletConnectProvider)
     }
 
     private fun setupCore(alchemySettings: AlchemySettings): Core {

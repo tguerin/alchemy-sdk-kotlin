@@ -17,12 +17,23 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
 
+    // We don't want to force the dependencies as they may have different wallet providers
+    compileOnly(libs.crypto)
+    compileOnly(libs.ktor.core)
+    compileOnly(libs.ktor.cio)
+    compileOnly(libs.ktor.websocket.server)
+
+    testImplementation(libs.ktor.websocket.server)
     testImplementation(libs.test.fluent.assertions)
     testImplementation(libs.test.junit)
     testImplementation(libs.test.kotlin.coroutines)
     testImplementation(libs.test.mock.webserver)
     testImplementation(libs.test.mockk)
     testImplementation(libs.test.mockk.agent)
+    testImplementation(libs.crypto)
+    testImplementation(libs.ktor.core)
+    testImplementation(libs.ktor.cio)
+    testImplementation(libs.ktor.websocket.server)
 }
 
 val sourcesJar by tasks.registering(Jar::class) {
