@@ -4,8 +4,12 @@ import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.core.model.TransactionCall
 import com.alchemy.sdk.util.GsonUtil
 import com.alchemy.sdk.util.HexString.Companion.hexString
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.gson.gson
 import kotlinx.coroutines.test.runTest
-import okhttp3.OkHttpClient
+import okhttp3.Headers
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.amshove.kluent.shouldBeEqualTo
@@ -14,9 +18,13 @@ import org.junit.Test
 
 class CcipReadFetcherTest {
 
-    private val okHttpClient = OkHttpClient()
-
-    private val gson = GsonUtil.gson
+    private val httpClient = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            gson {
+                GsonUtil.configureGson(this)
+            }
+        }
+    }
 
     lateinit var ccipReadFetcher: CcipReadFetcher
 
@@ -25,12 +33,16 @@ class CcipReadFetcherTest {
     @Before
     fun setUp() {
         mockWebServer.start()
-        ccipReadFetcher = CcipReadFetcher(okHttpClient, gson)
+        ccipReadFetcher = CcipReadFetcher(httpClient)
     }
 
     @Test
     fun `should get data from ccip read url`() = runTest {
-        mockWebServer.enqueue(MockResponse().setBody("{\"data\":\"0x3529b5834ea3c6\"}"))
+        mockWebServer.enqueue(
+            MockResponse()
+                .setHeaders(Headers.headersOf("Content-type", "application/json"))
+                .setBody("{\"data\":\"0x3529b5834ea3c6\"}")
+        )
         val result = ccipReadFetcher.fetchCcipRead(
             transactionCall = TransactionCall(
                 to = Network.ETH_MAINNET.ensAddress!!,
@@ -47,7 +59,11 @@ class CcipReadFetcherTest {
 
     @Test
     fun `validate request params`() = runTest {
-        mockWebServer.enqueue(MockResponse().setBody("{\"data\":\"0x3529b5834ea3c6\"}"))
+        mockWebServer.enqueue(
+            MockResponse()
+                .setHeaders(Headers.headersOf("Content-type", "application/json"))
+                .setBody("{\"data\":\"0x3529b5834ea3c6\"}")
+        )
         ccipReadFetcher.fetchCcipRead(
             transactionCall = TransactionCall(
                 to = Network.ETH_MAINNET.ensAddress!!,
@@ -62,7 +78,11 @@ class CcipReadFetcherTest {
 
     @Test
     fun `should send post request if there is no data in the url`() = runTest {
-        mockWebServer.enqueue(MockResponse().setBody("{\"data\":\"0x3529b5834ea3c6\"}"))
+        mockWebServer.enqueue(
+            MockResponse()
+                .setHeaders(Headers.headersOf("Content-type", "application/json"))
+                .setBody("{\"data\":\"0x3529b5834ea3c6\"}")
+        )
         ccipReadFetcher.fetchCcipRead(
             transactionCall = TransactionCall(
                 to = Network.ETH_MAINNET.ensAddress!!,
@@ -79,7 +99,11 @@ class CcipReadFetcherTest {
 
     @Test
     fun `should send get request if there is data in the url`() = runTest {
-        mockWebServer.enqueue(MockResponse().setBody("{\"data\":\"0x3529b5834ea3c6\"}"))
+        mockWebServer.enqueue(
+            MockResponse()
+                .setHeaders(Headers.headersOf("Content-type", "application/json"))
+                .setBody("{\"data\":\"0x3529b5834ea3c6\"}")
+        )
         ccipReadFetcher.fetchCcipRead(
             transactionCall = TransactionCall(
                 to = Network.ETH_MAINNET.ensAddress!!,
@@ -94,7 +118,11 @@ class CcipReadFetcherTest {
 
     @Test
     fun `should return null if no data from read url`() = runTest {
-        mockWebServer.enqueue(MockResponse().setBody("{\"data\": null}"))
+        mockWebServer.enqueue(
+            MockResponse()
+                .setHeaders(Headers.headersOf("Content-type", "application/json"))
+                .setBody("{\"data\": null}")
+        )
         val result = ccipReadFetcher.fetchCcipRead(
             transactionCall = TransactionCall(
                 to = Network.ETH_MAINNET.ensAddress!!,
@@ -112,7 +140,11 @@ class CcipReadFetcherTest {
     @Test
     fun `should return try other urls if error code is out of 499 range`() = runTest {
         mockWebServer.enqueue(MockResponse().setResponseCode(509))
-        mockWebServer.enqueue(MockResponse().setBody("{\"data\":\"0x3529b5834ea3c6\"}"))
+        mockWebServer.enqueue(
+            MockResponse()
+                .setHeaders(Headers.headersOf("Content-type", "application/json"))
+                .setBody("{\"data\":\"0x3529b5834ea3c6\"}")
+        )
         val result = ccipReadFetcher.fetchCcipRead(
             transactionCall = TransactionCall(
                 to = Network.ETH_MAINNET.ensAddress!!,

@@ -14,7 +14,7 @@ import io.ktor.http.isSuccess
 
 
 suspend inline fun <reified T> HttpClient.call(url: String, request: JsonRpcRequest): Result<T> {
-    val response = this.post(url) {
+    val response = post(url) {
         contentType(ContentType.Application.Json)
         setBody(request)
     }

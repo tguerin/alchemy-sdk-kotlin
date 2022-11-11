@@ -105,7 +105,7 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
         }
         return Core(
             alchemySettings.network,
-            CcipReadFetcher(okHttpClient, gson),
+            CcipReadFetcher(client),
             CoreApiImpl(
                 alchemyUrl,
                 idGenerator,
