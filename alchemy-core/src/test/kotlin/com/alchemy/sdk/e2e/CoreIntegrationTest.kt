@@ -10,7 +10,6 @@ import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.model.BlockTransaction
 import com.alchemy.sdk.core.model.FeeHistory
 import com.alchemy.sdk.core.model.Index.Companion.index
-import com.alchemy.sdk.core.model.Log
 import com.alchemy.sdk.core.model.LogFilter
 import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.core.model.Percentile.Companion.percentile
@@ -319,7 +318,7 @@ class CoreIntegrationTest {
         val data = alchemy.core.getTransactionCount(
             Address.from("0x10ce4cd51b9e95be1c8a9bc665d3ebdfa9762529"),
         )
-        data.getOrThrow().intValue() shouldBeGreaterOrEqualTo  6185
+        data.getOrThrow().intValue() shouldBeGreaterOrEqualTo 6185
     }
 
     @Test
@@ -402,7 +401,7 @@ class CoreIntegrationTest {
                 alchemy.core.getBlockByNumber(BlockTag.Latest).getOrThrow().hash
             )
         )
-        data.getOrThrow().size shouldBeGreaterThan  0
+        data.getOrThrow().size shouldBeGreaterThan 0
     }
 
     @Test

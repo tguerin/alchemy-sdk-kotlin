@@ -18,7 +18,6 @@ rootProject.name = "AlchemySdkKotlin"
 include(":alchemy-core")
 include(":annotations")
 include(":annotations-processor")
-include(":json-rpc-client")
 include(":samples:nft-explorer-app")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

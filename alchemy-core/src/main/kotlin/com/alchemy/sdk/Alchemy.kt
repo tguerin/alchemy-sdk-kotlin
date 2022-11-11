@@ -4,20 +4,24 @@ import com.alchemy.sdk.ccip.CcipReadFetcher
 import com.alchemy.sdk.core.Core
 import com.alchemy.sdk.core.api.CoreApiImpl
 import com.alchemy.sdk.core.model.Network
-import com.alchemy.sdk.json.rpc.client.generator.IncrementalIdGenerator
-import com.alchemy.sdk.json.rpc.client.http.HttpJsonRpcClient
 import com.alchemy.sdk.nft.Nft
 import com.alchemy.sdk.nft.api.NftApi
 import com.alchemy.sdk.transact.Transact
 import com.alchemy.sdk.util.AlchemyVersionInterceptor
 import com.alchemy.sdk.util.Constants
 import com.alchemy.sdk.util.GsonStringConverter
+import com.alchemy.sdk.util.GsonUtil
 import com.alchemy.sdk.util.GsonUtil.Companion.gson
 import com.alchemy.sdk.util.GsonUtil.Companion.nftGson
 import com.alchemy.sdk.util.ResultCallAdapter
+import com.alchemy.sdk.util.generator.IncrementalIdGenerator
 import com.alchemy.sdk.ws.DelayRetryPolicy
 import com.alchemy.sdk.ws.RetryPolicy
 import com.alchemy.sdk.ws.WebSocket
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.gson.gson
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -90,16 +94,22 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
     private fun setupCore(alchemySettings: AlchemySettings): Core {
         val alchemyUrl =
             Constants.getAlchemyHttpUrl(alchemySettings.network, alchemySettings.apiKey)
+        val client = HttpClient(CIO) {
+            install(ContentNegotiation) {
+                gson {
+                    GsonUtil.configureGson(
+                        this
+                    )
+                }
+            }
+        }
         return Core(
             alchemySettings.network,
             CcipReadFetcher(okHttpClient, gson),
             CoreApiImpl(
+                alchemyUrl,
                 idGenerator,
-                HttpJsonRpcClient(
-                    alchemyUrl,
-                    okHttpClient,
-                    gson
-                )
+                client
             )
         )
     }

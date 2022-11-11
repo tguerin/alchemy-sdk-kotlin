@@ -1,3 +1,3 @@
-package com.alchemy.sdk.json.rpc.client.model
+package com.alchemy.sdk.rpc.model
 
 class JsonRpcException(val jsonRpcError: JsonRpcError) : RuntimeException()

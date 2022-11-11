@@ -1,6 +1,3 @@
-import groovy.namespace.QName
-import groovy.util.Node
-
 @Suppress(
     "DSL_SCOPE_VIOLATION"
 )
@@ -23,15 +20,17 @@ kotlin {
 }
 
 dependencies {
-    implementation(projects.jsonRpcClient)
-
-   implementation(projects.annotations)
-   ksp(projects.annotationsProcessor)
+    implementation(projects.annotations)
+    ksp(projects.annotationsProcessor)
 
     implementation(libs.crypto.keccak)
     implementation(libs.gson)
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.okhttp)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.content.negociation)
+    implementation(libs.ktor.serialization.gson)
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
 
@@ -45,12 +44,7 @@ dependencies {
 
 val sourcesJar by tasks.registering(Jar::class) {
     from(sourceSets.main.get().allSource)
-    from({ project(":json-rpc-client").sourceSets.main.get().allSource })
     archiveClassifier.set("sources")
-}
-
-tasks.jar {
-    from(project(":json-rpc-client").sourceSets.main.get().output.classesDirs)
 }
 
 publishing {
@@ -60,16 +54,6 @@ publishing {
             groupId = "com.github.tguerin"
             artifactId = "alchemy-sdk-kotlin"
             version = "0.9.0"
-            pom.withXml {
-                val artifactsToExclude = listOf("json-rpc-client")
-                asNode().depthFirst().toList()
-                    .filterIsInstance<Node>()
-                    .filter { (it.name() as QName).localPart == "artifactId" && it.value() in artifactsToExclude }
-                    .forEach { node ->
-                        val dependencyNode = node.parent()
-                        dependencyNode.parent().remove(dependencyNode)
-                    }
-            }
             artifact(sourcesJar.get())
         }
     }
@@ -92,6 +76,8 @@ tasks.withType<JacocoReport> {
                 exclude("com/alchemy/sdk/**/model")
                 // https://github.com/jacoco/jacoco/issues/1036
                 exclude("com/alchemy/sdk/transact")
+                // Exclude generated classes
+                exclude("com/alchemy/sdk/core/api/CoreApiImpl")
             }
         }))
     }

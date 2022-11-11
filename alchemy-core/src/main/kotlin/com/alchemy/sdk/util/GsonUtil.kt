@@ -57,15 +57,8 @@ import java.lang.Long
 internal class GsonUtil {
 
     companion object {
-        internal val addressCreator = InstanceCreator { Constants.ADDRESS_ZERO }
-        internal val blockTransactionCreator =
-            InstanceCreator<BlockTransaction> { BlockTransaction.Unknown }
-        internal val pendingTransactionCreator = InstanceCreator<PendingTransaction> {
-            PendingTransaction.HashOnly("0x".hexString)
-        }
-        internal val gson: Gson by lazy {
-            GsonBuilder()
-                .registerTypeAdapter(Address::class.java, addressCreator)
+        fun configureGson(gsonBuilder: GsonBuilder): GsonBuilder {
+            return gsonBuilder.registerTypeAdapter(Address::class.java, addressCreator)
                 .registerTypeAdapter(BlockTransaction::class.java, blockTransactionCreator)
                 .registerTypeAdapter(PendingTransaction::class.java, pendingTransactionCreator)
                 .registerTypeAdapter(Address::class.java, AddressDeserializer)
@@ -97,7 +90,16 @@ internal class GsonUtil {
                 .registerTypeAdapter(RawInt::class.java, RawIntSerializer)
                 .registerTypeAdapter(Percentile::class.java, PercentileSerializer)
                 .registerTypeAdapter(PendingTransaction::class.java, PendingTransactionDeserializer)
-                .create()
+        }
+
+        internal val addressCreator = InstanceCreator { Constants.ADDRESS_ZERO }
+        internal val blockTransactionCreator =
+            InstanceCreator<BlockTransaction> { BlockTransaction.Unknown }
+        internal val pendingTransactionCreator = InstanceCreator<PendingTransaction> {
+            PendingTransaction.HashOnly("0x".hexString)
+        }
+        internal val gson: Gson by lazy {
+            configureGson(GsonBuilder()).create()
         }
 
         internal val ownedNftsCreator = InstanceCreator<OwnedNftsResponse> {

@@ -29,16 +29,16 @@ class JsonRpcProcessor(
     private val options: Map<String, String>
 ) : SymbolProcessor {
 
-    private val jsonRpcClientInterface = ClassName(
-        "com.alchemy.sdk.json.rpc.client",
-        "JsonRpcClient"
+    private val jsonRpcClient = ClassName(
+        "io.ktor.client",
+        "HttpClient"
     )
     private val jsonRpcRequestInterface = ClassName(
-        "com.alchemy.sdk.json.rpc.client.model",
+        "com.alchemy.sdk.rpc.model",
         "JsonRpcRequest"
     )
     private val idGeneratorInterface = ClassName(
-        "com.alchemy.sdk.json.rpc.client.generator",
+        "com.alchemy.sdk.util.generator",
         "IdGenerator"
     )
 
@@ -151,7 +151,7 @@ class JsonRpcProcessor(
                         |         method = rpcMethodName,
                         |         params = args.toList()
                         |     )
-                        |     jsonRpcClient.call(request,  T::class.java)
+                        |     jsonRpcClient.call(url, request)
                         |} catch (e: Exception) {
                         |     Result.failure(e)
                         |}
@@ -167,17 +167,18 @@ class JsonRpcProcessor(
             .addSuperinterface(classDeclaration.asType(emptyList()).toTypeName())
             .primaryConstructor(
                 FunSpec.constructorBuilder()
+                    .addParameter("url", String::class)
                     .addParameter("idGenerator", idGeneratorInterface)
-                    .addParameter("jsonRpcClient", jsonRpcClientInterface)
+                    .addParameter("jsonRpcClient", jsonRpcClient)
                     .build()
             )
             .addProperty(
                 PropertySpec.builder(
-                    "jsonRpcClient",
-                    jsonRpcClientInterface,
+                    "url",
+                    String::class,
                     KModifier.PRIVATE
                 )
-                    .initializer("jsonRpcClient")
+                    .initializer("url")
                     .build()
             )
             .addProperty(
@@ -187,6 +188,15 @@ class JsonRpcProcessor(
                     KModifier.PRIVATE
                 )
                     .initializer("idGenerator")
+                    .build()
+            )
+            .addProperty(
+                PropertySpec.builder(
+                    "jsonRpcClient",
+                    jsonRpcClient,
+                    KModifier.PRIVATE
+                )
+                    .initializer("jsonRpcClient")
                     .build()
             )
     }
@@ -199,6 +209,10 @@ class JsonRpcProcessor(
             classDeclaration.packageName.asString(),
             classDeclaration.simpleName.asString() + "Impl"
         )
+            .addImport(
+                "com.alchemy.sdk.rpc.http.call",
+                ""
+            )
             .addImport(
                 jsonRpcRequestInterface.packageName,
                 jsonRpcRequestInterface.simpleName

@@ -2,7 +2,6 @@ package com.alchemy.sdk.ccip
 
 import com.alchemy.sdk.core.model.CcipReadResponse
 import com.alchemy.sdk.core.model.TransactionCall
-import com.alchemy.sdk.json.rpc.client.http.HttpJsonRpcClient
 import com.alchemy.sdk.util.HexString
 import com.google.gson.Gson
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -43,7 +42,7 @@ class CcipReadFetcher internal constructor(
                             if (json == null) {
                                 get()
                             } else {
-                                post(json.toRequestBody(HttpJsonRpcClient.JSON.toMediaType()))
+                                post(json.toRequestBody("application/json".toMediaType()))
                             }
                         }
                         .build()

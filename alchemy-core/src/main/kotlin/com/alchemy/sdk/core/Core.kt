@@ -11,7 +11,7 @@ import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.core.model.Proof
 import com.alchemy.sdk.core.model.TransactionCall
 import com.alchemy.sdk.ens.Resolver
-import com.alchemy.sdk.json.rpc.client.model.JsonRpcException
+import com.alchemy.sdk.rpc.model.JsonRpcException
 import com.alchemy.sdk.util.Ether
 import com.alchemy.sdk.util.Formatters
 import com.alchemy.sdk.util.HexString

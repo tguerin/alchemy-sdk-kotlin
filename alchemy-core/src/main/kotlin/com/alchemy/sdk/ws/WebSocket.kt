@@ -2,10 +2,9 @@ package com.alchemy.sdk.ws
 
 import com.alchemy.sdk.core.Core
 import com.alchemy.sdk.core.model.Address
-import com.alchemy.sdk.json.rpc.client.generator.IdGenerator
-import com.alchemy.sdk.json.rpc.client.model.JsonRpcException
-import com.alchemy.sdk.json.rpc.client.model.JsonRpcRequest
-import com.alchemy.sdk.json.rpc.client.util.parseContent
+import com.alchemy.sdk.util.generator.IdGenerator
+import com.alchemy.sdk.rpc.model.JsonRpcException
+import com.alchemy.sdk.rpc.model.JsonRpcRequest
 import com.alchemy.sdk.util.HexString
 import com.alchemy.sdk.util.HexString.Companion.hexString
 import com.alchemy.sdk.util.pmap
@@ -38,7 +37,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import java.io.Reader
 import java.io.StringReader
+import java.lang.reflect.Type
 
 private fun <T> Flow<WebsocketEvent>.dataOnly(): Flow<Result<T>> {
     return this.filterIsInstance<WebsocketEvent.Data<Result<T>>>().map { it.data }
@@ -372,6 +373,32 @@ class WebSocket internal constructor(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    fun <T> Gson.parseContent(
+        wrapperType: Class<*>,
+        returnType: Type,
+        reader: Reader
+    ): Pair<T?, Exception?> {
+        val jsonReader = newJsonReader(reader)
+        val typeToken =
+            TypeToken.getParameterized(
+                wrapperType,
+                returnType
+            )
+        val adapter = getAdapter(typeToken)
+        var dataRead: Any?
+        var exception: Exception? = null
+        try {
+            dataRead = adapter.read(jsonReader)
+            if (jsonReader.peek() !== JsonToken.END_DOCUMENT) {
+                dataRead = null
+            }
+        } catch (e: Exception) {
+            exception = e
+            dataRead = null
+        }
+        return dataRead as T to exception
+    }
 
     companion object {
         private val subscriptionRegex = "\"subscription\":\"(0x[0-9a-fA-F]+)\"".toRegex()

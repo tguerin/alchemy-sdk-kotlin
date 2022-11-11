@@ -1,4 +1,4 @@
-package com.alchemy.sdk.json.rpc.client.model
+package com.alchemy.sdk.rpc.model
 
 data class JsonRpcError(
     val code: Int,

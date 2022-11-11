@@ -1,4 +1,4 @@
-package com.alchemy.sdk.json.rpc.client.generator
+package com.alchemy.sdk.util.generator
 
 import java.util.concurrent.atomic.AtomicLong
 

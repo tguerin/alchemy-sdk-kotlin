@@ -1,6 +1,6 @@
 package com.alchemy.sdk.ws.model
 
-import com.alchemy.sdk.json.rpc.client.model.JsonRpcError
+import com.alchemy.sdk.rpc.model.JsonRpcError
 import com.alchemy.sdk.util.HexString
 
 data class WebSocketJsonRpcResponse<T>(

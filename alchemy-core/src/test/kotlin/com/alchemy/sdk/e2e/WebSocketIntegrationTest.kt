@@ -8,11 +8,11 @@ import com.alchemy.sdk.core.Core
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.core.model.TransactionReceipt
-import com.alchemy.sdk.json.rpc.client.generator.IncrementalIdGenerator
 import com.alchemy.sdk.util.Constants
 import com.alchemy.sdk.util.GsonUtil
 import com.alchemy.sdk.util.HexString.Companion.hexString
 import com.alchemy.sdk.util.HexString.Companion.id
+import com.alchemy.sdk.util.generator.IncrementalIdGenerator
 import com.alchemy.sdk.ws.DelayRetryPolicy
 import com.alchemy.sdk.ws.WebSocket
 import com.alchemy.sdk.ws.model.BlockHead
