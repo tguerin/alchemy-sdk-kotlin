@@ -1,14 +1,32 @@
 import groovy.namespace.QName
 import groovy.util.Node
 
+@Suppress(
+    "DSL_SCOPE_VIOLATION"
+)
 plugins {
     id("kotlin")
     id("maven-publish")
     id("jacoco")
+    alias(libs.plugins.ksp)
+}
+
+ext["useCoroutines"] = true
+
+kotlin {
+    sourceSets.main {
+        kotlin.srcDir("build/generated/ksp/main/kotlin")
+    }
+    sourceSets.test {
+        kotlin.srcDir("build/generated/ksp/test/kotlin")
+    }
 }
 
 dependencies {
     implementation(projects.jsonRpcClient)
+
+   implementation(projects.annotations)
+   ksp(projects.annotationsProcessor)
 
     implementation(libs.crypto.keccak)
     implementation(libs.gson)

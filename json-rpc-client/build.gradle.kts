@@ -3,6 +3,8 @@ plugins {
     id("jacoco")
 }
 
+ext["useCoroutines"] = true
+
 dependencies {
     implementation(libs.gson)
     implementation(libs.kotlin.coroutines.core)

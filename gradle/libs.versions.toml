@@ -16,6 +16,9 @@ junit = "4.13.2"
 keccak = "1.1.1"
 kluent = "1.68"
 kotlin = "1.7.10"
+kotlinPoet = "1.12.0"
+ksp = "1.7.10-1.0.6"
+ktor = "2.1.2"
 landscapist = "2.0.0"
 material = "1.6.1"
 material3 = "1.0.0-beta03"
@@ -31,6 +34,8 @@ android-lint = { id = "com.android.lint", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 
 hilt = { id = "com.google.dagger.hilt.android",  version.ref = "hilt"}
+
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
@@ -65,6 +70,15 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hil
 
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+
+kotlin-poet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinPoet" }
+kotlin-poet-ksp= { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinPoet" }
+
+ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
+
+ktor-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
+ktor-websocket-server = { module = "io.ktor:ktor-server-websockets", version.ref = "ktor" }
 
 landscapist = { module = "com.github.skydoves:landscapist-glide", version.ref = "landscapist" }
 

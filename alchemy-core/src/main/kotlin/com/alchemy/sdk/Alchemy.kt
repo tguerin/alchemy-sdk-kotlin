@@ -2,13 +2,12 @@ package com.alchemy.sdk
 
 import com.alchemy.sdk.ccip.CcipReadFetcher
 import com.alchemy.sdk.core.Core
-import com.alchemy.sdk.core.api.CoreApi
+import com.alchemy.sdk.core.api.CoreApiImpl
 import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.json.rpc.client.generator.IncrementalIdGenerator
 import com.alchemy.sdk.json.rpc.client.http.HttpJsonRpcClient
 import com.alchemy.sdk.nft.Nft
 import com.alchemy.sdk.nft.api.NftApi
-import com.alchemy.sdk.proxy.AlchemyProxy
 import com.alchemy.sdk.transact.Transact
 import com.alchemy.sdk.util.AlchemyVersionInterceptor
 import com.alchemy.sdk.util.Constants
@@ -91,19 +90,17 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
     private fun setupCore(alchemySettings: AlchemySettings): Core {
         val alchemyUrl =
             Constants.getAlchemyHttpUrl(alchemySettings.network, alchemySettings.apiKey)
-        val alchemyProxy =
-            AlchemyProxy(
-                idGenerator = idGenerator,
-                jsonRpcClient = HttpJsonRpcClient(
+        return Core(
+            alchemySettings.network,
+            CcipReadFetcher(okHttpClient, gson),
+            CoreApiImpl(
+                idGenerator,
+                HttpJsonRpcClient(
                     alchemyUrl,
                     okHttpClient,
                     gson
                 )
             )
-        return Core(
-            alchemySettings.network,
-            CcipReadFetcher(okHttpClient, gson),
-            alchemyProxy.createProxy(CoreApi::class.java)
         )
     }
 

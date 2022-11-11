@@ -4,18 +4,21 @@ package com.alchemy.sdk.util
 
 import com.alchemy.sdk.core.adapter.AddressDeserializer
 import com.alchemy.sdk.core.adapter.AddressSerializer
+import com.alchemy.sdk.core.adapter.BlockCountSerializer
 import com.alchemy.sdk.core.adapter.BlockTagSerializer
 import com.alchemy.sdk.core.adapter.BlockTransactionDeserializer
 import com.alchemy.sdk.core.adapter.EtherDeserializer
 import com.alchemy.sdk.core.adapter.EtherSerializer
 import com.alchemy.sdk.core.adapter.HexStringDeserializer
 import com.alchemy.sdk.core.adapter.HexStringSerializer
+import com.alchemy.sdk.core.adapter.IndexSerializer
 import com.alchemy.sdk.core.adapter.LogFilterSerializer
 import com.alchemy.sdk.core.adapter.NumberSerializer
 import com.alchemy.sdk.core.adapter.PercentileSerializer
 import com.alchemy.sdk.core.adapter.RawFloatSerializer
 import com.alchemy.sdk.core.adapter.RawIntSerializer
 import com.alchemy.sdk.core.model.Address
+import com.alchemy.sdk.core.model.BlockCount
 import com.alchemy.sdk.core.model.BlockTag
 import com.alchemy.sdk.core.model.BlockTransaction
 import com.alchemy.sdk.core.model.Index
@@ -71,6 +74,7 @@ internal class GsonUtil {
                 .registerTypeAdapter(Address::class.java, AddressSerializer)
                 .registerTypeAdapter(Address.EthereumAddress::class.java, AddressSerializer)
                 .registerTypeAdapter(Address.ContractAddress::class.java, AddressSerializer)
+                .registerTypeAdapter(BlockCount::class.java, BlockCountSerializer)
                 .registerTypeAdapter(BlockTag.BlockTagNumber::class.java, BlockTagSerializer)
                 .registerTypeAdapter(BlockTag.Earliest::class.java, BlockTagSerializer)
                 .registerTypeAdapter(BlockTag.Latest::class.java, BlockTagSerializer)
@@ -82,6 +86,7 @@ internal class GsonUtil {
                 .registerTypeAdapter(Ether::class.java, EtherSerializer)
                 .registerTypeAdapter(HexString::class.java, HexStringSerializer)
                 .registerTypeAdapter(HexString::class.java, HexStringDeserializer)
+                .registerTypeAdapter(Index::class.java, IndexSerializer)
                 .registerTypeAdapter(Integer::class.java, NumberSerializer)
                 .registerTypeAdapter(Long::class.java, NumberSerializer)
                 .registerTypeAdapter(Float::class.java, NumberSerializer)
@@ -90,7 +95,6 @@ internal class GsonUtil {
                 .registerTypeAdapter(LogFilter.BlockRangeFilter::class.java, LogFilterSerializer)
                 .registerTypeAdapter(RawFloat::class.java, RawFloatSerializer)
                 .registerTypeAdapter(RawInt::class.java, RawIntSerializer)
-                .registerTypeAdapter(Index::class.java, RawFloatSerializer)
                 .registerTypeAdapter(Percentile::class.java, PercentileSerializer)
                 .registerTypeAdapter(PendingTransaction::class.java, PendingTransactionDeserializer)
                 .create()

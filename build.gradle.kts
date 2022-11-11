@@ -12,18 +12,24 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.kapt) apply false
+    alias(libs.plugins.ksp) apply false
 }
 
 subprojects {
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
-        kotlinOptions {
-            // Treat all Kotlin warnings as errors
-            allWarningsAsErrors = true
+    ext["useCoroutines"] = false
+    afterEvaluate {
+        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
+            kotlinOptions {
+                // Treat all Kotlin warnings as errors
+                allWarningsAsErrors = true
 
-            // Enable experimental coroutines APIs, including Flow
-            freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-            freeCompilerArgs += "-opt-in=kotlinx.coroutines.FlowPreview"
-            freeCompilerArgs += "-opt-in=kotlin.Experimental"
+                if (project.ext["useCoroutines"] == true) {
+                    // Enable experimental coroutines APIs, including Flow
+                    freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+                    freeCompilerArgs += "-opt-in=kotlinx.coroutines.FlowPreview"
+                    freeCompilerArgs += "-opt-in=kotlin.Experimental"
+                }
+            }
         }
     }
     if (!this.path.contains("samples")) {

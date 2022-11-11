@@ -20,6 +20,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterThan
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldNotBeEqualTo
+import org.junit.Ignore
 import org.junit.Test
 
 class NftIntegrationTest {
@@ -157,6 +158,7 @@ class NftIntegrationTest {
     }
 
     @Test
+    @Ignore("Alchemy is returning a 500 http code")
     fun `retrieve floor price for the collection`() = runTest {
         val floorPriceResponse = alchemy.nft.getFloorPrice(
             Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
