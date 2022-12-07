@@ -10,6 +10,7 @@ import io.ktor.websocket.readText
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -88,6 +89,7 @@ internal class AutoConnectWebSocket(
                                     }
 
                                     is OutgoingMessage.CloseMessage -> {
+                                        shouldRetryConnection = outgoingMessage.closeCode != CloseReason.Codes.NORMAL.code
                                         outgoing.send(
                                             Frame.Close(
                                                 CloseReason(
@@ -96,6 +98,8 @@ internal class AutoConnectWebSocket(
                                                 )
                                             )
                                         )
+                                        status = WebsocketStatus.Disconnected
+                                        cancel()
                                     }
                                 }
                             }
