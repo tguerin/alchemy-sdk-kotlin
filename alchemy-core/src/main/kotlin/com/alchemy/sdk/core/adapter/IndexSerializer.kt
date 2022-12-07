@@ -1,7 +1,6 @@
 package com.alchemy.sdk.core.adapter
 
 import com.alchemy.sdk.core.model.Index
-import com.alchemy.sdk.core.model.RawFloat
 import com.alchemy.sdk.util.HexString.Companion.hexString
 import com.google.gson.JsonElement
 import com.google.gson.JsonNull

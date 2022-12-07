@@ -69,6 +69,7 @@ sealed class Address private constructor(
                     }
                     EthereumAddress(result.hexString)
                 }
+
                 else -> {
                     val sanitizedAddress = rawAddress.lowercase()
                     val normalizedName = IDN.toUnicode(

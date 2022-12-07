@@ -5,6 +5,7 @@ import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.nft.api.NftApi
 import com.alchemy.sdk.nft.model.GetNftsForOwnerOptions
 import com.alchemy.sdk.nft.model.Nft
+import com.alchemy.sdk.nft.model.Nft.AlchemyNft
 import com.alchemy.sdk.nft.model.OwnedNftsResponse
 import com.alchemy.sdk.nft.model.RefreshNftMetadataResponse
 
@@ -69,8 +70,8 @@ class Nft(
         if (refreshedNftResult.isFailure) {
             return Result.failure(refreshedNftResult.exceptionOrNull()!!)
         }
-        val refreshedNft = refreshedNftResult.getOrThrow() as Nft.AlchemyNft
-        val nft = nftResult.getOrThrow() as Nft.AlchemyNft
+        val refreshedNft = refreshedNftResult.getOrThrow() as AlchemyNft
+        val nft = nftResult.getOrThrow() as AlchemyNft
         return Result.success(
             RefreshNftMetadataResponse(
                 updated = nft.timeLastUpdated != refreshedNft.timeLastUpdated,

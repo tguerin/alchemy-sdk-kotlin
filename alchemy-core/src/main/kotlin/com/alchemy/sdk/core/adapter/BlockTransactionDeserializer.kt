@@ -23,6 +23,7 @@ object BlockTransactionDeserializer : JsonDeserializer<BlockTransaction?> {
                 json,
                 BlockTransaction.FullBlockTransaction::class.java
             )
+
             else -> BlockTransaction.Unknown
         }
     }

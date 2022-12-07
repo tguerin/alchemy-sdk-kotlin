@@ -22,12 +22,14 @@ object FloorPriceDeserializer : JsonDeserializer<FloorPrice?> {
                 json,
                 FloorPrice.FloorPriceMarketplace::class.java
             )
+
             typeOfT == FloorPrice.FloorPriceError::class.java || (json is JsonObject && containsError(
                 json
             )) -> context.deserialize(
                 json,
                 FloorPrice.FloorPriceError::class.java
             )
+
             else -> throw IllegalStateException("Unknown Nft type")
         }
     }

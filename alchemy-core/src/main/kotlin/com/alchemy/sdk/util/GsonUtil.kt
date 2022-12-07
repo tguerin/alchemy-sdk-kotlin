@@ -120,9 +120,8 @@ internal class GsonUtil {
             NftContract.BaseNftContract(Address.ContractAddress("0x0".hexString))
         }
 
-        internal val nftGson: Gson by lazy {
-
-            GsonBuilder()
+        fun configureNftGson(gsonBuilder: GsonBuilder): GsonBuilder {
+            return gsonBuilder
                 .registerTypeAdapter(Address::class.java, addressCreator)
                 .registerTypeAdapter(OwnedNftsResponse::class.java, ownedNftsCreator)
                 .registerTypeAdapter(OwnedNft::class.java, ownedNftCreator)
@@ -145,7 +144,10 @@ internal class GsonUtil {
                 .registerTypeAdapter(Nft::class.java, NftDeserializer)
                 .registerTypeAdapter(FloorPrice::class.java, FloorPriceDeserializer)
                 .registerTypeAdapter(RefreshState::class.java, RefreshStateDeserializer)
-                .create()
+        }
+
+        internal val nftGson: Gson by lazy {
+            configureNftGson(GsonBuilder()).create()
         }
     }
 }

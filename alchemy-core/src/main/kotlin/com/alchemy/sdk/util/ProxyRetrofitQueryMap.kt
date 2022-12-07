@@ -27,6 +27,7 @@ class ProxyRetrofitQueryMap(m: Map<String, Any> = emptyMap()) : HashMap<String, 
                             }
                         }
                     }
+
                     else -> {
                         val newEntry = object : MutableMap.MutableEntry<String, Any> {
                             override val key: String

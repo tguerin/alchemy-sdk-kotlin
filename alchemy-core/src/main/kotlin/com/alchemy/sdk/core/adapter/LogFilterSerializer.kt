@@ -27,6 +27,7 @@ object LogFilterSerializer : JsonSerializer<LogFilter> {
                 }
                 jsonObject
             }
+
             is LogFilter.BlockRangeFilter -> {
                 val jsonObject = JsonObject()
                 jsonObject.add("from", JsonPrimitive(src.from.value))
@@ -38,6 +39,7 @@ object LogFilterSerializer : JsonSerializer<LogFilter> {
                 }
                 jsonObject
             }
+
             null -> JsonNull.INSTANCE
         }
     }

@@ -9,7 +9,6 @@ import org.junit.Rule
 import org.junit.Test
 import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 
@@ -82,7 +81,7 @@ internal class ResultCallBackTest {
             callback.onResponse(
                 resultCall,
                 withArg {
-                    it.body()?.exceptionOrNull()?.message shouldBeEqualTo  "No internet connection"
+                    it.body()?.exceptionOrNull()?.message shouldBeEqualTo "No internet connection"
                 }
             )
         }
@@ -98,7 +97,7 @@ internal class ResultCallBackTest {
             callback.onResponse(
                 resultCall,
                 withArg {
-                    it.body()?.exceptionOrNull()?.message shouldBeEqualTo  "exception"
+                    it.body()?.exceptionOrNull()?.message shouldBeEqualTo "exception"
                 }
             )
         }

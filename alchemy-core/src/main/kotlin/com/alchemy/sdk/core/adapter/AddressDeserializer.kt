@@ -23,6 +23,7 @@ object AddressDeserializer : JsonDeserializer<Address?> {
             Address.ContractAddress::class.java -> {
                 Address.ContractAddress(json.asString.hexString)
             }
+
             else -> {
                 Address.from(json.asString)
             }

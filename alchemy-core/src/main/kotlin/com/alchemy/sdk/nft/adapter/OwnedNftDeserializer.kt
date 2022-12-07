@@ -27,10 +27,12 @@ object OwnedNftDeserializer : JsonDeserializer<OwnedNft?> {
             json is JsonObject && (typeOfT == OwnedNft.OwnedAlchemyNft::class.java || isAlchemyNft(
                 json
             )) -> deserializeAlchemyNft(json, context)
+
             typeOfT == OwnedNft.OwnedBaseNft::class.java || json is JsonObject -> context.deserialize(
                 json,
                 OwnedNft.OwnedBaseNft::class.java
             )
+
             else -> throw IllegalStateException("Unknown Nft type")
         }
     }

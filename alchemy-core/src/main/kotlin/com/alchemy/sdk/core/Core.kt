@@ -158,6 +158,7 @@ class Core(
                     Result.failure(result.exceptionOrNull()!!)
                 }
             }
+
             else -> {
                 Result.failure(result.exceptionOrNull()!!)
             }
@@ -190,6 +191,7 @@ class Core(
             is LogFilter.BlockHashFilter -> {
                 block(filter.copy(addresses = resolveAddresses(filter.addresses)))
             }
+
             is LogFilter.BlockRangeFilter -> {
                 block(filter.copy(addresses = resolveAddresses(filter.addresses)))
             }
@@ -214,9 +216,11 @@ class Core(
             resolvedToAddressResult.isFailure -> {
                 Result.failure(resolvedToAddressResult.exceptionOrNull()!!)
             }
+
             resolvedFromAddressResult?.isFailure == true -> {
                 Result.failure(resolvedFromAddressResult.exceptionOrNull()!!)
             }
+
             else -> {
                 block(
                     transactionCall.copy(
@@ -246,6 +250,7 @@ class Core(
                 is Address.EnsAddress -> {
                     resolvedAddresses.getOrPut(address) { getResolver(address).getAddress() }
                 }
+
                 else -> address
             }
             Result.success(resolvedAddress)

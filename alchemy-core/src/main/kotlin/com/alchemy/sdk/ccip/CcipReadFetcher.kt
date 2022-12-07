@@ -47,9 +47,11 @@ class CcipReadFetcher internal constructor(
                         null
                     }
                 }
+
                 response.status.value in 400..499 -> {
                     continue
                 }
+
                 else -> {
                     continue
                 }

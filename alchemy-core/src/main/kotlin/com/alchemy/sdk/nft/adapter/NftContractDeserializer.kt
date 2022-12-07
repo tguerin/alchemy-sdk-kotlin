@@ -22,10 +22,12 @@ object NftContractDeserializer : JsonDeserializer<NftContract?> {
                 json,
                 NftContract.AlchemyNftContract::class.java
             )
+
             typeOfT == NftContract.BaseNftContract::class.java || json is JsonObject -> context.deserialize(
                 json,
                 NftContract.BaseNftContract::class.java
             )
+
             else -> throw IllegalStateException("Unknown Nft type")
         }
     }

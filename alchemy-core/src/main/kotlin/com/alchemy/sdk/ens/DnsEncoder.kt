@@ -11,7 +11,7 @@ object DnsEncoder {
         return ensNameSplit(rawAddress).map { component ->
             // DNS does not allow components over 63 bytes in length
             if (component.size > 63) {
-                throw  IllegalArgumentException("invalid DNS encoded entry length exceeds 63 bytes")
+                throw IllegalArgumentException("invalid DNS encoded entry length exceeds 63 bytes")
             }
             val bytes = IntArray(component.size + 1)
             bytes.set(component, 1)

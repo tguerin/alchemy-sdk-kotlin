@@ -58,7 +58,7 @@ internal class ResultCallTest {
     fun `should delegate request`() {
         val request = mockk<Request>()
         every { delegate.request() } returns request
-        resultCall.request() shouldBeEqualTo  request
+        resultCall.request() shouldBeEqualTo request
         verify { delegate.request() }
     }
 
@@ -66,7 +66,7 @@ internal class ResultCallTest {
     fun `should delegate timeout`() {
         val timeout = mockk<Timeout>()
         every { delegate.timeout() } returns timeout
-        resultCall.timeout() shouldBeEqualTo  timeout
+        resultCall.timeout() shouldBeEqualTo timeout
         verify { delegate.timeout() }
     }
 

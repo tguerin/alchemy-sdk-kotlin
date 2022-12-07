@@ -112,12 +112,14 @@ class HexString private constructor(val data: String) {
                             "0x${if (hexRepresentation.length % 2 != 0) "0" else ""}$hexRepresentation"
                         )
                     }
+
                     is Long -> {
                         val hexRepresentation = java.lang.Long.toHexString(this).lowercase()
                         HexString(
                             "0x${if (hexRepresentation.length % 2 != 0) "0" else ""}$hexRepresentation"
                         )
                     }
+
                     else -> throw IllegalArgumentException("Only Int or Long are supported for now")
                 }
             }
@@ -171,9 +173,11 @@ class HexString private constructor(val data: String) {
                             !startsWith("0x") -> {
                                 "0x$leadingZeroOrEmpty${lowercase()}"
                             }
+
                             leadingZeroOrEmpty.isNotEmpty() -> {
                                 lowercase().replace("0x", "0x0")
                             }
+
                             else -> lowercase()
                         }
                     )

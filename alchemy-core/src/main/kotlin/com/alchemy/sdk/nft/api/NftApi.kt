@@ -1,10 +1,10 @@
 package com.alchemy.sdk.nft.api
 
 import com.alchemy.sdk.core.model.Address
+import com.alchemy.sdk.nft.model.Nft
 import com.alchemy.sdk.nft.model.FloorPriceResponse
 import com.alchemy.sdk.nft.model.GetNftsForContractOptions
 import com.alchemy.sdk.nft.model.GetNftsForOwnerOptions
-import com.alchemy.sdk.nft.model.Nft
 import com.alchemy.sdk.nft.model.NftContractMetadata
 import com.alchemy.sdk.nft.model.NftContractNftsResponse
 import com.alchemy.sdk.nft.model.NftTokenType

@@ -21,6 +21,7 @@ object OwnedNftsResponseDeserializer : JsonDeserializer<OwnedNftsResponse> {
                 json,
                 OwnedNftsResponse.OwnedAlchemyNftsResponse::class.java
             )
+
             else -> context.deserialize<OwnedNftsResponse.OwnedBaseNftsResponse>(
                 json,
                 OwnedNftsResponse.OwnedBaseNftsResponse::class.java

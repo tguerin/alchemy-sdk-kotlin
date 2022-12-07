@@ -21,6 +21,7 @@ import com.alchemy.sdk.ws.WebSocket
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.serialization.gson.gson
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -86,7 +87,11 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
                 alchemySettings.network,
                 alchemySettings.apiKey
             ),
-            okHttpClientBuilder = OkHttpClient.Builder(),
+            httpClient = HttpClient(CIO) {
+                install(WebSockets) {
+                    pingInterval = 10_000
+                }
+            },
             retryPolicy = alchemySettings.wsSettings.retryPolicy
         )
     }

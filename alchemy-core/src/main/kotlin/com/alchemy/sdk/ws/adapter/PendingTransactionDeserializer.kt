@@ -19,9 +19,11 @@ object PendingTransactionDeserializer : JsonDeserializer<PendingTransaction?> {
             JsonNull.INSTANCE -> {
                 null
             }
+
             is JsonPrimitive -> {
                 PendingTransaction.HashOnly(json.asString.hexString)
             }
+
             else -> {
                 context.deserialize(json, PendingTransaction.FullPendingTransaction::class.java)
             }

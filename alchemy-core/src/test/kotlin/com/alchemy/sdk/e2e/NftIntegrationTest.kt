@@ -5,10 +5,10 @@ import com.alchemy.sdk.AlchemySettings
 import com.alchemy.sdk.ResourceUtils.Companion.parseFile
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.Network
+import com.alchemy.sdk.nft.Nft
 import com.alchemy.sdk.nft.model.FloorPrice
 import com.alchemy.sdk.nft.model.GetNftsForContractOptions
 import com.alchemy.sdk.nft.model.GetNftsForOwnerOptions
-import com.alchemy.sdk.nft.model.Nft
 import com.alchemy.sdk.nft.model.NftContractMetadata
 import com.alchemy.sdk.nft.model.NftContractNftsResponse
 import com.alchemy.sdk.nft.model.OwnedNftsResponse
