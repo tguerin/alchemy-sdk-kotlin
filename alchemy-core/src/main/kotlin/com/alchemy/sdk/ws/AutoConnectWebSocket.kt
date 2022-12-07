@@ -1,174 +1,135 @@
 package com.alchemy.sdk.ws
 
 import com.alchemy.sdk.ws.model.WebsocketStatus
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.websocket.webSocket
+import io.ktor.client.request.url
+import io.ktor.websocket.CloseReason
+import io.ktor.websocket.Frame
+import io.ktor.websocket.readText
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.WebSocket
-import okhttp3.WebSocketListener
-import okio.ByteString
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
 
-/**
- * Adapted from https://github.com/VinsonGuo/ReconnectWebSocketWrapper
- */
 internal class AutoConnectWebSocket(
-    private val okHttpClient: OkHttpClient,
-    private val request: Request,
-    listener: WebSocketListener,
+    private val httpClient: HttpClient,
+    private val websocketUrl: String,
+    private val onMessage: (String) -> Unit,
     private val onConnectStatusChangeListener: ConnectionStatusListener,
-    private val retryPolicy: RetryPolicy
-) : WebSocket {
+    private val retryPolicy: RetryPolicy,
+) {
 
-    private val isConnected = AtomicBoolean(false)
+    sealed interface OutgoingMessage {
+        class DataMessage(val message: String) : OutgoingMessage
+        class CloseMessage(val closeCode: Short, val message: String) : OutgoingMessage
+    }
 
-    private val isConnecting = AtomicBoolean(false)
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + CoroutineName("Ws context"))
 
-    private val isStopped = AtomicBoolean(false)
-
-    private val coroutineScope =
-        CoroutineScope(Dispatchers.IO.limitedParallelism(1) + CoroutineName("Ws retry context"))
+    private val outgoingMessageFlow = MutableSharedFlow<OutgoingMessage>()
 
     /**
      * get the status of reconnection
      */
-    val status: WebsocketStatus
-        get() = when {
-            isConnected.get() -> WebsocketStatus.Connected
-            isConnecting.get() -> WebsocketStatus.Reconnecting
-            else -> WebsocketStatus.Disconnected
-        }
-
-    /**
-     * this listener will be invoked before on reconnection
-     *
-     * if you want to modify request when reconnection, you can set this listener
-     */
-    var onPreReconnectListener: ((request: Request) -> Request) = { request -> request }
-
-    /**
-     * the count of attempt to reconnect
-     */
-    val reconnectAttemptCount = AtomicInteger(0)
-
-    private val webSocketListener = object : WebSocketListener() {
-        override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-            coroutineScope.launch {
-                isConnected.compareAndSet(true, false)
-                onConnectStatusChangeListener(webSocket, status)
-                listener.onClosed(webSocket, code, reason)
-                if (code != 1000) {
-                    doReconnect()
-                } else {
-                    isStopped.compareAndSet(false, true)
-                }
+    var status: WebsocketStatus = WebsocketStatus.Disconnected
+        private set(value) {
+            if (field != value) {
+                field = value
+                onConnectStatusChangeListener(value)
             }
         }
 
-        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-            listener.onClosing(webSocket, code, reason)
-        }
-
-        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-            coroutineScope.launch {
-                isConnected.compareAndSet(true, false)
-                onConnectStatusChangeListener(webSocket, status)
-                doReconnect()
-                listener.onFailure(webSocket, t, response)
-            }
-        }
-
-        override fun onMessage(webSocket: WebSocket, text: String) {
-            listener.onMessage(webSocket, text)
-        }
-
-        override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-            listener.onMessage(webSocket, bytes)
-        }
-
-        override fun onOpen(webSocket: WebSocket, response: Response) {
-            coroutineScope.launch {
-                isConnected.compareAndSet(false, true)
-                isConnecting.compareAndSet(true, false)
-                isStopped.compareAndSet(true, false)
-
-                onConnectStatusChangeListener(webSocket, status)
-
-                reconnectAttemptCount.set(0)
-                listener.onOpen(webSocket, response)
-            }
-        }
-
-    }
-
-    private var webSocket: WebSocket
-
-    init {
-        webSocket = okHttpClient.newWebSocket(request, webSocketListener)
-        onConnectStatusChangeListener(webSocket, status)
-    }
-
-    private suspend fun doReconnect() {
-        while (!isConnected.get() && !isConnecting.get() && retryPolicy.retryConnection()) {
-            isStopped.compareAndSet(true, false)
-            isConnecting.compareAndSet(false, true)
-
-            webSocket.cancel()
-            val reconnectRequest = onPreReconnectListener(request)
-            webSocket = okHttpClient.newWebSocket(reconnectRequest, webSocketListener)
-
-            onConnectStatusChangeListener(webSocket, status)
-        }
-    }
-
-    override fun cancel() {
-        coroutineScope.launch {
-            isConnected.compareAndSet(true, false)
-            onConnectStatusChangeListener(webSocket, status)
-            webSocket.cancel()
-        }
-    }
-
-    override fun close(code: Int, reason: String?): Boolean {
-        onConnectStatusChangeListener(webSocket, WebsocketStatus.Disconnected)
-        return webSocket.close(code, reason)
-    }
-
-    override fun queueSize(): Long {
-        return webSocket.queueSize()
-    }
-
-    override fun request(): Request {
-        return webSocket.request()
-    }
-
-    override fun send(text: String): Boolean {
-        return webSocket.send(text)
-    }
-
-    override fun send(bytes: ByteString): Boolean {
-        return webSocket.send(bytes)
-    }
-
-    fun emit(message: String) {
-        webSocketListener.onMessage(webSocket, message)
-    }
 
     fun connect() {
         coroutineScope.launch {
-            if (isStopped.get()) {
-                doReconnect()
+            var shouldRetryConnection = false
+            while (true) {
+                try {
+                    httpClient.webSocket(
+                        {
+                            this.url(websocketUrl)
+                        }
+                    ) {
+                        val incomingJob = incoming.consumeAsFlow()
+                            .catch {
+                                outgoing.close(it)
+                            }
+                            .onEach { frame ->
+                                when (frame) {
+                                    is Frame.Text -> {
+                                        onMessage(frame.readText())
+                                    }
+
+                                    is Frame.Close -> {
+                                        shouldRetryConnection =
+                                            this@webSocket.closeReason.await()?.code != CloseReason.Codes.NORMAL.code
+                                    }
+
+                                    else -> {
+                                        // just do nothing for now
+                                    }
+                                }
+
+                            }
+                            .launchIn(this)
+
+                        val outgoingJob = outgoingMessageFlow
+                            .onEach { outgoingMessage ->
+                                when (outgoingMessage) {
+                                    is OutgoingMessage.DataMessage -> {
+                                        outgoing.send(Frame.Text(outgoingMessage.message))
+                                    }
+
+                                    is OutgoingMessage.CloseMessage -> {
+                                        outgoing.send(
+                                            Frame.Close(
+                                                CloseReason(
+                                                    outgoingMessage.closeCode,
+                                                    outgoingMessage.message
+                                                )
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                            .launchIn(this)
+                        status = WebsocketStatus.Connected
+                        joinAll(incomingJob, outgoingJob)
+                    }
+                } catch (e: Exception) {
+                    shouldRetryConnection = true
+                    // Log exception
+                }
+                status = WebsocketStatus.Reconnecting
+                if (shouldRetryConnection && !retryPolicy.retryConnection()) {
+                    break
+                }
             }
+            status = WebsocketStatus.Disconnected
+        }
+    }
+
+    fun send(message: String) {
+        coroutineScope.launch {
+            outgoingMessageFlow.emit(OutgoingMessage.DataMessage(message))
+        }
+    }
+
+    fun close(code: Short, message: String) {
+        coroutineScope.launch {
+            outgoingMessageFlow.emit(OutgoingMessage.CloseMessage(code, message))
         }
     }
 
     interface ConnectionStatusListener {
-        operator fun invoke(webSocket: WebSocket, status: WebsocketStatus)
+        operator fun invoke(status: WebsocketStatus)
     }
 
 }

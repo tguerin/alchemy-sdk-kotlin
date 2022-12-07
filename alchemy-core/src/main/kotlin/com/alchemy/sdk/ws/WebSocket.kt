@@ -2,11 +2,11 @@ package com.alchemy.sdk.ws
 
 import com.alchemy.sdk.core.Core
 import com.alchemy.sdk.core.model.Address
-import com.alchemy.sdk.util.generator.IdGenerator
 import com.alchemy.sdk.rpc.model.JsonRpcException
 import com.alchemy.sdk.rpc.model.JsonRpcRequest
 import com.alchemy.sdk.util.HexString
 import com.alchemy.sdk.util.HexString.Companion.hexString
+import com.alchemy.sdk.util.generator.IdGenerator
 import com.alchemy.sdk.util.pmap
 import com.alchemy.sdk.ws.WebSocket.MessageWithMetadata.Companion.DefaultSubscriptionId
 import com.alchemy.sdk.ws.model.PendingTransaction
@@ -17,6 +17,7 @@ import com.alchemy.sdk.ws.model.WebsocketStatus
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonToken
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +37,6 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
 import java.io.Reader
 import java.io.StringReader
 import java.lang.reflect.Type
@@ -52,7 +52,7 @@ class WebSocket internal constructor(
     private val gson: Gson,
     retryPolicy: RetryPolicy,
     websocketUrl: String,
-    okHttpClientBuilder: OkHttpClient.Builder
+    httpClient: HttpClient
 ) {
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO + CoroutineName("WebSocket"))
@@ -65,7 +65,7 @@ class WebSocket internal constructor(
 
     private val websocketConnection = WebSocketConnection(
         websocketUrl,
-        okHttpClientBuilder,
+        httpClient,
         retryPolicy
     )
 
@@ -108,9 +108,11 @@ class WebSocket internal constructor(
             rawMessage.message.contains("subscription") -> {
                 subscriptionRegex.find(rawMessage.message)
             }
+
             rawMessage.message.contains("result") -> {
                 resultRegex.find(rawMessage.message)
             }
+
             else -> {
                 null
             }
@@ -139,6 +141,7 @@ class WebSocket internal constructor(
                     messageWithMetadata.subscriptionId
                 )
             }
+
             messageWithMetadata.subscriptionId != DefaultSubscriptionId &&
                     messageWithMetadata.message.contains("params") &&
                     mapMethodBySubscription[messageWithMetadata.subscriptionId] != null -> {
@@ -150,6 +153,7 @@ class WebSocket internal constructor(
                     )
                 )
             }
+
             else -> null // TODO log something
         }
     }
@@ -247,35 +251,15 @@ class WebSocket internal constructor(
             content != null && content.params.result != null -> {
                 Result.success(content.params.result)
             }
+
             content != null && content.params.error != null -> {
                 Result.failure(JsonRpcException(content.params.error))
             }
+
             else -> {
                 Result.failure(exception ?: RuntimeException("can't happen"))
             }
         }
-    }
-
-    private fun <T> parseContent(
-        gson: Gson,
-        typeToken: TypeToken<T>,
-        message: String
-    ): Pair<T?, Throwable?> {
-        val jsonReader = gson.newJsonReader(StringReader(message))
-        val adapter = gson.getAdapter(typeToken)
-        var dataRead: T?
-        var exception: Throwable? = null
-        try {
-            dataRead = adapter.read(jsonReader)
-            if (jsonReader.peek() !== JsonToken.END_DOCUMENT) {
-                dataRead = null
-                exception = RuntimeException("Json Parsing Failed")
-            }
-        } catch (e: Exception) {
-            dataRead = null
-            exception = e
-        }
-        return Pair(dataRead, exception)
     }
 
     private suspend fun <T> forgeEvent(id: String, method: WebsocketMethod<T>): String {
@@ -301,6 +285,7 @@ class WebSocket internal constructor(
                     true
                 }
             }
+
             else -> true
         }
     }
@@ -316,6 +301,7 @@ class WebSocket internal constructor(
                     }, toAddresses = resolveParam(method.toAddresses) as List<Address>
                 ) as WebsocketMethod<T>
             }
+
             is WebsocketMethod.LogFilter -> {
                 method.copy(
                     address = if (method.address != null) {
@@ -325,6 +311,7 @@ class WebSocket internal constructor(
                     }
                 ) as WebsocketMethod<T>
             }
+
             else -> {
                 method
             }
@@ -338,9 +325,11 @@ class WebSocket internal constructor(
                 is Address -> {
                     core.resolveAddress(param).getOrThrow()
                 }
+
                 is List<Any?> -> {
                     resolveParam(param)
                 }
+
                 else -> {
                     param
                 }
@@ -350,11 +339,11 @@ class WebSocket internal constructor(
 
     /** For test purpose only */
     internal fun emit(message: String) {
-        websocketConnection.emit(message)
+        websocketConnection.send(message)
     }
 
     /** For test purpose only*/
-    internal fun close(code: Int, message: String) {
+    internal fun close(code: Short, message: String) {
         websocketConnection.close(code, message)
     }
 

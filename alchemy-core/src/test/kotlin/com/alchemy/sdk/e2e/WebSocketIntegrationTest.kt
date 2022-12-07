@@ -19,6 +19,9 @@ import com.alchemy.sdk.ws.model.BlockHead
 import com.alchemy.sdk.ws.model.PendingTransaction
 import com.alchemy.sdk.ws.model.WebsocketMethod
 import com.alchemy.sdk.ws.model.WebsocketStatus
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.websocket.WebSockets
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.async
@@ -33,11 +36,9 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
-import okhttp3.OkHttpClient
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldContainAll
-import org.junit.Ignore
 import org.junit.Test
 
 class WebSocketIntegrationTest {
@@ -187,7 +188,11 @@ class WebSocketIntegrationTest {
                 Network.ETH_MAINNET,
                 Constants.DEFAULT_ALCHEMY_API_KEY
             ),
-            OkHttpClient.Builder(),
+            HttpClient(CIO) {
+                install(WebSockets) {
+                    pingInterval = 10_000
+                }
+            },
         )
         val result = ws
             .on(WebsocketMethod.Transaction("0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString))
