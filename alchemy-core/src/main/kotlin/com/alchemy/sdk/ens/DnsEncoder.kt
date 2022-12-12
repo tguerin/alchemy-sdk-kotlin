@@ -1,13 +1,13 @@
 package com.alchemy.sdk.ens
 
-import com.alchemy.sdk.util.Constants
 import com.alchemy.sdk.util.HexString
 import com.alchemy.sdk.util.HexString.Companion.hexString
 import com.alchemy.sdk.util.set
-import java.net.IDN
 
-object DnsEncoder {
-    fun dnsEncode(rawAddress: String): HexString {
+class DnsEncoder(
+    private val ensNormalizer: EnsNormalizer
+) {
+    fun encode(rawAddress: String): HexString {
         return ensNameSplit(rawAddress).map { component ->
             // DNS does not allow components over 63 bytes in length
             if (component.size > 63) {
@@ -21,7 +21,7 @@ object DnsEncoder {
     }
 
     private fun ensNameSplit(name: String): List<IntArray> {
-        val bytes = ensNormalize(name).toByteArray().map { it.toInt() }.toIntArray()
+        val bytes =  ensNormalizer.normalize(name).toByteArray().map { it.toInt() }.toIntArray()
         val comps: MutableList<IntArray> = mutableListOf()
 
         if (name.isEmpty()) return comps
@@ -47,12 +47,7 @@ object DnsEncoder {
     }
 
     private fun checkComponent(comp: IntArray): IntArray {
-        if (comp.isEmpty()) throw IllegalArgumentException("invalid ENS name empty component")
+        if (comp.isEmpty()) error("invalid ENS name empty component")
         return comp
-    }
-
-    private fun ensNormalize(name: String): String {
-        // TODO not sure about this
-        return IDN.toUnicode(name, IDN.USE_STD3_ASCII_RULES or Constants.NONTRANSITIONAL_TO_UNICODE)
     }
 }

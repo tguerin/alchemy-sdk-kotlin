@@ -10,6 +10,7 @@ import com.alchemy.sdk.core.model.LogFilter
 import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.core.model.Proof
 import com.alchemy.sdk.core.model.TransactionCall
+import com.alchemy.sdk.ens.DnsEncoder
 import com.alchemy.sdk.ens.Resolver
 import com.alchemy.sdk.rpc.model.JsonRpcException
 import com.alchemy.sdk.util.Ether
@@ -24,7 +25,8 @@ import java.util.concurrent.ConcurrentHashMap
 class Core(
     private val network: Network,
     private val ccipReadFetcher: CcipReadFetcher,
-    private val coreApi: CoreApi
+    private val coreApi: CoreApi,
+    private val dnsEncoder: DnsEncoder
 ) : CoreApi by coreApi {
 
     private val resolvedAddresses: MutableMap<Address.EnsAddress, Address> = ConcurrentHashMap()
@@ -263,13 +265,13 @@ class Core(
         var currentEnsAddress = ensAddress
         while (true) {
             if (currentEnsAddress.rawAddress == "" || currentEnsAddress.rawAddress == ".") {
-                throw IllegalArgumentException("Invalid address: ${ensAddress.rawAddress}")
+                error("Invalid address: ${ensAddress.rawAddress}")
             }
 
             // Optimization since the eth node cannot change and does
             // not have a wildcard resolver
             if (ensAddress.rawAddress != "eth" && currentEnsAddress.rawAddress == "eth") {
-                throw IllegalArgumentException("Invalid address: ${ensAddress.rawAddress}")
+               error("Invalid address: ${ensAddress.rawAddress}")
             }
 
             // Check the current node for a resolver
@@ -277,7 +279,7 @@ class Core(
 
             // Found a resolver!
             if (resolverAddress != null) {
-                val resolver = Resolver(this, resolverAddress, ensAddress)
+                val resolver = Resolver(this, resolverAddress, ensAddress, dnsEncoder)
 
                 // Legacy resolver found, using EIP-2544 so it isn't safe to use
                 if (currentEnsAddress != ensAddress && !resolver.supportsWildcard()) {

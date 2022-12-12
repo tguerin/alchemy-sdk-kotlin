@@ -3,7 +3,6 @@ package com.alchemy.sdk.ens
 import com.alchemy.sdk.core.Core
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.TransactionCall
-import com.alchemy.sdk.ens.DnsEncoder.dnsEncode
 import com.alchemy.sdk.util.Constants.HASH_ZERO
 import com.alchemy.sdk.util.Formatters
 import com.alchemy.sdk.util.HexString.Companion.hexString
@@ -12,7 +11,8 @@ import com.alchemy.sdk.util.encodeBytes
 class Resolver(
     private val core: Core,
     private val resolverAddress: Address.ContractAddress,
-    private val ensName: Address.EnsAddress
+    private val ensName: Address.EnsAddress,
+    private val dnsEncoder: DnsEncoder
 ) {
 
     private var _supportsEip2544: Boolean? = null
@@ -47,7 +47,7 @@ class Resolver(
 
             transactionCall = transactionCall.copy(
                 data = "0x9061b923".hexString + encodeBytes(
-                    dnsEncode(ensName.rawAddress),
+                    dnsEncoder.encode(ensName.rawAddress),
                     transactionCall.data!!
                 )
             )

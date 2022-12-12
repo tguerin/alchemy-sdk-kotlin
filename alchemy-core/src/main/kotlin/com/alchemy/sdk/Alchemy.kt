@@ -4,6 +4,8 @@ import com.alchemy.sdk.ccip.CcipReadFetcher
 import com.alchemy.sdk.core.Core
 import com.alchemy.sdk.core.api.CoreApiImpl
 import com.alchemy.sdk.core.model.Network
+import com.alchemy.sdk.ens.DnsEncoder
+import com.alchemy.sdk.ens.IDNNormalizer
 import com.alchemy.sdk.nft.Nft
 import com.alchemy.sdk.nft.api.NftApiImpl
 import com.alchemy.sdk.nft.http.RestHttpClient
@@ -108,7 +110,8 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
                 alchemyUrl,
                 idGenerator,
                 client
-            )
+            ),
+            DnsEncoder(IDNNormalizer)
         )
     }
 
