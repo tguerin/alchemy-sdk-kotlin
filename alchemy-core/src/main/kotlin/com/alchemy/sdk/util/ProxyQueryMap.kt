@@ -1,7 +1,7 @@
 package com.alchemy.sdk.util
 
 
-class ProxyRetrofitQueryMap(m: Map<String, Any> = emptyMap()) : HashMap<String, Any>(m) {
+class ProxyQueryMap(m: Map<String, Any> = emptyMap()) : HashMap<String, Any>(m) {
 
     override val entries: MutableSet<MutableMap.MutableEntry<String, Any>>
         get() {

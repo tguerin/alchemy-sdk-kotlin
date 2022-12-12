@@ -5,11 +5,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.alchemy.sdk.Alchemy
 import com.alchemy.sdk.core.model.Address
+import com.alchemy.sdk.nft.explorer.R
 import com.alchemy.sdk.nft.model.GetNftsForContractOptions
 import com.alchemy.sdk.nft.model.Nft
 import com.alchemy.sdk.util.HexString
 import com.alchemy.sdk.util.HexString.Companion.hexString
-import com.alchemy.sdk.nft.explorer.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

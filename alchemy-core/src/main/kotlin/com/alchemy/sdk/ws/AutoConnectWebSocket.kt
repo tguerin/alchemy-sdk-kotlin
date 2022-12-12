@@ -89,7 +89,8 @@ internal class AutoConnectWebSocket(
                                     }
 
                                     is OutgoingMessage.CloseMessage -> {
-                                        shouldRetryConnection = outgoingMessage.closeCode != CloseReason.Codes.NORMAL.code
+                                        shouldRetryConnection =
+                                            outgoingMessage.closeCode != CloseReason.Codes.NORMAL.code
                                         outgoing.send(
                                             Frame.Close(
                                                 CloseReason(

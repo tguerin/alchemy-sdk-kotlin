@@ -4,9 +4,9 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 
-class JsonRpcProcessorProvider : SymbolProcessorProvider {
+class RestProcessorProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-        return JsonRpcProcessor(
+        return RestProcessor(
             codeGenerator = environment.codeGenerator,
             logger = environment.logger
         )

@@ -48,8 +48,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.alchemy.sdk.nft.model.Nft
 import com.alchemy.sdk.nft.explorer.R
+import com.alchemy.sdk.nft.model.Nft
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
@@ -99,12 +99,12 @@ internal fun NftExplorer(
             )
         },
         modifier = Modifier.fillMaxSize()
-    ) {
+    ) { paddingValues ->
         Surface(
             color = MaterialTheme.colorScheme.background,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                .padding(paddingValues)
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 NftExplorerSearch(state, onContractAddressEntered)
@@ -236,6 +236,7 @@ fun NftExploreItem(nft: Nft) {
                 }
             }
         }
+
         is Nft.BaseNft -> {
             Card(
                 modifier = Modifier.fillMaxWidth()

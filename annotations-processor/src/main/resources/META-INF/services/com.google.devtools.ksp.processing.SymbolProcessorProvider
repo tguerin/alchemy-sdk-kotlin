@@ -1,1 +1,1 @@
-com.alchemy.sdk.annotations.processor.JsonRpcProcessorProvider
+com.alchemy.sdk.annotations.processor.AlchemyAnnotationsProcessorProvider

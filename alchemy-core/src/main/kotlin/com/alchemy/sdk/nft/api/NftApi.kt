@@ -1,20 +1,20 @@
 package com.alchemy.sdk.nft.api
 
+import com.alchemy.sdk.annotations.GET
+import com.alchemy.sdk.annotations.Headers
+import com.alchemy.sdk.annotations.Query
+import com.alchemy.sdk.annotations.QueryMap
 import com.alchemy.sdk.core.model.Address
-import com.alchemy.sdk.nft.model.Nft
 import com.alchemy.sdk.nft.model.FloorPriceResponse
 import com.alchemy.sdk.nft.model.GetNftsForContractOptions
 import com.alchemy.sdk.nft.model.GetNftsForOwnerOptions
+import com.alchemy.sdk.nft.model.Nft
 import com.alchemy.sdk.nft.model.NftContractMetadata
 import com.alchemy.sdk.nft.model.NftContractNftsResponse
 import com.alchemy.sdk.nft.model.NftTokenType
 import com.alchemy.sdk.nft.model.OwnedNftsResponse
 import com.alchemy.sdk.nft.model.OwnersResponse
 import com.alchemy.sdk.nft.model.RefreshContractResponse
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.Query
-import retrofit2.http.QueryMap
 
 interface NftApi {
 

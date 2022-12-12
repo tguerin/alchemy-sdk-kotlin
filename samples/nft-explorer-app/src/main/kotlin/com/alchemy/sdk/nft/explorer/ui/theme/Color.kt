@@ -1,4 +1,5 @@
 package com.alchemy.sdk.nft.explorer.ui.theme
+
 import androidx.compose.ui.graphics.Color
 
 val md_theme_light_primary = Color(0xFF006E21)
@@ -27,7 +28,6 @@ val md_theme_light_outline = Color(0xFF72796F)
 val md_theme_light_inverseOnSurface = Color(0xFFF0F1EB)
 val md_theme_light_inverseSurface = Color(0xFF2F312D)
 val md_theme_light_inversePrimary = Color(0xFF7DDB7F)
-val md_theme_light_shadow = Color(0xFF000000)
 val md_theme_light_surfaceTint = Color(0xFF006E21)
 
 val md_theme_dark_primary = Color(0xFF7DDB7F)
@@ -56,8 +56,4 @@ val md_theme_dark_outline = Color(0xFF8C9388)
 val md_theme_dark_inverseOnSurface = Color(0xFF1A1C19)
 val md_theme_dark_inverseSurface = Color(0xFFE2E3DD)
 val md_theme_dark_inversePrimary = Color(0xFF006E21)
-val md_theme_dark_shadow = Color(0xFF000000)
 val md_theme_dark_surfaceTint = Color(0xFF7DDB7F)
-
-
-val seed = Color(0xFF006F21)

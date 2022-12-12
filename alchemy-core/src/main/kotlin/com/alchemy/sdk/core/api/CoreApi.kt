@@ -1,7 +1,6 @@
 package com.alchemy.sdk.core.api
 
 import com.alchemy.sdk.annotations.JsonRpc
-import com.alchemy.sdk.annotations.JsonRpcService
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.Block
 import com.alchemy.sdk.core.model.BlockCount
@@ -23,7 +22,6 @@ import com.alchemy.sdk.core.model.Validator
 import com.alchemy.sdk.util.Ether
 import com.alchemy.sdk.util.HexString
 
-@JsonRpcService
 interface CoreApi {
 
     @JsonRpc("eth_getBalance")

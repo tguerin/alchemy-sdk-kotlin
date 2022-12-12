@@ -1,7 +1,7 @@
 package com.alchemy.sdk.util
 
 open class QueryMapObject : Map<String, Any> {
-    protected var queryData = ProxyRetrofitQueryMap()
+    protected var queryData = ProxyQueryMap()
 
     override val entries: Set<Map.Entry<String, Any>>
         get() = queryData.entries

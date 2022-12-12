@@ -6,11 +6,11 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldContainAll
 import org.junit.Test
 
-class ProxyRetrofitQueryMapTest {
+class ProxyQueryMapTest {
 
     @Test
     fun `should duplicate query params if it's a list`() {
-        val queryMap = ProxyRetrofitQueryMap().apply {
+        val queryMap = ProxyQueryMap().apply {
             this["contractAddresses[]"] = listOf(
                 Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString),
                 Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e2".hexString)
@@ -29,7 +29,7 @@ class ProxyRetrofitQueryMapTest {
         val value =
             Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
         val key = "contractAddress"
-        val queryMap = ProxyRetrofitQueryMap().apply {
+        val queryMap = ProxyQueryMap().apply {
             this[key] = value
         }
         queryMap.keys shouldBeEqualTo setOf(key)
@@ -43,7 +43,7 @@ class ProxyRetrofitQueryMapTest {
 
     @Test
     fun `should let non list value untouched`() {
-        val queryMap = ProxyRetrofitQueryMap().apply {
+        val queryMap = ProxyQueryMap().apply {
             this["contractAddress"] =
                 Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
         }

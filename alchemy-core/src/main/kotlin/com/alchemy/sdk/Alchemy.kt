@@ -5,15 +5,13 @@ import com.alchemy.sdk.core.Core
 import com.alchemy.sdk.core.api.CoreApiImpl
 import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.nft.Nft
-import com.alchemy.sdk.nft.api.NftApi
+import com.alchemy.sdk.nft.api.NftApiImpl
+import com.alchemy.sdk.nft.http.RestHttpClient
 import com.alchemy.sdk.transact.Transact
-import com.alchemy.sdk.util.AlchemyVersionInterceptor
 import com.alchemy.sdk.util.Constants
 import com.alchemy.sdk.util.GsonStringConverter
 import com.alchemy.sdk.util.GsonUtil
 import com.alchemy.sdk.util.GsonUtil.Companion.gson
-import com.alchemy.sdk.util.GsonUtil.Companion.nftGson
-import com.alchemy.sdk.util.ResultCallAdapter
 import com.alchemy.sdk.util.generator.IncrementalIdGenerator
 import com.alchemy.sdk.ws.DelayRetryPolicy
 import com.alchemy.sdk.ws.RetryPolicy
@@ -23,9 +21,6 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.serialization.gson.gson
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 data class AlchemySettings(
     /** The Alchemy API key that can be found in the Alchemy dashboard. */
@@ -60,10 +55,6 @@ data class AlchemySettings(
 @Suppress("UNCHECKED_CAST")
 class Alchemy private constructor(alchemySettings: AlchemySettings) {
 
-    private val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(AlchemyVersionInterceptor)
-        .build()
-
     private val idGenerator = IncrementalIdGenerator()
 
     val core by lazy {
@@ -74,6 +65,8 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
         setupNft(alchemySettings)
     }
 
+    // Remove this annotation when transact will be tested
+    @Suppress("unused")
     val transact by lazy {
         Transact(core)
     }
@@ -122,14 +115,16 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
     private fun setupNft(alchemySettings: AlchemySettings): Nft {
         val alchemyUrl =
             Constants.getAlchemyNftUrl(alchemySettings.network, alchemySettings.apiKey)
-        val retrofit = Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(alchemyUrl)
-            .addCallAdapterFactory(ResultCallAdapter)
-            .addConverterFactory(GsonConverterFactory.create(nftGson))
-            .addConverterFactory(GsonStringConverter(nftGson))
-            .build()
-        return Nft(core, retrofit.create(NftApi::class.java))
+        val client = HttpClient(CIO) {
+            install(ContentNegotiation) {
+                gson {
+                    GsonUtil.configureNftGson(
+                        this
+                    )
+                }
+            }
+        }
+        return Nft(core, NftApiImpl(alchemyUrl, RestHttpClient(client, GsonStringConverter(GsonUtil.nftGson))))
     }
 
     companion object {

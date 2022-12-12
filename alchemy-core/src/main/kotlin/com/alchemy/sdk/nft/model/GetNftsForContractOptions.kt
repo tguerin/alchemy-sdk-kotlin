@@ -1,7 +1,7 @@
 package com.alchemy.sdk.nft.model
 
 import com.alchemy.sdk.util.HexString
-import com.alchemy.sdk.util.ProxyRetrofitQueryMap
+import com.alchemy.sdk.util.ProxyQueryMap
 import com.alchemy.sdk.util.QueryMapObject
 
 data class GetNftsForContractOptions(
@@ -29,7 +29,7 @@ data class GetNftsForContractOptions(
 ) : QueryMapObject() {
 
     init {
-        val queryData = ProxyRetrofitQueryMap()
+        val queryData = ProxyQueryMap()
         startToken?.let {
             // Somehow this parameter requires a 64 long hex (+2 for 0x)
             var startTokenAsString = it.data
