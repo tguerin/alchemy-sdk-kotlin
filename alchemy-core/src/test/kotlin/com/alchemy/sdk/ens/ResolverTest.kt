@@ -18,6 +18,8 @@ class ResolverTest {
     @get:Rule
     val mockkRule = MockKRule(this)
 
+    private val dnsEncoder = DnsEncoder(IDNNormalizer)
+
     @MockK
     lateinit var core: Core
 
@@ -27,7 +29,8 @@ class ResolverTest {
         val resolver = Resolver(
             core,
             Network.ETH_MAINNET.ensAddress!!,
-            ensName
+            ensName,
+            dnsEncoder
         )
 
         coEvery {
@@ -59,7 +62,8 @@ class ResolverTest {
         val resolver = Resolver(
             core,
             Network.ETH_MAINNET.ensAddress!!,
-            ensName
+            ensName,
+            dnsEncoder
         )
 
         coEvery {
@@ -91,7 +95,8 @@ class ResolverTest {
         val resolver = Resolver(
             core,
             Network.ETH_MAINNET.ensAddress!!,
-            ensName
+            ensName,
+            dnsEncoder
         )
 
         coEvery {

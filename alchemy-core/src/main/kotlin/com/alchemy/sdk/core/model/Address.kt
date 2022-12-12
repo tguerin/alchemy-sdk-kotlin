@@ -1,11 +1,11 @@
 package com.alchemy.sdk.core.model
 
-import com.alchemy.sdk.util.Constants.NONTRANSITIONAL_TO_UNICODE
+import com.alchemy.sdk.ens.EnsNormalizer
+import com.alchemy.sdk.ens.IDNNormalizer
 import com.alchemy.sdk.util.HexString
 import com.alchemy.sdk.util.HexString.Companion.hexString
 import org.komputing.khash.keccak.Keccak
 import org.komputing.khash.keccak.KeccakParameter
-import java.net.IDN
 
 sealed class Address private constructor(
     val value: HexString
@@ -51,7 +51,7 @@ sealed class Address private constructor(
 
     companion object {
         private val checksumRegex = "([A-F].*[a-f])|([a-f].*[A-F])".toRegex()
-        fun from(rawAddress: String): Address {
+        fun from(rawAddress: String, ensNormalizer: EnsNormalizer = IDNNormalizer): Address {
             if (rawAddress.isEmpty()) {
                 throw IllegalArgumentException("Address can't be empty")
             }
@@ -72,10 +72,7 @@ sealed class Address private constructor(
 
                 else -> {
                     val sanitizedAddress = rawAddress.lowercase()
-                    val normalizedName = IDN.toUnicode(
-                        sanitizedAddress,
-                        IDN.USE_STD3_ASCII_RULES or NONTRANSITIONAL_TO_UNICODE
-                    )
+                    val normalizedName = ensNormalizer.normalize(sanitizedAddress)
                     EnsAddress(normalizedName, nameHash(normalizedName))
                 }
             }
