@@ -17,7 +17,7 @@ class CcipReadFetcher internal constructor(
 ) {
     suspend fun fetchCcipRead(
         transactionCall: TransactionCall,
-        calldata: HexString?,
+        callData: HexString?,
         urls: List<String>
     ): HexString? {
         if (urls.isEmpty()) return null
@@ -25,11 +25,11 @@ class CcipReadFetcher internal constructor(
         for (url in urls) {
             val href = url
                 .replace("{sender}", sender.value.data)
-                .replace("{data}", calldata?.data ?: "")
+                .replace("{data}", callData?.data ?: "")
             val json = if (url.indexOf("{data}") >= 0) {
                 null
             } else {
-                "{\"data\":\"${calldata?.data}\",\"sender\":\"${sender.value.data}\"}"
+                "{\"data\":\"${callData?.data}\",\"sender\":\"${sender.value.data}\"}"
             }
 
             val response = if (json == null) {

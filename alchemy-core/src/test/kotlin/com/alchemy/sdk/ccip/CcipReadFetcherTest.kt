@@ -48,7 +48,7 @@ class CcipReadFetcherTest {
                 to = Network.ETH_MAINNET.ensAddress!!,
                 data = "0x02".hexString
             ),
-            calldata = "0x02".hexString,
+            callData = "0x02".hexString,
             urls = listOf(
                 mockWebServer.url("/").toString() + "{sender}/{data}"
             )
@@ -69,7 +69,7 @@ class CcipReadFetcherTest {
                 to = Network.ETH_MAINNET.ensAddress!!,
                 data = "0x02".hexString
             ),
-            calldata = "0x02".hexString,
+            callData = "0x02".hexString,
             urls = listOf(mockWebServer.url("/").toString() + "{sender}/{data}")
         )
 
@@ -88,7 +88,7 @@ class CcipReadFetcherTest {
                 to = Network.ETH_MAINNET.ensAddress!!,
                 data = "0x02".hexString
             ),
-            calldata = "0x02".hexString,
+            callData = "0x02".hexString,
             urls = listOf(mockWebServer.url("/").toString() + "{sender}")
         )
 
@@ -109,7 +109,7 @@ class CcipReadFetcherTest {
                 to = Network.ETH_MAINNET.ensAddress!!,
                 data = "0x02".hexString
             ),
-            calldata = "0x02".hexString,
+            callData = "0x02".hexString,
             urls = listOf(mockWebServer.url("/").toString() + "{sender}/{data}")
         )
 
@@ -128,7 +128,7 @@ class CcipReadFetcherTest {
                 to = Network.ETH_MAINNET.ensAddress!!,
                 data = "0x02".hexString
             ),
-            calldata = "0x02".hexString,
+            callData = "0x02".hexString,
             urls = listOf(
                 mockWebServer.url("/").toString() + "{sender}/{data})"
             )
@@ -150,7 +150,7 @@ class CcipReadFetcherTest {
                 to = Network.ETH_MAINNET.ensAddress!!,
                 data = "0x02".hexString
             ),
-            calldata = "0x02".hexString,
+            callData = "0x02".hexString,
             urls = listOf(
                 mockWebServer.url("/").toString() + "{sender}/{data}",
                 mockWebServer.url("/").toString() + "{sender}/{data}",
@@ -168,7 +168,7 @@ class CcipReadFetcherTest {
                 to = Network.ETH_MAINNET.ensAddress!!,
                 data = "0x02".hexString
             ),
-            calldata = "0x02".hexString,
+            callData = "0x02".hexString,
             urls = listOf(mockWebServer.url("/").toString() + "{sender}/{data}")
         )
 
