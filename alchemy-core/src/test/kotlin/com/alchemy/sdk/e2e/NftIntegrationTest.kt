@@ -25,7 +25,12 @@ import org.junit.Test
 
 class NftIntegrationTest {
 
-    private val alchemy = Alchemy.with(AlchemySettings(network = Network.ETH_MAINNET))
+    private val alchemy = Alchemy.with(
+        AlchemySettings(
+            apiKey = System.getenv("ALCHEMY_API_TOKEN"),
+            network = Network.ETH_MAINNET
+        )
+    )
 
     @Test
     fun `nfts for owner with metadata`() = runTest {

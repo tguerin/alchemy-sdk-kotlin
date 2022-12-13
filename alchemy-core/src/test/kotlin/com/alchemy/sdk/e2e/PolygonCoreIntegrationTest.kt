@@ -12,7 +12,12 @@ import org.junit.Test
 
 class PolygonCoreIntegrationTest {
 
-    private val alchemy = Alchemy.with(AlchemySettings(network = Network.MATIC_MAINNET))
+    private val alchemy = Alchemy.with(
+        AlchemySettings(
+            apiKey = System.getenv("ALCHEMY_API_TOKEN"),
+            network = Network.MATIC_MAINNET
+        )
+    )
 
     @Test
     fun `retrieve author`() = runTest {

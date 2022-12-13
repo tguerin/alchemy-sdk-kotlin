@@ -43,7 +43,12 @@ import org.junit.Test
 
 class WebSocketIntegrationTest {
 
-    private val alchemy = Alchemy.with(AlchemySettings(network = Network.ETH_MAINNET))
+    private val alchemy = Alchemy.with(
+        AlchemySettings(
+            apiKey = System.getenv("ALCHEMY_API_TOKEN"),
+            network = Network.ETH_MAINNET
+        )
+    )
 
     @Test
     fun `should share the flow for the same method call`() = runTest {

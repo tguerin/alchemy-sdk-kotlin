@@ -32,7 +32,12 @@ import java.math.BigInteger
 
 class CoreIntegrationTest {
 
-    private val alchemy = Alchemy.with(AlchemySettings(network = Network.ETH_MAINNET))
+    private val alchemy = Alchemy.with(
+        AlchemySettings(
+            apiKey = System.getenv("ALCHEMY_API_TOKEN"),
+            network = Network.ETH_MAINNET
+        )
+    )
 
     @Test
     fun `retrieve network from settings`() = runTest {
