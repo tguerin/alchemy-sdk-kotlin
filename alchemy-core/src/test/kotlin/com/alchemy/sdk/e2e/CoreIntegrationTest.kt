@@ -49,7 +49,7 @@ class CoreIntegrationTest {
     fun `retrieve balance given an address`() = runTest {
         val result =
             alchemy.core.getBalance(Address.from("0x1188aa75C38E1790bE3768508743FBE7b50b2153"))
-        result.getOrThrow() shouldBeEqualTo "0x252511db903332".hexString.wei
+        result.getOrThrow() shouldBeEqualTo "0x1e5b5b8f58dc42".hexString.wei
     }
 
     @Test
@@ -131,7 +131,7 @@ class CoreIntegrationTest {
             address = Address.from("0x4B076f0E07eED3F1007fB1B5C000F7A08D3208E1"),
             keys = listOf("0x41494c616e647363617065000000000000000000000000000000000000000016".hexString)
         )
-        val expectedProof = parseFile("proof_test.json", Proof::class.java)
+        val expectedProof: Proof = parseFile("proof_test.json")
 
         data.getOrThrow().address shouldBeEqualTo expectedProof.address
         data.getOrThrow().accountProof shouldHaveSize expectedProof.accountProof.size
@@ -196,7 +196,7 @@ class CoreIntegrationTest {
 
         val data = alchemy.core.getBlockByNumber(blockTag, true)
 
-        val expectedBlock = parseFile("block_test.json", Block::class.java)
+        val expectedBlock: Block = parseFile("block_test.json")
         data.getOrThrow() shouldBeEqualTo expectedBlock
     }
 
@@ -206,7 +206,7 @@ class CoreIntegrationTest {
 
         val data = alchemy.core.getBlockByNumber(blockTag)
 
-        val expectedBlock = parseFile("block_without_transactions_test.json", Block::class.java)
+        val expectedBlock: Block = parseFile("block_without_transactions_test.json")
         data.getOrThrow() shouldBeEqualTo expectedBlock
     }
 
@@ -217,7 +217,7 @@ class CoreIntegrationTest {
 
         val data = alchemy.core.getBlockByHash(blockHash, true)
 
-        val expectedBlock = parseFile("block_test.json", Block::class.java)
+        val expectedBlock: Block = parseFile("block_test.json")
         data.getOrThrow() shouldBeEqualTo expectedBlock
     }
 
@@ -228,7 +228,7 @@ class CoreIntegrationTest {
 
         val data = alchemy.core.getBlockByHash(blockHash)
 
-        val expectedBlock = parseFile("block_without_transactions_test.json", Block::class.java)
+        val expectedBlock: Block = parseFile("block_without_transactions_test.json")
         data.getOrThrow() shouldBeEqualTo expectedBlock
     }
 
@@ -256,7 +256,7 @@ class CoreIntegrationTest {
 
         val data = alchemy.core.getUncleByBlockNumberAndIndex(blockTag, 0.index)
 
-        val expectedBlock = parseFile("uncle_block_test.json", UncleBlock::class.java)
+        val expectedBlock: UncleBlock = parseFile("uncle_block_test.json")
         data.getOrThrow() shouldBeEqualTo expectedBlock
     }
 
@@ -266,7 +266,7 @@ class CoreIntegrationTest {
             "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString, 0.index
         )
 
-        val expectedBlock = parseFile("uncle_block_test.json", UncleBlock::class.java)
+        val expectedBlock: UncleBlock = parseFile("uncle_block_test.json")
         data.getOrThrow() shouldBeEqualTo expectedBlock
     }
 
@@ -293,8 +293,7 @@ class CoreIntegrationTest {
 
         val data = alchemy.core.getTransactionByBlockNumberAndIndex(blockTag, 0.index)
 
-        val expectedBlockTransaction =
-            parseFile("transaction_test.json", BlockTransaction::class.java)
+        val expectedBlockTransaction: BlockTransaction = parseFile("transaction_test.json")
         data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
     }
 
@@ -304,8 +303,7 @@ class CoreIntegrationTest {
             "0x4e216c95f527e9ba0f1161a1c4609b893302c704f05a520da8141ca91878f63e".hexString, 0.index
         )
 
-        val expectedBlockTransaction =
-            parseFile("transaction_test.json", BlockTransaction::class.java)
+        val expectedBlockTransaction: BlockTransaction = parseFile("transaction_test.json")
         data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
     }
 
@@ -332,8 +330,7 @@ class CoreIntegrationTest {
             "0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString
         )
 
-        val expectedBlockTransaction =
-            parseFile("transaction_test.json", BlockTransaction::class.java)
+        val expectedBlockTransaction: BlockTransaction = parseFile("transaction_test.json")
         data.getOrThrow() shouldBeEqualTo expectedBlockTransaction
     }
 
@@ -343,8 +340,7 @@ class CoreIntegrationTest {
             "0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString
         )
 
-        val expectedTransactionReceipt =
-            parseFile("transaction_receipt_test.json", TransactionReceipt::class.java)
+        val expectedTransactionReceipt: TransactionReceipt = parseFile("transaction_receipt_test.json")
         data.getOrThrow() shouldBeEqualTo expectedTransactionReceipt
     }
 
@@ -383,7 +379,7 @@ class CoreIntegrationTest {
             4.blockCount, BlockTag.BlockTagNumber("0xed14e5".hexString)
         )
 
-        val expectedFeeHistory = parseFile("fee_history_test.json", FeeHistory::class.java)
+        val expectedFeeHistory: FeeHistory = parseFile("fee_history_test.json")
         data.getOrThrow() shouldBeEqualTo expectedFeeHistory
     }
 
@@ -394,8 +390,7 @@ class CoreIntegrationTest {
             BlockTag.BlockTagNumber("0xed14e5".hexString),
             listOf(25.percentile, 75.percentile)
         )
-        val expectedFeeHistory =
-            parseFile("fee_history_percentiles_test.json", FeeHistory::class.java)
+        val expectedFeeHistory: FeeHistory = parseFile("fee_history_percentiles_test.json")
         data.getOrThrow() shouldBeEqualTo expectedFeeHistory
     }
 

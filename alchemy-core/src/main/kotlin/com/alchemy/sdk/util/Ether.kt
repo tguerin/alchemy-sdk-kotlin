@@ -1,9 +1,12 @@
 package com.alchemy.sdk.util
 
+import com.alchemy.sdk.core.adapter.KEtherSerializer
 import com.alchemy.sdk.util.HexString.Companion.hexString
+import kotlinx.serialization.Serializable
 import java.math.BigDecimal
 import java.math.BigInteger
 
+@Serializable(with = KEtherSerializer::class)
 class Ether private constructor(val weiHexValue: HexString) {
     private val weiValue = weiHexValue.decimalValue()
 

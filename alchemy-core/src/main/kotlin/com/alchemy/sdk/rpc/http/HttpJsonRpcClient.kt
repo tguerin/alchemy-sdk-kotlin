@@ -23,7 +23,7 @@ suspend inline fun <reified T> HttpClient.call(url: String, request: JsonRpcRequ
         if (jsonRpcResponse.result == null && jsonRpcResponse.error != null) {
             Result.failure(JsonRpcException(jsonRpcResponse.error))
         } else {
-            Result.success(jsonRpcResponse.result)
+            Result.success(jsonRpcResponse.result as T)
         }
     } else {
         Result.failure(RuntimeException("error.http.code.${response.status.value}: " + response.bodyAsText()))

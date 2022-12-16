@@ -22,7 +22,6 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.TypeVariableName
-import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
 
@@ -39,9 +38,20 @@ class JsonRpcProcessor(
         "com.alchemy.sdk.rpc.model",
         "JsonRpcRequest"
     )
+
     private val idGeneratorInterface = ClassName(
         "com.alchemy.sdk.util.generator",
         "IdGenerator"
+    )
+
+    private val json = ClassName(
+        "kotlinx.serialization.json",
+        "Json"
+    )
+
+    private val jsonElement = ClassName(
+        "kotlinx.serialization.json",
+        "JsonElement"
     )
 
     private val t = TypeVariableName("T")
@@ -79,12 +89,11 @@ class JsonRpcProcessor(
             val rpcMethodNameFromAnnotation = jsonRpcMethod.getAnnotationsByType(JsonRpc::class).firstOrNull()?.method
                 ?: error("Should have rpc annotation")
             logger.info("[JsonRpcProcessor] Processing $rpcMethodName method")
+            val returnType =
+                jsonRpcMethod.returnType?.toTypeName() ?: error("No return type for function $rpcMethodName")
             val functionBuilder = FunSpec.builder(rpcMethodName)
                 .addModifiers(KModifier.SUSPEND)
-                .returns(
-                    jsonRpcMethod.returnType?.toTypeName()
-                        ?: error("No return type for function $rpcMethodName")
-                )
+                .returns(returnType)
             jsonRpcMethod.parameters.forEach { parameter ->
                 functionBuilder.addParameter(
                     ParameterSpec.builder(
@@ -99,8 +108,8 @@ class JsonRpcProcessor(
                 .joinToString(
                     separator = ",·",
                 ) {
-                    it.name?.asString()
-                        ?: error("Parameter of function $rpcMethodName has no name")
+                    val paramName = it.name?.asString() ?: error("Parameter of function $rpcMethodName has no name")
+                    "json.encodeToJsonElement($paramName)"
                 }
             val separator = if (allParameters.isEmpty()) {
                 ""
@@ -133,7 +142,7 @@ class JsonRpcProcessor(
                 .addParameter(
                     ParameterSpec.builder(
                         "args",
-                        Any::class.asTypeName().copy(true),
+                        jsonElement,
                         KModifier.VARARG
                     )
                         .build()
@@ -149,7 +158,7 @@ class JsonRpcProcessor(
                         |     val request = JsonRpcRequest(
                         |         id = idGenerator.generateId(),
                         |         method = rpcMethodName,
-                        |         params = args.toList()
+                        |         params = JsonArray(args.toList())
                         |     )
                         |     jsonRpcClient.call(url, request)
                         |} catch (e: Exception) {
@@ -170,6 +179,7 @@ class JsonRpcProcessor(
                     .addParameter("url", String::class)
                     .addParameter("idGenerator", idGeneratorInterface)
                     .addParameter("jsonRpcClient", jsonRpcClient)
+                    .addParameter("json", json)
                     .build()
             )
             .addProperty(
@@ -199,6 +209,15 @@ class JsonRpcProcessor(
                     .initializer("jsonRpcClient")
                     .build()
             )
+            .addProperty(
+                PropertySpec.builder(
+                    "json",
+                    json,
+                    KModifier.PRIVATE
+                )
+                    .initializer("json")
+                    .build()
+            )
     }
 
     private fun writeToFile(
@@ -212,6 +231,14 @@ class JsonRpcProcessor(
             .addImport(
                 "com.alchemy.sdk.rpc.http.call",
                 ""
+            )
+            .addImport(
+                "kotlinx.serialization.json.encodeToJsonElement",
+                ""
+            )
+            .addImport(
+                "kotlinx.serialization.json",
+                "JsonArray"
             )
             .addImport(
                 jsonRpcRequestInterface.packageName,

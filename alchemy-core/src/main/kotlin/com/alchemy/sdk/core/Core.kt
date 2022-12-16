@@ -271,7 +271,7 @@ class Core(
             // Optimization since the eth node cannot change and does
             // not have a wildcard resolver
             if (ensAddress.rawAddress != "eth" && currentEnsAddress.rawAddress == "eth") {
-               error("Invalid address: ${ensAddress.rawAddress}")
+                error("Invalid address: ${ensAddress.rawAddress}")
             }
 
             // Check the current node for a resolver
@@ -298,7 +298,7 @@ class Core(
 
     }
 
-    private suspend fun getResolverAddress(ensAddress: Address.EnsAddress): Address.ContractAddress? {
+    private suspend fun getResolverAddress(ensAddress: Address.EnsAddress): Address? {
         val network = getNetwork()
         if (network.ensAddress == null) {
             throw IllegalArgumentException("${network.networkId} doesn't support ens resolution")
@@ -312,7 +312,7 @@ class Core(
         )
         val resolverAddress = resolverAddressResult.getOrThrow()
         val formattedAddress = Formatters.formatCallAddress(resolverAddress)
-        return if (formattedAddress == null) null else Address.ContractAddress(formattedAddress.hexString)
+        return if (formattedAddress == null) null else Address.from(formattedAddress)
     }
 
     companion object {

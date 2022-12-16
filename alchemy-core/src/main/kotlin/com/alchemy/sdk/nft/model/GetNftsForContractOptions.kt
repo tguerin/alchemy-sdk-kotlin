@@ -1,8 +1,7 @@
 package com.alchemy.sdk.nft.model
 
 import com.alchemy.sdk.util.HexString
-import com.alchemy.sdk.util.ProxyQueryMap
-import com.alchemy.sdk.util.QueryMapObject
+import kotlinx.serialization.json.Json
 
 data class GetNftsForContractOptions(
     /**
@@ -26,10 +25,10 @@ data class GetNftsForContractOptions(
      * metadata for cache misses then set this value to 0.
      */
     val tokenUriTimeoutInMs: Int? = null,
-) : QueryMapObject() {
+) : QueryMapEncoder {
 
-    init {
-        val queryData = ProxyQueryMap()
+    override fun encode(json: Json): Map<String, String> {
+        val queryData = mutableMapOf<String, String>()
         startToken?.let {
             // Somehow this parameter requires a 64 long hex (+2 for 0x)
             var startTokenAsString = it.data
@@ -47,6 +46,7 @@ data class GetNftsForContractOptions(
         tokenUriTimeoutInMs?.let {
             queryData["tokenUriTimeoutInMs"] = it.toString()
         }
-        this.queryData = queryData
+        return queryData
     }
+
 }

@@ -1,12 +1,12 @@
 package com.alchemy.sdk.core.model
 
 import com.alchemy.sdk.util.HexString
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-class Validators : ArrayList<Validator>()
-
+@Serializable
 data class Validator(
-    @SerializedName("ID")
+    @SerialName("ID")
     val id: Long,
     val signer: HexString,
     val power: Int,

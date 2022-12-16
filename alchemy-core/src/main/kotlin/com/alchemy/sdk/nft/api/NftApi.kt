@@ -11,9 +11,10 @@ import com.alchemy.sdk.nft.model.GetNftsForOwnerOptions
 import com.alchemy.sdk.nft.model.Nft
 import com.alchemy.sdk.nft.model.NftContractMetadata
 import com.alchemy.sdk.nft.model.NftContractNftsResponse
+import com.alchemy.sdk.nft.model.NftContractOwnersResponse
+import com.alchemy.sdk.nft.model.NftOwnersResponse
 import com.alchemy.sdk.nft.model.NftTokenType
 import com.alchemy.sdk.nft.model.OwnedNftsResponse
-import com.alchemy.sdk.nft.model.OwnersResponse
 import com.alchemy.sdk.nft.model.RefreshContractResponse
 
 interface NftApi {
@@ -32,7 +33,7 @@ interface NftApi {
         "Alchemy-Ethers-Sdk-Method: getNFTMetadata"
     )
     suspend fun getNftMetadata(
-        @Query("contractAddress") contractAddress: Address.ContractAddress,
+        @Query("contractAddress") contractAddress: Address,
         @Query("tokenId") tokenId: Long,
         @Query("tokenType") tokenType: NftTokenType? = null,
         @Query("tokenUriTimeoutInMs") tokenUriTimeoutInMs: Int? = null
@@ -43,7 +44,7 @@ interface NftApi {
         "Alchemy-Ethers-Sdk-Method: refreshNftMetadata"
     )
     suspend fun getNftMetadataRefreshed(
-        @Query("contractAddress") contractAddress: Address.ContractAddress,
+        @Query("contractAddress") contractAddress: Address,
         @Query("tokenId") tokenId: Long,
         @Query("refreshCache") refreshCache: Boolean = true
     ): Result<Nft>
@@ -53,7 +54,7 @@ interface NftApi {
         "Alchemy-Ethers-Sdk-Method: getContractMetadata"
     )
     suspend fun getContractMetadata(
-        @Query("contractAddress") contractAddress: Address.ContractAddress
+        @Query("contractAddress") contractAddress: Address
     ): Result<NftContractMetadata>
 
     @GET("getNFTsForCollection")
@@ -61,7 +62,7 @@ interface NftApi {
         "Alchemy-Ethers-Sdk-Method: getNFTsForContract"
     )
     suspend fun getNftsForContract(
-        @Query("contractAddress") contractAddress: Address.ContractAddress,
+        @Query("contractAddress") contractAddress: Address,
         @QueryMap options: GetNftsForContractOptions = GetNftsForContractOptions()
     ): Result<NftContractNftsResponse>
 
@@ -70,31 +71,31 @@ interface NftApi {
         "Alchemy-Ethers-Sdk-Method: getOwnersForNft"
     )
     suspend fun getOwnersForNft(
-        @Query("contractAddress") contractAddress: Address.ContractAddress,
+        @Query("contractAddress") contractAddress: Address,
         @Query("tokenId") tokenId: Long
-    ): Result<OwnersResponse>
+    ): Result<NftOwnersResponse>
 
     @GET("getOwnersForCollection")
     @Headers(
         "Alchemy-Ethers-Sdk-Method: getOwnersForContract"
     )
     suspend fun getOwnersForContract(
-        @Query("contractAddress") contractAddress: Address.ContractAddress
-    ): Result<OwnersResponse>
+        @Query("contractAddress") contractAddress: Address
+    ): Result<NftContractOwnersResponse>
 
     @GET("isSpamContract")
     @Headers(
         "Alchemy-Ethers-Sdk-Method: isSpamContract"
     )
     suspend fun isSpamContract(
-        @Query("contractAddress") contractAddress: Address.ContractAddress
+        @Query("contractAddress") contractAddress: Address
     ): Result<Boolean>
 
     @GET("getSpamContracts")
     @Headers(
         "Alchemy-Ethers-Sdk-Method: getSpamContracts"
     )
-    suspend fun getSpamContracts(): Result<List<Address.ContractAddress>>
+    suspend fun getSpamContracts(): Result<List<Address>>
 
     @GET("getNFTs")
     @Headers(
@@ -110,7 +111,7 @@ interface NftApi {
         "Alchemy-Ethers-Sdk-Method: getFloorPrice"
     )
     suspend fun getFloorPrice(
-        @Query("contractAddress") contractAddress: Address.ContractAddress
+        @Query("contractAddress") contractAddress: Address
     ): Result<FloorPriceResponse>
 
     @GET("reingestContract")
@@ -118,6 +119,6 @@ interface NftApi {
         "Alchemy-Ethers-Sdk-Method: refreshContract"
     )
     suspend fun refreshContract(
-        @Query("contractAddress") contractAddress: Address.ContractAddress
+        @Query("contractAddress") contractAddress: Address
     ): Result<RefreshContractResponse>
 }

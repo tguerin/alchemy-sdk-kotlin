@@ -1,13 +1,13 @@
 package com.alchemy.sdk.ccip
 
+import com.alchemy.sdk.ResourceUtils.Companion.json
 import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.core.model.TransactionCall
-import com.alchemy.sdk.util.GsonUtil
 import com.alchemy.sdk.util.HexString.Companion.hexString
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.serialization.gson.gson
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.test.runTest
 import okhttp3.Headers
 import okhttp3.mockwebserver.MockResponse
@@ -20,9 +20,7 @@ class CcipReadFetcherTest {
 
     private val httpClient = HttpClient(CIO) {
         install(ContentNegotiation) {
-            gson {
-                GsonUtil.configureGson(this)
-            }
+            json(json)
         }
     }
 

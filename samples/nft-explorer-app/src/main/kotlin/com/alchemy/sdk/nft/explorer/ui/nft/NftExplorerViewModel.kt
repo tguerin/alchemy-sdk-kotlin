@@ -9,7 +9,6 @@ import com.alchemy.sdk.nft.explorer.R
 import com.alchemy.sdk.nft.model.GetNftsForContractOptions
 import com.alchemy.sdk.nft.model.Nft
 import com.alchemy.sdk.util.HexString
-import com.alchemy.sdk.util.HexString.Companion.hexString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,7 +50,7 @@ class NftExplorerViewModel @Inject constructor(
             loadingState.emit(true)
             addressState.emit(contractAddress)
             val nftResult =
-                alchemy.nft.getNftsForContract(Address.ContractAddress(contractAddress.hexString))
+                alchemy.nft.getNftsForContract(Address.from(contractAddress))
             if (nftResult.isFailure) {
                 errorMessageState.emit(getApplication<Application>().getString(R.string.nfts_loading_failed))
             } else {
@@ -67,7 +66,7 @@ class NftExplorerViewModel @Inject constructor(
         if (nextToken == null) return
         viewModelScope.launch(Dispatchers.IO) {
             val nftResult = alchemy.nft.getNftsForContract(
-                Address.ContractAddress(addressState.value.hexString),
+                Address.from(addressState.value),
                 GetNftsForContractOptions(
                     startToken = nextToken
                 )

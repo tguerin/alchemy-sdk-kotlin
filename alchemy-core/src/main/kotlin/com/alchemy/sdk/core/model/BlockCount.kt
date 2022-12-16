@@ -1,6 +1,10 @@
 package com.alchemy.sdk.core.model
 
+import com.alchemy.sdk.core.adapter.KBlockCountSerializer
+import kotlinx.serialization.Serializable
+
 @JvmInline
+@Serializable(with = KBlockCountSerializer::class)
 value class BlockCount constructor(val value: Int) {
 
     companion object {

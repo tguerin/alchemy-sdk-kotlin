@@ -10,7 +10,6 @@ androidxnavigation = "2.5.1"
 androidxtest = "1.4.0"
 compose = "1.2.1"
 coroutines = "1.6.4"
-gson = "2.9.1"
 hilt = "2.44"
 junit = "4.13.2"
 keccak = "1.1.1"
@@ -22,6 +21,7 @@ ktor = "2.1.2"
 landscapist = "2.0.0"
 material = "1.6.1"
 material3 = "1.0.0-beta03"
+serialization = "1.4.1"
 mockk = "1.12.8"
 mockwebserver = "4.10.0"
 systemuicontroller = "0.26.2-beta"
@@ -39,6 +39,8 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlin-gradle = { id = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxappcompat" }
@@ -62,8 +64,6 @@ androidx-test-runner = { module = "androidx.test:runner", version.ref = "android
 
 crypto-keccak = { module = "com.github.komputing.khash:keccak", version.ref = "keccak" }
 
-gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
-
 hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 
@@ -82,12 +82,14 @@ ktor-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
 ktor-content-negociation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-websocket-server = { module = "io.ktor:ktor-server-websockets", version.ref = "ktor" }
-ktor-serialization-gson = { module = "io.ktor:ktor-serialization-gson", version.ref = "ktor" }
+ktor-serialization-kotlinx = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 landscapist = { module = "com.github.skydoves:landscapist-glide", version.ref = "landscapist" }
 
 material = { module = "com.google.android.material:material", version.ref = "material" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+
+kotlinx-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 
 system-ui-controller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "systemuicontroller" }
 

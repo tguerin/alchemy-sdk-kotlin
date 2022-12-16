@@ -14,7 +14,6 @@ import com.alchemy.sdk.core.model.LogFilter
 import com.alchemy.sdk.core.model.Percentile
 import com.alchemy.sdk.core.model.PrivateTransactionCall
 import com.alchemy.sdk.core.model.Proof
-import com.alchemy.sdk.core.model.RawInt
 import com.alchemy.sdk.core.model.TransactionCall
 import com.alchemy.sdk.core.model.TransactionReceipt
 import com.alchemy.sdk.core.model.UncleBlock
@@ -158,7 +157,7 @@ interface CoreApi {
     suspend fun getFeeHistory(
         blockCount: BlockCount,
         blockTag: BlockTag,
-        rewardPercentiles: List<Percentile>? = null,
+        rewardPercentiles: List<Percentile>? = emptyList(),
     ): Result<FeeHistory>
 
     @JsonRpc("eth_getLogs")
@@ -193,7 +192,7 @@ interface CoreApi {
     suspend fun getCurrentProposer(): Result<HexString>
 
     @JsonRpc("bor_getRootHash")
-    suspend fun getRootHash(from: RawInt, to: RawInt): Result<HexString>
+    suspend fun getRootHash(from: Int, to: Int): Result<HexString>
 
     @JsonRpc("bor_getCurrentValidators")
     suspend fun getCurrentValidators(): Result<List<Validator>>

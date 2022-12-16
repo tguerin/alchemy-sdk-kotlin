@@ -8,12 +8,8 @@ import com.alchemy.sdk.ens.DnsEncoder
 import com.alchemy.sdk.ens.IDNNormalizer
 import com.alchemy.sdk.nft.Nft
 import com.alchemy.sdk.nft.api.NftApiImpl
-import com.alchemy.sdk.nft.http.RestHttpClient
 import com.alchemy.sdk.transact.Transact
 import com.alchemy.sdk.util.Constants
-import com.alchemy.sdk.util.GsonStringConverter
-import com.alchemy.sdk.util.GsonUtil
-import com.alchemy.sdk.util.GsonUtil.Companion.gson
 import com.alchemy.sdk.util.generator.IncrementalIdGenerator
 import com.alchemy.sdk.ws.DelayRetryPolicy
 import com.alchemy.sdk.ws.RetryPolicy
@@ -22,7 +18,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.websocket.WebSockets
-import io.ktor.serialization.gson.gson
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 
 data class AlchemySettings(
     /** The Alchemy API key that can be found in the Alchemy dashboard. */
@@ -59,6 +56,11 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
 
     private val idGenerator = IncrementalIdGenerator()
 
+    private val json = Json {
+        encodeDefaults = true
+        ignoreUnknownKeys = true
+    }
+
     val core by lazy {
         setupCore(alchemySettings)
     }
@@ -77,7 +79,7 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
         WebSocket(
             idGenerator = idGenerator,
             core = core,
-            gson = gson,
+            json = json,
             websocketUrl = Constants.getAlchemyWebsocketUrl(
                 alchemySettings.network,
                 alchemySettings.apiKey
@@ -96,11 +98,7 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
             Constants.getAlchemyHttpUrl(alchemySettings.network, alchemySettings.apiKey)
         val client = HttpClient(CIO) {
             install(ContentNegotiation) {
-                gson {
-                    GsonUtil.configureGson(
-                        this
-                    )
-                }
+                json(json)
             }
         }
         return Core(
@@ -109,7 +107,8 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
             CoreApiImpl(
                 alchemyUrl,
                 idGenerator,
-                client
+                client,
+                json
             ),
             DnsEncoder(IDNNormalizer)
         )
@@ -120,14 +119,10 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
             Constants.getAlchemyNftUrl(alchemySettings.network, alchemySettings.apiKey)
         val client = HttpClient(CIO) {
             install(ContentNegotiation) {
-                gson {
-                    GsonUtil.configureNftGson(
-                        this
-                    )
-                }
+                json(json)
             }
         }
-        return Nft(core, NftApiImpl(alchemyUrl, RestHttpClient(client, GsonStringConverter(GsonUtil.nftGson))))
+        return Nft(core, NftApiImpl(alchemyUrl, client, json))
     }
 
     companion object {

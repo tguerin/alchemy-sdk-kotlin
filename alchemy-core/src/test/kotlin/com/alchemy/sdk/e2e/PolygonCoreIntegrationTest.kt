@@ -3,7 +3,6 @@ package com.alchemy.sdk.e2e
 import com.alchemy.sdk.Alchemy
 import com.alchemy.sdk.AlchemySettings
 import com.alchemy.sdk.core.model.Network
-import com.alchemy.sdk.core.model.RawInt.Companion.raw
 import com.alchemy.sdk.util.HexString.Companion.hexString
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -41,7 +40,7 @@ class PolygonCoreIntegrationTest {
 
     @Test
     fun `retrieve the root hash`() = runTest {
-        val data = alchemy.core.getRootHash(from = 1.raw, to = 2.raw)
+        val data = alchemy.core.getRootHash(from = 1, to = 2)
         data.getOrThrow() shouldBeEqualTo "e105ee4b21c49a6f79a26647122abc8ad0b5aed34801999e30bc37ea5b0c589b".hexString
     }
 

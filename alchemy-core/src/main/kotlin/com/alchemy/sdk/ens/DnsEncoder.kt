@@ -21,7 +21,7 @@ class DnsEncoder(
     }
 
     private fun ensNameSplit(name: String): List<IntArray> {
-        val bytes =  ensNormalizer.normalize(name).toByteArray().map { it.toInt() }.toIntArray()
+        val bytes = ensNormalizer.normalize(name).toByteArray().map { it.toInt() }.toIntArray()
         val comps: MutableList<IntArray> = mutableListOf()
 
         if (name.isEmpty()) return comps

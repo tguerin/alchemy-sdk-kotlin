@@ -1,49 +1,31 @@
 package com.alchemy.sdk.nft.adapter
 
+import com.alchemy.sdk.ResourceUtils.Companion.json
 import com.alchemy.sdk.nft.model.NftMetadata
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonNull
-import com.google.gson.JsonObject
-import com.google.gson.reflect.TypeToken
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit4.MockKRule
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.JsonPrimitive
 import org.amshove.kluent.shouldBeEqualTo
-import org.junit.Rule
 import org.junit.Test
 
 class NftMetadataDeserializerTest {
 
-    @get:Rule
-    val mockkRule = MockKRule(this)
-
-    @MockK
-    lateinit var context: JsonDeserializationContext
-
     @Test
     fun `should return metadata from parsed json object`() {
-        val json = JsonObject()
-        val metadata = mapOf("1" to "2")
-        every {
-            context.deserialize<Map<String, Any>>(
-                json,
-                object : TypeToken<Map<String, Any>>() {}.type
-            )
-        } returns metadata
-        NftMetadataDeserializer.deserialize(
-            json,
-            NftMetadata::class.java,
-            context
-        ) shouldBeEqualTo NftMetadata(metadata)
+        val jsonData = "{\"date\":12345,\"image\":\"image.png\",\"dna\":\"dna\",\"name\":\"name\",\"description\":\"description\",\"edition\":1,\"attributes\":[{\"value\":\"The Legend Valley\",\"trait_type\":\"Land\"}]}"
+        val metadata = json.decodeFromString<NftMetadata?>(jsonData)
+        metadata?.date shouldBeEqualTo 12345L
+        metadata?.image shouldBeEqualTo "image.png"
+        metadata?.dna shouldBeEqualTo "dna"
+        metadata?.name shouldBeEqualTo "name"
+        metadata?.description shouldBeEqualTo "description"
+        metadata?.edition shouldBeEqualTo 1.0
+        metadata?.attributes?.get(0)?.get("value") shouldBeEqualTo JsonPrimitive("The Legend Valley")
+        metadata?.attributes?.get(0)?.get("trait_type") shouldBeEqualTo JsonPrimitive("Land")
     }
 
     @Test
     fun `should handle null case`() {
-        val data = NftMetadataDeserializer.deserialize(
-            JsonNull.INSTANCE,
-            NftMetadata::class.java,
-            context
-        )
+        val data = json.decodeFromString<NftMetadata?>("null")
         data shouldBeEqualTo null
     }
 }

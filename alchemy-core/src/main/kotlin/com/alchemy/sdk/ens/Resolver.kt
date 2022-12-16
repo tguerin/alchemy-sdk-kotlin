@@ -10,7 +10,7 @@ import com.alchemy.sdk.util.encodeBytes
 
 class Resolver(
     private val core: Core,
-    private val resolverAddress: Address.ContractAddress,
+    private val resolverAddress: Address,
     private val ensName: Address.EnsAddress,
     private val dnsEncoder: DnsEncoder
 ) {

@@ -32,7 +32,7 @@ class Nft(
 
     suspend fun checkNftOwnership(
         owner: Address,
-        contractAddresses: List<Address.ContractAddress>
+        contractAddresses: List<Address>
     ): Result<Boolean> {
         return core.resolveAddress(owner) {
             val nftsResult = nftApi.getNftsForOwnership(
@@ -51,7 +51,7 @@ class Nft(
     }
 
     override suspend fun getNftMetadataRefreshed(
-        contractAddress: Address.ContractAddress,
+        contractAddress: Address,
         tokenId: Long,
         refreshCache: Boolean
     ): Result<Nft> {
@@ -59,7 +59,7 @@ class Nft(
     }
 
     suspend fun refreshNftMetadata(
-        contractAddress: Address.ContractAddress,
+        contractAddress: Address,
         tokenId: Long,
     ): Result<RefreshNftMetadataResponse> {
         val nftResult = getNftMetadata(contractAddress, tokenId)

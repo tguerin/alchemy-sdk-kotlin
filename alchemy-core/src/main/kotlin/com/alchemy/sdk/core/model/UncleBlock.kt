@@ -2,7 +2,9 @@ package com.alchemy.sdk.core.model
 
 import com.alchemy.sdk.util.Ether
 import com.alchemy.sdk.util.HexString
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class UncleBlock(
     val number: HexString,
     val difficulty: HexString,

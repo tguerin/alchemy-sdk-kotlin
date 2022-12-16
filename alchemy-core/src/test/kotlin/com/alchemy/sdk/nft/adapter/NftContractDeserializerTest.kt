@@ -1,63 +1,33 @@
 package com.alchemy.sdk.nft.adapter
 
+import com.alchemy.sdk.ResourceUtils.Companion.json
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.nft.model.NftContract
 import com.alchemy.sdk.nft.model.NftContractMetadata
 import com.alchemy.sdk.nft.model.NftTokenType
-import com.alchemy.sdk.util.HexString.Companion.hexString
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonNull
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit4.MockKRule
+import kotlinx.serialization.decodeFromString
 import org.amshove.kluent.shouldBeEqualTo
-import org.junit.Rule
 import org.junit.Test
 
 class NftContractDeserializerTest {
 
-    @get:Rule
-    val mockkRule = MockKRule(this)
-
-    @MockK
-    lateinit var context: JsonDeserializationContext
-
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = Exception::class)
     fun `should throw exception if value is not a json object`() {
-        NftContractDeserializer.deserialize(
-            JsonPrimitive(2),
-            NftContract::class.java,
-            context
-        )
+        json.decodeFromString<NftContract>("2")
     }
 
     @Test
     fun `should parse nft contract as base nft contract`() {
         val expectedNftContract = NftContract.BaseNftContract(
-            Address.ContractAddress("0x0".hexString)
+            Address.from("0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe")
         )
-        val json = JsonObject().apply {
-            add("contract", JsonPrimitive("0x0"))
-        }
-        every {
-            context.deserialize<NftContract.BaseNftContract>(
-                json,
-                NftContract.BaseNftContract::class.java
-            )
-        } returns expectedNftContract
-        NftContractDeserializer.deserialize(
-            json,
-            NftContract::class.java,
-            context
-        ) shouldBeEqualTo expectedNftContract
+        json.decodeFromString<NftContract>("{\"address\": \"0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe\"}") shouldBeEqualTo expectedNftContract
     }
 
     @Test
     fun `should parse nft contract as alchemy nft contract`() {
         val expectedNftContract = NftContract.AlchemyNftContract(
-            address = Address.ContractAddress("0x0".hexString),
+            address = Address.from("0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe"),
             contractMetadata = NftContractMetadata(
                 tokenType = NftTokenType.Erc721,
                 name = "my token",
@@ -65,32 +35,15 @@ class NftContractDeserializerTest {
                 totalSupply = 10L
             )
         )
-        val json = JsonObject().apply {
-            add("contract", JsonPrimitive("0x0"))
-            add("tokenType", JsonPrimitive(NftTokenType.Erc721.value))
-            add("name", JsonPrimitive("my token"))
-            add("symbol", JsonPrimitive("mt"))
-            add("totalSupply", JsonPrimitive(10L))
-        }
-        every {
-            context.deserialize<NftContract.AlchemyNftContract>(
-                json,
-                NftContract.AlchemyNftContract::class.java
-            )
-        } returns expectedNftContract
-        NftContractDeserializer.deserialize(
-            json,
-            NftContract::class.java,
-            context
+        json.decodeFromString<NftContract>(
+            "{\"address\":\"0xde0b295669a9fd93d5f28d9ec85e40f4cb697bae\",\"contractMetadata\":{\"tokenType\":\"Erc721\",\"name\":\"my token\",\"symbol\":\"mt\",\"totalSupply\":10}}"
         ) shouldBeEqualTo expectedNftContract
     }
 
     @Test
     fun `should handle null case`() {
-        val data = NftContractDeserializer.deserialize(
-            JsonNull.INSTANCE,
-            NftContract::class.java,
-            context
+        val data = json.decodeFromString<NftContract?>(
+            "null"
         )
         data shouldBeEqualTo null
     }

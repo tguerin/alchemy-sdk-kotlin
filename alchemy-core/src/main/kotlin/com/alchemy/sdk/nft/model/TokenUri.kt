@@ -1,5 +1,8 @@
 package com.alchemy.sdk.nft.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class TokenUri(
     /**
      * URI for the location of the NFT's original metadata blob (ex: the original

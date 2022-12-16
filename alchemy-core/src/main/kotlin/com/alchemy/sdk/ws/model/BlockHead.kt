@@ -2,7 +2,9 @@ package com.alchemy.sdk.ws.model
 
 import com.alchemy.sdk.util.Ether
 import com.alchemy.sdk.util.HexString
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class BlockHead(
     val baseFeePerGas: Ether,
     val difficulty: HexString,

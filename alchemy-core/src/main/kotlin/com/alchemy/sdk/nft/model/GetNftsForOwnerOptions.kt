@@ -1,8 +1,8 @@
 package com.alchemy.sdk.nft.model
 
 import com.alchemy.sdk.core.model.Address
-import com.alchemy.sdk.util.ProxyQueryMap
-import com.alchemy.sdk.util.QueryMapObject
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 data class GetNftsForOwnerOptions(
     /**
@@ -12,7 +12,7 @@ data class GetNftsForOwnerOptions(
     val pageKey: String? = null,
 
     /** Optional list of contract addresses to filter the results by. Limit is 20. */
-    val contractAddresses: List<Address.ContractAddress> = emptyList(),
+    val contractAddresses: List<Address> = emptyList(),
 
     /**
      * Optional list of filters applied to the query. NFTs that match one or more
@@ -38,18 +38,18 @@ data class GetNftsForOwnerOptions(
     val tokenUriTimeoutInMs: Int? = null,
 
     val refreshCache: Boolean? = null
-) : QueryMapObject() {
+) : QueryMapEncoder {
 
-    init {
-        val queryData = ProxyQueryMap()
+    override fun encode(json: Json): Map<String, String> {
+        val queryData = mutableMapOf<String, String>()
         pageKey?.let {
             queryData["pageKey"] = it
         }
         if (contractAddresses.isNotEmpty()) {
-            queryData["contractAddresses[]"] = contractAddresses
+            queryData["contractAddresses[]"] = json.encodeToString(contractAddresses)
         }
         if (excludeFilters.isNotEmpty()) {
-            queryData["excludeFilters[]"] = excludeFilters.map { it.value }
+            queryData["excludeFilters[]"] = json.encodeToString(excludeFilters.map { it.value })
         }
         pageSize?.let {
             queryData["pageSize"] = it.toString()
@@ -59,8 +59,8 @@ data class GetNftsForOwnerOptions(
             queryData["tokenUriTimeoutInMs"] = it.toString()
         }
         refreshCache?.let {
-            queryData["refreshCache"] = true
+            queryData["refreshCache"] = json.encodeToString(true)
         }
-        this.queryData = queryData
+        return queryData
     }
 }

@@ -47,12 +47,22 @@
           }
         ]
       },
-      "timeLastUpdated": "2022-10-04T06:04:20.519Z",
+      "timeLastUpdated": "2022-12-16T22:25:41.255Z",
       "contractMetadata": {
         "name": "AILandscape",
         "symbol": "AILAND",
         "totalSupply": "9",
-        "tokenType": "ERC721"
+        "tokenType": "ERC721",
+        "openSea": {
+          "floorPrice": 0.0,
+          "collectionName": "The Wanderer Lands",
+          "safelistRequestStatus": "not_requested",
+          "imageUrl": "https://i.seadn.io/gcs/files/45bf0d1920093a55c4014f81feb8a049.png?w=500&auto=format",
+          "description": "Eleven blessed and cursed lands await you, \n\nOnly Fate knows where this journey will end, \n\nGet lost in the endless wandering of your soul\n\n[Claim your lands](https://the-wanderer-mint.xyz)\n\nThe wanderer lands is a 10K collection of beautiful and high resolution A.I. assisted handpainted landscapes. Eleven realm have been crafted and are waiting for you to be explored.\n\n\n\n\n\n\n \n",
+          "externalUrl": "https://the-wanderer-mint.xyz",
+          "twitterUsername": "LandsWanderer",
+          "lastIngestedAt": "2022-12-13T17:40:14.000Z"
+        }
       }
     },
     {
@@ -104,7 +114,17 @@
         "name": "AILandscape",
         "symbol": "AILAND",
         "totalSupply": "9",
-        "tokenType": "ERC721"
+        "tokenType": "ERC721",
+        "openSea": {
+          "floorPrice": 0.0,
+          "collectionName": "The Wanderer Lands",
+          "safelistRequestStatus": "not_requested",
+          "imageUrl": "https://i.seadn.io/gcs/files/45bf0d1920093a55c4014f81feb8a049.png?w=500&auto=format",
+          "description": "Eleven blessed and cursed lands await you, \n\nOnly Fate knows where this journey will end, \n\nGet lost in the endless wandering of your soul\n\n[Claim your lands](https://the-wanderer-mint.xyz)\n\nThe wanderer lands is a 10K collection of beautiful and high resolution A.I. assisted handpainted landscapes. Eleven realm have been crafted and are waiting for you to be explored.\n\n\n\n\n\n\n \n",
+          "externalUrl": "https://the-wanderer-mint.xyz",
+          "twitterUsername": "LandsWanderer",
+          "lastIngestedAt": "2022-12-13T17:40:14.000Z"
+        }
       }
     },
     {
@@ -156,7 +176,17 @@
         "name": "AILandscape",
         "symbol": "AILAND",
         "totalSupply": "9",
-        "tokenType": "ERC721"
+        "tokenType": "ERC721",
+        "openSea": {
+          "floorPrice": 0.0,
+          "collectionName": "The Wanderer Lands",
+          "safelistRequestStatus": "not_requested",
+          "imageUrl": "https://i.seadn.io/gcs/files/45bf0d1920093a55c4014f81feb8a049.png?w=500&auto=format",
+          "description": "Eleven blessed and cursed lands await you, \n\nOnly Fate knows where this journey will end, \n\nGet lost in the endless wandering of your soul\n\n[Claim your lands](https://the-wanderer-mint.xyz)\n\nThe wanderer lands is a 10K collection of beautiful and high resolution A.I. assisted handpainted landscapes. Eleven realm have been crafted and are waiting for you to be explored.\n\n\n\n\n\n\n \n",
+          "externalUrl": "https://the-wanderer-mint.xyz",
+          "twitterUsername": "LandsWanderer",
+          "lastIngestedAt": "2022-12-13T17:40:14.000Z"
+        }
       }
     },
     {
@@ -211,7 +241,17 @@
         "name": "AILandscape",
         "symbol": "AILAND",
         "totalSupply": "9",
-        "tokenType": "ERC721"
+        "tokenType": "ERC721",
+        "openSea": {
+          "floorPrice": 0.0,
+          "collectionName": "The Wanderer Lands",
+          "safelistRequestStatus": "not_requested",
+          "imageUrl": "https://i.seadn.io/gcs/files/45bf0d1920093a55c4014f81feb8a049.png?w=500&auto=format",
+          "description": "Eleven blessed and cursed lands await you, \n\nOnly Fate knows where this journey will end, \n\nGet lost in the endless wandering of your soul\n\n[Claim your lands](https://the-wanderer-mint.xyz)\n\nThe wanderer lands is a 10K collection of beautiful and high resolution A.I. assisted handpainted landscapes. Eleven realm have been crafted and are waiting for you to be explored.\n\n\n\n\n\n\n \n",
+          "externalUrl": "https://the-wanderer-mint.xyz",
+          "twitterUsername": "LandsWanderer",
+          "lastIngestedAt": "2022-12-13T17:40:14.000Z"
+        }
       }
     },
     {
@@ -263,7 +303,17 @@
         "name": "AILandscape",
         "symbol": "AILAND",
         "totalSupply": "9",
-        "tokenType": "ERC721"
+        "tokenType": "ERC721",
+        "openSea": {
+          "floorPrice": 0.0,
+          "collectionName": "The Wanderer Lands",
+          "safelistRequestStatus": "not_requested",
+          "imageUrl": "https://i.seadn.io/gcs/files/45bf0d1920093a55c4014f81feb8a049.png?w=500&auto=format",
+          "description": "Eleven blessed and cursed lands await you, \n\nOnly Fate knows where this journey will end, \n\nGet lost in the endless wandering of your soul\n\n[Claim your lands](https://the-wanderer-mint.xyz)\n\nThe wanderer lands is a 10K collection of beautiful and high resolution A.I. assisted handpainted landscapes. Eleven realm have been crafted and are waiting for you to be explored.\n\n\n\n\n\n\n \n",
+          "externalUrl": "https://the-wanderer-mint.xyz",
+          "twitterUsername": "LandsWanderer",
+          "lastIngestedAt": "2022-12-13T17:40:14.000Z"
+        }
       }
     },
     {
@@ -280,15 +330,15 @@
       "description": "A beautiful and high resolution collection of A.I. generated landscapes",
       "tokenUri": {
         "raw": "ipfs://bafybeifcnkipzxl54rk523qhorqw5ysrvdppxg4vykkuhh4vrqqhoeyfiy/6.json",
-        "gateway": "https://ipfs.io/ipfs/bafybeifcnkipzxl54rk523qhorqw5ysrvdppxg4vykkuhh4vrqqhoeyfiy/6.json"
+        "gateway": "https://alchemy.mypinata.cloud/ipfs/bafybeifcnkipzxl54rk523qhorqw5ysrvdppxg4vykkuhh4vrqqhoeyfiy/6.json"
       },
       "media": [
         {
           "raw": "ipfs://bafybeifu4nlpuj5dniyvkxmd5fmghab7h2dfooprfpzm752hxhi7iou2yq/6.png",
-          "gateway": "https://res.cloudinary.com/alchemyapi/image/upload/mainnet/f0ec2963a04675923ebcd1b2966d53e8.png",
-          "thumbnail": "https://res.cloudinary.com/alchemyapi/image/upload/w_256,h_256/mainnet/f0ec2963a04675923ebcd1b2966d53e8.png",
+          "gateway": "https://nft-cdn.alchemy.com/eth-mainnet/55c1c6acc1830b4fd2e6c3c001ea7011",
+          "thumbnail": "https://res.cloudinary.com/alchemyapi/image/upload/thumbnail/eth-mainnet/55c1c6acc1830b4fd2e6c3c001ea7011",
           "format": "png",
-          "bytes": 13868664
+          "bytes": 4675877
         }
       ],
       "metadata": {
@@ -313,12 +363,22 @@
           }
         ]
       },
-      "timeLastUpdated": "2022-10-02T01:58:41.524Z",
+      "timeLastUpdated": "2022-12-16T04:49:27.096Z",
       "contractMetadata": {
         "name": "AILandscape",
         "symbol": "AILAND",
         "totalSupply": "9",
-        "tokenType": "ERC721"
+        "tokenType": "ERC721",
+        "openSea": {
+          "floorPrice": 0.0,
+          "collectionName": "The Wanderer Lands",
+          "safelistRequestStatus": "not_requested",
+          "imageUrl": "https://i.seadn.io/gcs/files/45bf0d1920093a55c4014f81feb8a049.png?w=500&auto=format",
+          "description": "Eleven blessed and cursed lands await you, \n\nOnly Fate knows where this journey will end, \n\nGet lost in the endless wandering of your soul\n\n[Claim your lands](https://the-wanderer-mint.xyz)\n\nThe wanderer lands is a 10K collection of beautiful and high resolution A.I. assisted handpainted landscapes. Eleven realm have been crafted and are waiting for you to be explored.\n\n\n\n\n\n\n \n",
+          "externalUrl": "https://the-wanderer-mint.xyz",
+          "twitterUsername": "LandsWanderer",
+          "lastIngestedAt": "2022-12-13T17:40:14.000Z"
+        }
       }
     },
     {
@@ -370,7 +430,17 @@
         "name": "AILandscape",
         "symbol": "AILAND",
         "totalSupply": "9",
-        "tokenType": "ERC721"
+        "tokenType": "ERC721",
+        "openSea": {
+          "floorPrice": 0.0,
+          "collectionName": "The Wanderer Lands",
+          "safelistRequestStatus": "not_requested",
+          "imageUrl": "https://i.seadn.io/gcs/files/45bf0d1920093a55c4014f81feb8a049.png?w=500&auto=format",
+          "description": "Eleven blessed and cursed lands await you, \n\nOnly Fate knows where this journey will end, \n\nGet lost in the endless wandering of your soul\n\n[Claim your lands](https://the-wanderer-mint.xyz)\n\nThe wanderer lands is a 10K collection of beautiful and high resolution A.I. assisted handpainted landscapes. Eleven realm have been crafted and are waiting for you to be explored.\n\n\n\n\n\n\n \n",
+          "externalUrl": "https://the-wanderer-mint.xyz",
+          "twitterUsername": "LandsWanderer",
+          "lastIngestedAt": "2022-12-13T17:40:14.000Z"
+        }
       }
     },
     {
@@ -422,7 +492,17 @@
         "name": "AILandscape",
         "symbol": "AILAND",
         "totalSupply": "9",
-        "tokenType": "ERC721"
+        "tokenType": "ERC721",
+        "openSea": {
+          "floorPrice": 0.0,
+          "collectionName": "The Wanderer Lands",
+          "safelistRequestStatus": "not_requested",
+          "imageUrl": "https://i.seadn.io/gcs/files/45bf0d1920093a55c4014f81feb8a049.png?w=500&auto=format",
+          "description": "Eleven blessed and cursed lands await you, \n\nOnly Fate knows where this journey will end, \n\nGet lost in the endless wandering of your soul\n\n[Claim your lands](https://the-wanderer-mint.xyz)\n\nThe wanderer lands is a 10K collection of beautiful and high resolution A.I. assisted handpainted landscapes. Eleven realm have been crafted and are waiting for you to be explored.\n\n\n\n\n\n\n \n",
+          "externalUrl": "https://the-wanderer-mint.xyz",
+          "twitterUsername": "LandsWanderer",
+          "lastIngestedAt": "2022-12-13T17:40:14.000Z"
+        }
       }
     },
     {
@@ -477,7 +557,17 @@
         "name": "AILandscape",
         "symbol": "AILAND",
         "totalSupply": "9",
-        "tokenType": "ERC721"
+        "tokenType": "ERC721",
+        "openSea": {
+          "floorPrice": 0.0,
+          "collectionName": "The Wanderer Lands",
+          "safelistRequestStatus": "not_requested",
+          "imageUrl": "https://i.seadn.io/gcs/files/45bf0d1920093a55c4014f81feb8a049.png?w=500&auto=format",
+          "description": "Eleven blessed and cursed lands await you, \n\nOnly Fate knows where this journey will end, \n\nGet lost in the endless wandering of your soul\n\n[Claim your lands](https://the-wanderer-mint.xyz)\n\nThe wanderer lands is a 10K collection of beautiful and high resolution A.I. assisted handpainted landscapes. Eleven realm have been crafted and are waiting for you to be explored.\n\n\n\n\n\n\n \n",
+          "externalUrl": "https://the-wanderer-mint.xyz",
+          "twitterUsername": "LandsWanderer",
+          "lastIngestedAt": "2022-12-13T17:40:14.000Z"
+        }
       }
     }
   ]

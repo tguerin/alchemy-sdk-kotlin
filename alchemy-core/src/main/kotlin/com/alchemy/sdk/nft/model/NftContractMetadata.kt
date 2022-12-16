@@ -1,5 +1,8 @@
 package com.alchemy.sdk.nft.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class NftContractMetadata(
     /** The type of the token in the contract. */
     val tokenType: NftTokenType = NftTokenType.Unknown,

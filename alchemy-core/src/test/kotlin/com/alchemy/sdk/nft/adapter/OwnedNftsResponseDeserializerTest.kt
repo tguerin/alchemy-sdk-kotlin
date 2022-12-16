@@ -1,82 +1,42 @@
 package com.alchemy.sdk.nft.adapter
 
+import com.alchemy.sdk.ResourceUtils.Companion.json
 import com.alchemy.sdk.core.model.Address
+import com.alchemy.sdk.nft.model.Nft
 import com.alchemy.sdk.nft.model.NftContract
 import com.alchemy.sdk.nft.model.NftId
 import com.alchemy.sdk.nft.model.NftMetadata
 import com.alchemy.sdk.nft.model.NftTokenType
-import com.alchemy.sdk.nft.model.OwnedNft
 import com.alchemy.sdk.nft.model.OwnedNftsResponse
 import com.alchemy.sdk.nft.model.TokenMetadata
 import com.alchemy.sdk.nft.model.TokenUri
-import com.alchemy.sdk.util.GsonUtil.Companion.gson
 import com.alchemy.sdk.util.HexString.Companion.hexString
-import com.google.gson.JsonArray
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonNull
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit4.MockKRule
+import kotlinx.serialization.decodeFromString
 import org.amshove.kluent.shouldBeEqualTo
-import org.junit.Rule
 import org.junit.Test
 
 class OwnedNftsResponseDeserializerTest {
 
-    @get:Rule
-    val mockkRule = MockKRule(this)
-
-    @MockK
-    lateinit var context: JsonDeserializationContext
-
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = Exception::class)
     fun `should throw exception if value is not a json object`() {
-        OwnedNftsResponseDeserializer.deserialize(
-            JsonPrimitive(2),
-            OwnedNftsResponse::class.java,
-            context
-        )
+        json.decodeFromString<OwnedNftsResponse>("2")
     }
 
     @Test
     fun `should parse owned nfts response as base nfts response`() {
         val expectedOwnedNftsResponse = OwnedNftsResponse.OwnedBaseNftsResponse(
             ownedNfts = listOf(
-                OwnedNft.OwnedBaseNft(
+                Nft.BaseNft(
                     balance = 1L,
-                    contract = NftContract.BaseNftContract(Address.ContractAddress("0x0".hexString)),
+                    contract = NftContract.BaseNftContract(Address.from("0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d")),
                     id = NftId("1".hexString, TokenMetadata(NftTokenType.Erc721)),
                 )
             ),
             pageKey = "pageKey",
             totalCount = 1L
         )
-        val json = JsonObject().apply {
-            add("ownedNfts", JsonArray().apply {
-                add(
-                    JsonObject().apply {
-                        add("balance", JsonPrimitive(1L))
-                        add("contract", JsonPrimitive("0x0"))
-                        add("tokenId", JsonPrimitive("tokenId"))
-                        add("tokenType", JsonPrimitive(NftTokenType.Erc721.value))
-                    }
-                )
-            })
-            add("pageKey", JsonPrimitive("pageKey"))
-            add("totalCount", JsonPrimitive(1))
-        }
-        every {
-            context.deserialize<OwnedNftsResponse.OwnedBaseNftsResponse>(
-                json,
-                OwnedNftsResponse.OwnedBaseNftsResponse::class.java
-            )
-        } returns expectedOwnedNftsResponse
-        OwnedNftsResponseDeserializer.deserialize(
-            json,
-            OwnedNftsResponse::class.java,
-            context
+        json.decodeFromString<OwnedNftsResponse.OwnedBaseNftsResponse>(
+            "{\"ownedNfts\":[{\"contract\":{\"address\":\"0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d\"},\"id\":{\"tokenId\":\"0x01\",\"tokenMetadata\":{\"tokenType\":\"ERC721\"}},\"balance\":1}],\"pageKey\":\"pageKey\",\"totalCount\":1}"
         ) shouldBeEqualTo expectedOwnedNftsResponse
     }
 
@@ -86,9 +46,9 @@ class OwnedNftsResponseDeserializerTest {
         val tokenUri = TokenUri("raw", "gateway")
         val expectedOwnedNftsResponse = OwnedNftsResponse.OwnedAlchemyNftsResponse(
             ownedNfts = listOf(
-                OwnedNft.OwnedAlchemyNft(
+                Nft.AlchemyNft(
                     balance = 1L,
-                    contract = NftContract.AlchemyNftContract(Address.ContractAddress("0x0".hexString)),
+                    contract = NftContract.AlchemyNftContract(Address.from("0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d")),
                     id = NftId("1".hexString, TokenMetadata(NftTokenType.Erc721)),
                     title = "title",
                     description = "description",
@@ -102,36 +62,8 @@ class OwnedNftsResponseDeserializerTest {
             pageKey = "pageKey",
             totalCount = 1L
         )
-        val json = JsonObject().apply {
-            add("ownedNfts", JsonArray().apply {
-                add(
-                    JsonObject().apply {
-                        add("balance", JsonPrimitive(1L))
-                        add("contract", JsonPrimitive("0x0"))
-                        add("tokenId", JsonPrimitive("tokenId"))
-                        add("tokenType", JsonPrimitive(NftTokenType.Erc721.value))
-                        add("title", JsonPrimitive("title"))
-                        add("description", JsonPrimitive("description"))
-                        add("metadataError", JsonNull.INSTANCE)
-                        add("rawMetadata", gson.toJsonTree(rawMetadata))
-                        add("tokenUri", gson.toJsonTree(tokenUri))
-                        add("media", JsonArray())
-                    }
-                )
-            })
-            add("pageKey", JsonPrimitive("pageKey"))
-            add("totalCount", JsonPrimitive(1))
-        }
-        every {
-            context.deserialize<OwnedNftsResponse.OwnedAlchemyNftsResponse>(
-                json,
-                OwnedNftsResponse.OwnedAlchemyNftsResponse::class.java
-            )
-        } returns expectedOwnedNftsResponse
-        OwnedNftsResponseDeserializer.deserialize(
-            json,
-            OwnedNftsResponse::class.java,
-            context
+        json.decodeFromString<OwnedNftsResponse.OwnedAlchemyNftsResponse>(
+            "{\"ownedNfts\":[{\"contract\":{\"address\":\"0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d\"},\"id\":{\"tokenId\":\"0x01\",\"tokenMetadata\":{\"tokenType\":\"ERC721\"}},\"balance\":1,\"title\":\"title\",\"description\":\"description\",\"timeLastUpdated\":\"134\",\"metadataError\":null,\"metadata\":{},\"tokenUri\":{\"raw\":\"raw\",\"gateway\":\"gateway\"},\"media\":[]}],\"pageKey\":\"pageKey\",\"totalCount\":1}"
         ) shouldBeEqualTo expectedOwnedNftsResponse
     }
 

@@ -1,7 +1,11 @@
 package com.alchemy.sdk.core.model
 
+import com.alchemy.sdk.core.adapter.KPercentileSerializer
+import kotlinx.serialization.Serializable
+
 @JvmInline
-value class Percentile constructor(val value: RawFloat) {
+@Serializable(with = KPercentileSerializer::class)
+value class Percentile constructor(val value: Float) {
 
     companion object {
         val Int.percentile: Percentile
@@ -12,7 +16,7 @@ value class Percentile constructor(val value: RawFloat) {
         val Float.percentile: Percentile
             get() {
                 check(this in 0.0..100.0)
-                return Percentile(RawFloat(this))
+                return Percentile(this)
             }
     }
 }

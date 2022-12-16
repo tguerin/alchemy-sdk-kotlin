@@ -1,59 +1,34 @@
 package com.alchemy.sdk.core.adapter
 
+import com.alchemy.sdk.ResourceUtils.Companion.json
 import com.alchemy.sdk.util.HexString
 import com.alchemy.sdk.util.HexString.Companion.hexString
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonNull
-import com.google.gson.JsonPrimitive
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit4.MockKRule
+import kotlinx.serialization.decodeFromString
 import org.amshove.kluent.shouldBeEqualTo
-import org.junit.Rule
 import org.junit.Test
 
 class HexStringDeserializerTest {
 
-    @get:Rule
-    val mockkRule = MockKRule(this)
 
-    @MockK
-    lateinit var context: JsonDeserializationContext
-
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = Exception::class)
     fun `should throw exception if value is not a string`() {
-        HexStringDeserializer.deserialize(
-            JsonPrimitive(2),
-            HexString::class.java,
-            context
-        )
+        json.decodeFromString<HexString>("2")
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `should throw exception if value is not a valid hex value`() {
-        HexStringDeserializer.deserialize(
-            JsonPrimitive("XD"),
-            HexString::class.java,
-            context
-        )
+        json.decodeFromString<HexString>("\"XD\"")
     }
 
     @Test
     fun `should parse hex value as hex string`() {
-        val data = HexStringDeserializer.deserialize(
-            JsonPrimitive("0x02"),
-            HexString::class.java,
-            context
-        )
+        val data = json.decodeFromString<HexString>("\"0x02\"")
         data shouldBeEqualTo "0x02".hexString
     }
 
     @Test
     fun `should handle null case`() {
-        val data = HexStringDeserializer.deserialize(
-            JsonNull.INSTANCE,
-            HexString::class.java,
-            context
-        )
+        val data = json.decodeFromString<HexString?>("null")
         data shouldBeEqualTo null
     }
 }

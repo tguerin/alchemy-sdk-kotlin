@@ -71,6 +71,7 @@ dependencies {
     kapt(libs.hilt.compiler)
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.kotlin.coroutines.android)
+    implementation(libs.kotlinx.json)
     implementation(libs.landscapist)
     implementation(libs.material)
     implementation(libs.material3)

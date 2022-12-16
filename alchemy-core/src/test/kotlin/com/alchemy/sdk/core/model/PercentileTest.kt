@@ -1,7 +1,6 @@
 package com.alchemy.sdk.core.model
 
 import com.alchemy.sdk.core.model.Percentile.Companion.percentile
-import com.alchemy.sdk.core.model.RawFloat.Companion.raw
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 
@@ -20,6 +19,6 @@ class PercentileTest {
 
     @Test
     fun `percentile identity when in bounds`() {
-        2.percentile.value shouldBeEqualTo 2f.raw
+        2.percentile.value shouldBeEqualTo 2f
     }
 }

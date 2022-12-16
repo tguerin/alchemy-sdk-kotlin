@@ -1,29 +1,19 @@
 package com.alchemy.sdk.core.model
 
+import com.alchemy.sdk.core.adapter.KAddressSerializer
 import com.alchemy.sdk.ens.EnsNormalizer
 import com.alchemy.sdk.ens.IDNNormalizer
 import com.alchemy.sdk.util.HexString
 import com.alchemy.sdk.util.HexString.Companion.hexString
+import kotlinx.serialization.Serializable
 import org.komputing.khash.keccak.Keccak
 import org.komputing.khash.keccak.KeccakParameter
 
+@Serializable(with = KAddressSerializer::class)
 sealed class Address private constructor(
     val value: HexString
 ) {
     class EthereumAddress internal constructor(value: HexString) : Address(value) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-            if (!super.equals(other)) return false
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return value.hashCode()
-        }
-    }
-
-    class ContractAddress constructor(value: HexString) : Address(value) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false

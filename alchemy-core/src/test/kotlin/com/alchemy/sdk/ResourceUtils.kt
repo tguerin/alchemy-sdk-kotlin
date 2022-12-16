@@ -1,37 +1,26 @@
 package com.alchemy.sdk
 
-import com.alchemy.sdk.util.GsonUtil
-import com.google.gson.Gson
-import com.google.gson.stream.JsonReader
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.io.File
-import java.io.FileInputStream
-import java.io.InputStreamReader
 
 class ResourceUtils {
 
     companion object {
 
-        fun <T> parseFile(fileName: String, type: Class<T>, gson: Gson = GsonUtil.gson): T {
-            return gson.fromJson(
-                jsonReaderFromFileName(fileName),
-                type
-            )
+        val json = Json {
+            encodeDefaults = true
+            ignoreUnknownKeys = true
+        }
+
+        internal inline fun <reified T> parseFile(fileName: String): T {
+            return json.decodeFromString(readFile(fileName))
         }
 
         fun readFile(fileName: String): String {
             return File("src/test/resources/$fileName").useLines {
                 it.joinToString("")
             }
-        }
-
-        private fun jsonReaderFromFileName(fileName: String): JsonReader {
-            return JsonReader(
-                InputStreamReader(
-                    FileInputStream(
-                        File("src/test/resources/$fileName")
-                    )
-                )
-            )
         }
     }
 }

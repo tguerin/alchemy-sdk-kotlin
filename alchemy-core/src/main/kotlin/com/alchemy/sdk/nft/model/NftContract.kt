@@ -1,14 +1,19 @@
 package com.alchemy.sdk.nft.model
 
 import com.alchemy.sdk.core.model.Address
-import com.google.gson.annotations.Expose
+import com.alchemy.sdk.nft.adapter.KNftContractSerializer
+import kotlinx.serialization.Serializable
 
+@Serializable(with = KNftContractSerializer::class)
 sealed interface NftContract {
-    val address: Address
+    fun address(): Address
 
-    open class BaseNftContract(
-        override val address: Address
-    ) : NftContract {
+    @Serializable
+    open class BaseNftContract(val address: Address) : NftContract {
+        override fun address(): Address {
+            return address
+        }
+
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
@@ -30,11 +35,11 @@ sealed interface NftContract {
 
     }
 
+    @Serializable
     class AlchemyNftContract(
-        address: Address,
-        @Expose(serialize = false, deserialize = true)
+        val address: Address,
         private val contractMetadata: NftContractMetadata? = null
-    ) : BaseNftContract(address) {
+    ) : NftContract {
         /** The type of the token in the contract. */
         val tokenType: NftTokenType
             get() = contractMetadata?.tokenType ?: NftTokenType.Unknown
@@ -51,6 +56,10 @@ sealed interface NftContract {
         /** The number of NFTs in the contract. */
         val totalSupply: Long?
             get() = contractMetadata?.totalSupply
+
+        override fun address(): Address {
+            return address
+        }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -73,12 +82,4 @@ sealed interface NftContract {
 
     }
 
-    companion object {
-        val alchemyNftSpecificPropertyNames = listOf(
-            "tokenType",
-            "name",
-            "symbol",
-            "totalSupply",
-        )
-    }
 }

@@ -2,9 +2,12 @@ package com.alchemy.sdk.annotations.processor
 
 import com.alchemy.sdk.annotations.GET
 import com.alchemy.sdk.annotations.Headers
+import com.alchemy.sdk.annotations.Query
+import com.alchemy.sdk.annotations.QueryMap
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.closestClassDeclaration
 import com.google.devtools.ksp.getAnnotationsByType
+import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
@@ -12,7 +15,6 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
-import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
@@ -34,14 +36,19 @@ class RestProcessor(
     private val logger: KSPLogger
 ) : SymbolProcessor {
 
-    private val restHttpClient = ClassName(
-        "com.alchemy.sdk.nft.http",
-        "RestHttpClient"
+    private val httpClient = ClassName(
+        "io.ktor.client",
+        "HttpClient"
+    )
+
+    private val json = ClassName(
+        "kotlinx.serialization.json",
+        "Json"
     )
 
     private val t = TypeVariableName("T")
 
-    private val mapData = Map::class.asClassName().parameterizedBy(STRING, ANY.copy(nullable = true))
+    private val mapData = Map::class.asClassName().parameterizedBy(STRING, STRING.copy(nullable = true))
 
     private val mapHeaders = Map::class.asClassName().parameterizedBy(STRING, STRING)
 
@@ -100,9 +107,18 @@ class RestProcessor(
                 .joinToString(
                     separator = "\n",
                 ) {
-                    val paramName = it.name?.asString()
-                        ?: error("Parameter of function $restMethodName has no name")
-                    "entriesMap[\"$paramName\"] = $paramName"
+                    val paramName = it.name?.asString() ?: error("Parameter of function $restMethodName has no name")
+                    if (it.isAnnotationPresent(QueryMap::class)) {
+                        "entriesMap.putAll($paramName.encode(json))"
+                    } else {
+                        val query = it.getAnnotationsByType(Query::class).singleOrNull()
+                            ?: error("At least a @Query annotation should be added")
+                        if (it.type.toTypeName().isNullable) {
+                            "entriesMap[\"${query.value}\"] = if ($paramName == null) null else json.encodeToString($paramName)"
+                        } else {
+                            "entriesMap[\"${query.value}\"] = json.encodeToString($paramName)"
+                        }
+                    }
                 }
 
             val headersFromAnnotation = restMethod.getAnnotationsByType(Headers::class)
@@ -120,7 +136,7 @@ class RestProcessor(
                     .addCode(
                         CodeBlock.of(
                             """
-                            |val entriesMap = mutableMapOf<String, Any?>()
+                            |val entriesMap = mutableMapOf<String, String?>()
                             |$addAllParametersToMap
                             |val headersMap = mutableMapOf<String, String>()
                             |$addAllHeadersFromAnnotation
@@ -166,7 +182,7 @@ class RestProcessor(
                     CodeBlock.of(
                         """
                         |return try {
-                        |     restHttpClient.executeGet("${'$'}url/${'$'}restMethodName", headers, params)
+                        |     httpClient.executeGet("${'$'}url/${'$'}restMethodName", headers, params)
                         |} catch (e: Exception) {
                         |     Result.failure(e)
                         |}
@@ -183,7 +199,8 @@ class RestProcessor(
             .primaryConstructor(
                 FunSpec.constructorBuilder()
                     .addParameter("url", String::class)
-                    .addParameter("restHttpClient", restHttpClient)
+                    .addParameter("httpClient", httpClient)
+                    .addParameter("json", json)
                     .build()
             )
             .addProperty(
@@ -197,11 +214,20 @@ class RestProcessor(
             )
             .addProperty(
                 PropertySpec.builder(
-                    "restHttpClient",
-                    restHttpClient,
+                    "httpClient",
+                    httpClient,
                     KModifier.PRIVATE
                 )
-                    .initializer("restHttpClient")
+                    .initializer("httpClient")
+                    .build()
+            )
+            .addProperty(
+                PropertySpec.builder(
+                    "json",
+                    json,
+                    KModifier.PRIVATE
+                )
+                    .initializer("json")
                     .build()
             )
     }
@@ -214,6 +240,14 @@ class RestProcessor(
             classDeclaration.packageName.asString(),
             classDeclaration.simpleName.asString() + "Impl"
         )
+            .addImport(
+                "kotlinx.serialization.encodeToString",
+                ""
+            )
+            .addImport(
+                "com.alchemy.sdk.nft.http.executeGet",
+                ""
+            )
             .addAnnotation(
                 AnnotationSpec.builder(ClassName("", "Suppress"))
                     .addMember("%S", "RedundantVisibilityModifier")

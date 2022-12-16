@@ -1,10 +1,13 @@
 package com.alchemy.sdk.util
 
+import com.alchemy.sdk.core.adapter.KHexStringSerializer
+import kotlinx.serialization.Serializable
 import org.komputing.khash.keccak.Keccak
 import org.komputing.khash.keccak.KeccakParameter
 import java.math.BigDecimal
 import java.math.BigInteger
 
+@Serializable(with = KHexStringSerializer::class)
 class HexString private constructor(val data: String) {
 
     fun withoutPrefix(): String = data.substring(2)

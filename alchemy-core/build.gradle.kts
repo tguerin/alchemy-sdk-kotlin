@@ -6,6 +6,7 @@ plugins {
     id("maven-publish")
     id("jacoco")
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 ext["useCoroutines"] = true
@@ -24,13 +25,13 @@ dependencies {
     ksp(projects.annotationsProcessor)
 
     implementation(libs.crypto.keccak)
-    implementation(libs.gson)
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.websockets)
     implementation(libs.ktor.content.negociation)
-    implementation(libs.ktor.serialization.gson)
+    implementation(libs.ktor.serialization.kotlinx)
+    implementation(libs.kotlinx.json)
 
     testImplementation(libs.test.fluent.assertions)
     testImplementation(libs.test.junit)

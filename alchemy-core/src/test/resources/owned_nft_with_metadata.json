@@ -1,6 +1,7 @@
 {
   "contract": {
-    "address": "0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1"
+    "address": "0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1",
+    "contractMetadata": null
   },
   "id": {
     "tokenId": "0x0000000000000000000000000000000000000000000000000000000000000001",

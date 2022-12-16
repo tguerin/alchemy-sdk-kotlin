@@ -11,9 +11,9 @@ import com.alchemy.sdk.nft.model.GetNftsForOwnerOptions
 import com.alchemy.sdk.nft.model.Nft
 import com.alchemy.sdk.nft.model.NftContractMetadata
 import com.alchemy.sdk.nft.model.NftContractNftsResponse
+import com.alchemy.sdk.nft.model.NftContractOwnersResponse
+import com.alchemy.sdk.nft.model.NftOwnersResponse
 import com.alchemy.sdk.nft.model.OwnedNftsResponse
-import com.alchemy.sdk.nft.model.OwnersResponse
-import com.alchemy.sdk.util.GsonUtil.Companion.nftGson
 import com.alchemy.sdk.util.HexString.Companion.hexString
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -37,8 +37,7 @@ class NftIntegrationTest {
         val ownedNftsResponse =
             alchemy.nft.getNftsForOwner(Address.from("0x1188aa75c38e1790be3768508743fbe7b50b2153"))
 
-        val expectedOwnedNft =
-            parseFile("owned_nfts_with_metadata.json", OwnedNftsResponse::class.java, nftGson)
+        val expectedOwnedNft: OwnedNftsResponse.OwnedAlchemyNftsResponse = parseFile("owned_nfts_with_metadata.json")
         ownedNftsResponse.getOrNull() shouldBeEqualTo expectedOwnedNft
     }
 
@@ -50,82 +49,64 @@ class NftIntegrationTest {
                 GetNftsForOwnerOptions(omitMetadata = true)
             )
 
-        val expectedOwnedNft =
-            parseFile("owned_nfts_without_metadata.json", OwnedNftsResponse::class.java, nftGson)
+        val expectedOwnedNft: OwnedNftsResponse.OwnedBaseNftsResponse = parseFile("owned_nfts_without_metadata.json")
         ownedNftsResponse.getOrNull() shouldBeEqualTo expectedOwnedNft
     }
 
     @Test
     fun `retrieve nft metadata`() = runTest {
         val nft = alchemy.nft.getNftMetadata(
-            Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString),
+            Address.from("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1"),
             1L
         )
-        val expectedNft = parseFile("nft_metadata_test.json", Nft::class.java, nftGson)
+        val expectedNft: Nft = parseFile("nft_metadata_test.json")
         nft.getOrThrow() shouldBeEqualTo expectedNft
     }
 
     @Test
     fun `retrieve nft contract metadata`() = runTest {
         val nft = alchemy.nft.getContractMetadata(
-            Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
+            Address.from("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1")
         )
-        val expectedNft =
-            parseFile("contract_metadata_test.json", NftContractMetadata::class.java, nftGson)
+        val expectedNft: NftContractMetadata = parseFile("contract_metadata_test.json")
         nft.getOrThrow() shouldBeEqualTo expectedNft
     }
 
     @Test
     fun `retrieve nfts for contract without metadata`() = runTest {
         val nftContractNfts = alchemy.nft.getNftsForContract(
-            Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString),
+            Address.from("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1"),
             GetNftsForContractOptions(omitMetadata = true)
         )
-        val expectedNftContractNfts = parseFile(
-            "nft_for_contracts_without_metadata.json",
-            NftContractNftsResponse::class.java,
-            nftGson
-        )
+        val expectedNftContractNfts: NftContractNftsResponse = parseFile("nft_for_contracts_without_metadata.json")
         nftContractNfts.getOrThrow() shouldBeEqualTo expectedNftContractNfts
     }
 
     @Test
     fun `retrieve nfts for contract with metadata`() = runTest {
         val nftContractNfts = alchemy.nft.getNftsForContract(
-            Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
+            Address.from("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1")
         )
-        val expectedNftContractNfts = parseFile(
-            "nft_for_contracts_with_metadata.json",
-            NftContractNftsResponse::class.java,
-            nftGson
-        )
+        val expectedNftContractNfts: NftContractNftsResponse = parseFile("nft_for_contracts_with_metadata.json")
         nftContractNfts.getOrThrow() shouldBeEqualTo expectedNftContractNfts
     }
 
     @Test
     fun `retrieve owners for nft`() = runTest {
         val owners = alchemy.nft.getOwnersForNft(
-            Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString),
+            Address.from("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1"),
             tokenId = 1L
         )
-        val expectedOwners = parseFile(
-            "owners_for_nft_test.json",
-            OwnersResponse::class.java,
-            nftGson
-        )
+        val expectedOwners: NftOwnersResponse = parseFile("owners_for_nft_test.json")
         owners.getOrThrow() shouldBeEqualTo expectedOwners
     }
 
     @Test
     fun `retrieve owners for contract`() = runTest {
         val owners = alchemy.nft.getOwnersForContract(
-            Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
+            Address.from("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1")
         )
-        val expectedOwners = parseFile(
-            "owners_for_contract_test.json",
-            OwnersResponse::class.java,
-            nftGson
-        )
+        val expectedOwners: NftContractOwnersResponse = parseFile("owners_for_contract_test.json")
         owners.getOrThrow() shouldBeEqualTo expectedOwners
     }
 
@@ -140,7 +121,7 @@ class NftIntegrationTest {
     @Test
     fun `check if a contract is a spam`() = runTest {
         alchemy.nft.isSpamContract(
-            Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
+            Address.from("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1")
         ).getOrThrow() shouldBeEqualTo false
     }
 
@@ -149,8 +130,8 @@ class NftIntegrationTest {
         alchemy.nft.checkNftOwnership(
             Address.from("0x1188aa75c38e1790be3768508743fbe7b50b2153"),
             listOf(
-                Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString),
-                Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
+                Address.from("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1"),
+                Address.from("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1")
             )
         ).getOrThrow() shouldBeEqualTo true
     }
@@ -166,7 +147,7 @@ class NftIntegrationTest {
     @Ignore("Alchemy is returning a 500 http code")
     fun `retrieve floor price for the collection`() = runTest {
         val floorPriceResponse = alchemy.nft.getFloorPrice(
-            Address.ContractAddress("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1".hexString)
+            Address.from("0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1")
         )
         val floorPrice = floorPriceResponse.getOrThrow()
         floorPrice.openSea shouldBeInstanceOf FloorPrice.FloorPriceMarketplace::class.java
@@ -176,7 +157,7 @@ class NftIntegrationTest {
     @Test
     fun `should refresh metadata`() = runTest {
         val refreshNftMetadataResponse = alchemy.nft.refreshNftMetadata(
-            Address.ContractAddress("0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d".hexString),
+            Address.from("0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d"),
             1L
         )
         refreshNftMetadataResponse.getOrThrow() shouldNotBeEqualTo null
@@ -185,7 +166,7 @@ class NftIntegrationTest {
     @Test
     fun `should refresh contract`() = runTest {
         val refreshContractResponse = alchemy.nft.refreshContract(
-            Address.ContractAddress("0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d".hexString)
+            Address.from("0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d")
         )
         refreshContractResponse.getOrThrow() shouldNotBeEqualTo null
     }

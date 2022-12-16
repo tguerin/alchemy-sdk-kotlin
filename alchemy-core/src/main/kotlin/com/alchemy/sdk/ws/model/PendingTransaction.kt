@@ -3,12 +3,18 @@ package com.alchemy.sdk.ws.model
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.util.Ether
 import com.alchemy.sdk.util.HexString
+import com.alchemy.sdk.ws.adapter.KHashOnlySerializer
+import com.alchemy.sdk.ws.adapter.KPendingTransactionSerializer
+import kotlinx.serialization.Serializable
 
+@Serializable(with = KPendingTransactionSerializer::class)
 sealed interface PendingTransaction {
     val hash: HexString
 
+    @Serializable(with = KHashOnlySerializer::class)
     data class HashOnly(override val hash: HexString) : PendingTransaction
 
+    @Serializable
     data class FullPendingTransaction(
         val blockHash: HexString?,
         val blockNumber: HexString?,

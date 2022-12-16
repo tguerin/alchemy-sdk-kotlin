@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.kapt) apply false
+    alias(libs.plugins.kotlinx.serialization) apply false
     alias(libs.plugins.ksp) apply false
 }
 
@@ -28,6 +29,7 @@ subprojects {
                     freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
                     freeCompilerArgs += "-opt-in=kotlinx.coroutines.FlowPreview"
                     freeCompilerArgs += "-opt-in=kotlin.Experimental"
+                    freeCompilerArgs += "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
                 }
             }
         }

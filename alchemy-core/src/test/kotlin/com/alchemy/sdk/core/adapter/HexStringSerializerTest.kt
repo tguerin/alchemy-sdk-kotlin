@@ -1,40 +1,22 @@
 package com.alchemy.sdk.core.adapter
 
+import com.alchemy.sdk.ResourceUtils.Companion.json
 import com.alchemy.sdk.util.HexString
 import com.alchemy.sdk.util.HexString.Companion.hexString
-import com.google.gson.JsonNull
-import com.google.gson.JsonPrimitive
-import com.google.gson.JsonSerializationContext
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit4.MockKRule
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.encodeToString
 import org.amshove.kluent.shouldBeEqualTo
-import org.junit.Rule
 import org.junit.Test
 
 class HexStringSerializerTest {
 
-    @get:Rule
-    val mockkRule = MockKRule(this)
-
-    @MockK
-    lateinit var context: JsonSerializationContext
-
     @Test
     fun `should convert hex string to string hex representation`() = runTest {
-        HexStringSerializer.serialize(
-            "0x02".hexString,
-            HexString::class.java,
-            context
-        ) shouldBeEqualTo JsonPrimitive("0x02")
+        json.encodeToString("0x02".hexString) shouldBeEqualTo "\"0x02\""
     }
 
     @Test
     fun `should handle null case`() {
-        HexStringSerializer.serialize(
-            null,
-            HexString::class.java,
-            context
-        ) shouldBeEqualTo JsonNull.INSTANCE
+        json.encodeToString<HexString?>(null) shouldBeEqualTo "null"
     }
 }

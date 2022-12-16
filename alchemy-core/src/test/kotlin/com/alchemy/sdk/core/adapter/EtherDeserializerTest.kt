@@ -1,59 +1,33 @@
 package com.alchemy.sdk.core.adapter
 
+import com.alchemy.sdk.ResourceUtils.Companion.json
 import com.alchemy.sdk.util.Ether
 import com.alchemy.sdk.util.Ether.Companion.wei
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonNull
-import com.google.gson.JsonPrimitive
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit4.MockKRule
+import kotlinx.serialization.decodeFromString
 import org.amshove.kluent.shouldBeEqualTo
-import org.junit.Rule
 import org.junit.Test
 
 class EtherDeserializerTest {
 
-    @get:Rule
-    val mockkRule = MockKRule(this)
-
-    @MockK
-    lateinit var context: JsonDeserializationContext
-
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = Exception::class)
     fun `should throw exception if value is not a string`() {
-        EtherDeserializer.deserialize(
-            JsonPrimitive(2),
-            Ether::class.java,
-            context
-        )
+        json.decodeFromString<Ether>("2")
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `should throw exception if value is not a valid hex value`() {
-        EtherDeserializer.deserialize(
-            JsonPrimitive("XD"),
-            Ether::class.java,
-            context
-        )
+        json.decodeFromString<Ether>("\"XD\"")
     }
 
     @Test
     fun `should parse hex value as ether`() {
-        val data = EtherDeserializer.deserialize(
-            JsonPrimitive("0x02"),
-            Ether::class.java,
-            context
-        )
+        val data = json.decodeFromString<Ether>("\"0x02\"")
         data shouldBeEqualTo "0x02".wei
     }
 
     @Test
     fun `should handle null case`() {
-        val data = EtherDeserializer.deserialize(
-            JsonNull.INSTANCE,
-            Ether::class.java,
-            context
-        )
+        val data = json.decodeFromString<Ether?>("null")
         data shouldBeEqualTo null
     }
 

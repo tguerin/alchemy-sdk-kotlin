@@ -1,35 +1,18 @@
 package com.alchemy.sdk.core.adapter
 
+import com.alchemy.sdk.ResourceUtils.Companion.json
 import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.BlockTransaction
 import com.alchemy.sdk.util.Ether.Companion.wei
 import com.alchemy.sdk.util.HexString.Companion.hexString
-import com.google.gson.Gson
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonNull
-import com.google.gson.JsonPrimitive
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit4.MockKRule
+import kotlinx.serialization.decodeFromString
 import org.amshove.kluent.shouldBeEqualTo
-import org.junit.Rule
 import org.junit.Test
 
 class BlockTransactionDeserializerTest {
-
-    @get:Rule
-    val mockkRule = MockKRule(this)
-
-    @MockK
-    lateinit var context: JsonDeserializationContext
-
     @Test
     fun `should deserialize String as SimpleBlockTransaction`() {
-        BlockTransactionDeserializer.deserialize(
-            JsonPrimitive("0x02"),
-            BlockTransaction::class.java,
-            context
-        ) shouldBeEqualTo BlockTransaction.SimpleBlockTransaction("0x02".hexString)
+        json.decodeFromString<BlockTransaction>("\"0x02\"") shouldBeEqualTo BlockTransaction.SimpleBlockTransaction("0x02".hexString)
     }
 
     @Test
@@ -55,27 +38,13 @@ class BlockTransactionDeserializerTest {
             "0x07".hexString,
             "0x08".hexString,
         )
-        val jsonTree = Gson().toJsonTree(blockTransaction)
-        every {
-            context.deserialize<BlockTransaction.FullBlockTransaction>(
-                jsonTree,
-                BlockTransaction.FullBlockTransaction::class.java
-            )
-        } returns blockTransaction
-        BlockTransactionDeserializer.deserialize(
-            jsonTree,
-            BlockTransaction::class.java,
-            context
-        ) shouldBeEqualTo blockTransaction
+        val jsonTree = json.encodeToString(BlockTransaction.FullBlockTransaction.serializer(), blockTransaction)
+        json.decodeFromString<BlockTransaction>(jsonTree) shouldBeEqualTo blockTransaction
     }
 
     @Test
     fun `should handle null case`() {
-        val data = BlockTransactionDeserializer.deserialize(
-            JsonNull.INSTANCE,
-            BlockTransaction::class.java,
-            context
-        )
+        val data = json.decodeFromString<BlockTransaction?>("null")
         data shouldBeEqualTo null
     }
 }

@@ -1,7 +1,9 @@
 package com.alchemy.sdk.core.model
 
 import com.alchemy.sdk.util.HexString
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Log(
     val address: Address,
     val topics: List<HexString>,

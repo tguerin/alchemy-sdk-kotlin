@@ -2,6 +2,7 @@ package com.alchemy.sdk.e2e
 
 import com.alchemy.sdk.Alchemy
 import com.alchemy.sdk.AlchemySettings
+import com.alchemy.sdk.ResourceUtils.Companion.json
 import com.alchemy.sdk.ResourceUtils.Companion.parseFile
 import com.alchemy.sdk.ResourceUtils.Companion.readFile
 import com.alchemy.sdk.core.Core
@@ -9,7 +10,6 @@ import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.core.model.Network
 import com.alchemy.sdk.core.model.TransactionReceipt
 import com.alchemy.sdk.util.Constants
-import com.alchemy.sdk.util.GsonUtil
 import com.alchemy.sdk.util.HexString.Companion.hexString
 import com.alchemy.sdk.util.HexString.Companion.id
 import com.alchemy.sdk.util.generator.IncrementalIdGenerator
@@ -170,24 +170,20 @@ class WebSocketIntegrationTest {
         val result = alchemy.ws
             .on(WebsocketMethod.Transaction("0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString))
             .single()
-        result.getOrThrow() shouldBeEqualTo parseFile(
-            "transaction_receipt_test.json",
-            TransactionReceipt::class.java
-        )
+        result.getOrThrow() shouldBeEqualTo parseFile<TransactionReceipt>("transaction_receipt_test.json")
     }
 
     @Test
     fun `should retrieve the transaction receipt when a block number is emitted`() = runTest {
         val core = mockk<Core>()
-        val expectedReceipt =
-            parseFile("transaction_receipt_test.json", TransactionReceipt::class.java)
+        val expectedReceipt: TransactionReceipt = parseFile("transaction_receipt_test.json")
         coEvery {
             core.getTransactionReceipt("0x6576804cb20d1bab7898d22eaf4fed6fec75ddaf43ef43b97f2c8011e449deef".hexString)
         } returns Result.success(null) andThen Result.success(expectedReceipt)
         val ws = WebSocket(
             IncrementalIdGenerator(),
             core,
-            GsonUtil.gson,
+            json,
             DelayRetryPolicy(),
             Constants.getAlchemyWebsocketUrl(
                 Network.ETH_MAINNET,

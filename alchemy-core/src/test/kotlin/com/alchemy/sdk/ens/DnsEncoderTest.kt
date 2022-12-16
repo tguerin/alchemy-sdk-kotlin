@@ -6,7 +6,8 @@ import org.junit.Test
 
 class DnsEncoderTest {
 
-    private val dnsEncoder =  DnsEncoder(IDNNormalizer)
+    private val dnsEncoder = DnsEncoder(IDNNormalizer)
+
     @Test
     fun `should mimic ethers dns encode`() {
         dnsEncoder.encode("1.offchainexample.eth") shouldBeEqualTo "0x01310f6f6666636861696e6578616d706c650365746800".hexString

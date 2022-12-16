@@ -1,22 +1,17 @@
 package com.alchemy.sdk.ws
 
 import com.alchemy.sdk.core.Core
-import com.alchemy.sdk.core.model.Address
 import com.alchemy.sdk.rpc.model.JsonRpcException
 import com.alchemy.sdk.rpc.model.JsonRpcRequest
 import com.alchemy.sdk.util.HexString
 import com.alchemy.sdk.util.HexString.Companion.hexString
 import com.alchemy.sdk.util.generator.IdGenerator
-import com.alchemy.sdk.util.pmap
 import com.alchemy.sdk.ws.WebSocket.MessageWithMetadata.Companion.DefaultSubscriptionId
 import com.alchemy.sdk.ws.model.PendingTransaction
 import com.alchemy.sdk.ws.model.WebSocketJsonRpcResponse
 import com.alchemy.sdk.ws.model.WebsocketEvent
 import com.alchemy.sdk.ws.model.WebsocketMethod
 import com.alchemy.sdk.ws.model.WebsocketStatus
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.google.gson.stream.JsonToken
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -37,9 +32,10 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.Reader
-import java.io.StringReader
-import java.lang.reflect.Type
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 
 private fun <T> Flow<WebsocketEvent>.dataOnly(): Flow<Result<T>> {
     return this.filterIsInstance<WebsocketEvent.Data<Result<T>>>().map { it.data }
@@ -49,7 +45,7 @@ private fun <T> Flow<WebsocketEvent>.dataOnly(): Flow<Result<T>> {
 class WebSocket internal constructor(
     private val idGenerator: IdGenerator,
     private val core: Core,
-    private val gson: Gson,
+    private val json: Json,
     retryPolicy: RetryPolicy,
     websocketUrl: String,
     httpClient: HttpClient
@@ -148,7 +144,7 @@ class WebSocket internal constructor(
                 WebsocketEvent.Data(
                     messageWithMetadata.subscriptionId,
                     parseWebSocketResponseContent(
-                        mapMethodBySubscription[messageWithMetadata.subscriptionId]?.responseType!!,
+                        mapMethodBySubscription[messageWithMetadata.subscriptionId]?.serializer!!,
                         messageWithMetadata.message
                     )
                 )
@@ -220,7 +216,7 @@ class WebSocket internal constructor(
         }
     }
 
-    private suspend fun unsubscribeFromEvent(methodId: String, subscriptionId: HexString) {
+    private fun unsubscribeFromEvent(methodId: String, subscriptionId: HexString) {
         mapMethodBySubscription.remove(subscriptionId)
         mapSubscriptionByMethodId.remove(methodId)
         websocketConnection.send(
@@ -231,7 +227,7 @@ class WebSocket internal constructor(
         )
     }
 
-    private suspend fun <T> subscribeToEvent(
+    private fun <T> subscribeToEvent(
         methodId: String,
         method: WebsocketMethod<T>
     ) {
@@ -239,33 +235,40 @@ class WebSocket internal constructor(
     }
 
     private fun <T> parseWebSocketResponseContent(
-        type: Class<T>,
+        innerTypeSerializer: KSerializer<T>,
         message: String
     ): Result<T> {
-        val (content, exception) = gson.parseContent<WebSocketJsonRpcResponse<T>>(
-            WebSocketJsonRpcResponse::class.java,
-            type,
-            StringReader(message)
-        )
+        val content: WebSocketJsonRpcResponse<T> = try {
+            json.decodeFromString(WebSocketJsonRpcResponse.serializer(innerTypeSerializer), message)
+        } catch (e: Exception) {
+            return Result.failure(e)
+        }
         return when {
-            content != null && content.params.result != null -> {
+            content.params.result != null -> {
                 Result.success(content.params.result)
             }
 
-            content != null && content.params.error != null -> {
+            content.params.error != null -> {
                 Result.failure(JsonRpcException(content.params.error))
             }
 
             else -> {
-                Result.failure(exception ?: RuntimeException("can't happen"))
+                error("Websocket response should have either result or error field")
             }
         }
     }
 
-    private suspend fun <T> forgeEvent(id: String, method: WebsocketMethod<T>): String {
-        return gson.toJson(
+    private fun <T> forgeEvent(id: String, method: WebsocketMethod<T>): String {
+        return json.encodeToString(
             JsonRpcRequest(
-                id = id, method = method.name, params = resolveParam(method.params)
+                id = id,
+                method = method.name,
+                params = JsonArray(method.params.map {
+                    json.encodeToJsonElement(
+                        it.second as KSerializer<Any>,
+                        it.first
+                    )
+                })
             )
         )
     }
@@ -291,50 +294,8 @@ class WebSocket internal constructor(
     }
 
     private suspend fun <T> resolveMethod(method: WebsocketMethod<T>): WebsocketMethod<T> {
-        return when (method) {
-            is WebsocketMethod.PendingTransactions -> {
-                method.copy(
-                    fromAddress = if (method.fromAddress != null) {
-                        core.resolveAddress(method.fromAddress).getOrThrow()
-                    } else {
-                        null
-                    }, toAddresses = resolveParam(method.toAddresses) as List<Address>
-                ) as WebsocketMethod<T>
-            }
+        return method.resolveAddresses(core)
 
-            is WebsocketMethod.LogFilter -> {
-                method.copy(
-                    address = if (method.address != null) {
-                        core.resolveAddress(method.address).getOrThrow()
-                    } else {
-                        null
-                    }
-                ) as WebsocketMethod<T>
-            }
-
-            else -> {
-                method
-            }
-        }
-
-    }
-
-    private suspend fun resolveParam(params: List<Any?>): List<Any?> {
-        return params.pmap { param ->
-            when (param) {
-                is Address -> {
-                    core.resolveAddress(param).getOrThrow()
-                }
-
-                is List<Any?> -> {
-                    resolveParam(param)
-                }
-
-                else -> {
-                    param
-                }
-            }
-        }
     }
 
     /** For test purpose only */
@@ -360,33 +321,6 @@ class WebSocket internal constructor(
         companion object {
             val DefaultSubscriptionId = "0x0".hexString
         }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun <T> Gson.parseContent(
-        wrapperType: Class<*>,
-        returnType: Type,
-        reader: Reader
-    ): Pair<T?, Exception?> {
-        val jsonReader = newJsonReader(reader)
-        val typeToken =
-            TypeToken.getParameterized(
-                wrapperType,
-                returnType
-            )
-        val adapter = getAdapter(typeToken)
-        var dataRead: Any?
-        var exception: Exception? = null
-        try {
-            dataRead = adapter.read(jsonReader)
-            if (jsonReader.peek() !== JsonToken.END_DOCUMENT) {
-                dataRead = null
-            }
-        } catch (e: Exception) {
-            exception = e
-            dataRead = null
-        }
-        return dataRead as T to exception
     }
 
     companion object {
