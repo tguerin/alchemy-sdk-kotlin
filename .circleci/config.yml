@@ -2,9 +2,9 @@ version: 2.1
 
 machine:
   environment:
-    ANDROID_HOME: "/usr/local/share/android-sdk"
-    ANDROID_SDK_HOME: "/usr/local/share/android-sdk"
-    ANDROID_SDK_ROOT: "/usr/local/share/android-sdk"
+    ANDROID_HOME: "/usr/local/opt/android-sdk"
+    ANDROID_SDK_HOME: "/usr/local/opt/android-sdk"
+    ANDROID_SDK_ROOT: "/usr/local/opt/android-sdk"
 
 dependencies:
   pre:
