@@ -21,6 +21,8 @@ jobs:
     steps:
       - checkout
       - run:
+          command: echo `which android`
+      - run:
           name: Build and execute tests
           command: ./gradlew test
       - run:
