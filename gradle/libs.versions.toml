@@ -1,5 +1,4 @@
 [versions]
-activitycompose = "1.5.1"
 agp = "7.3.0"
 androidxappcompat = "1.5.0"
 androidxcore = "1.8.0"
@@ -8,22 +7,21 @@ androidxjunit = "1.1.3"
 androidxlifecycle = "2.6.0-alpha02"
 androidxnavigation = "2.5.1"
 androidxtest = "1.4.0"
-compose = "1.2.1"
+bignum = "0.3.7"
 coroutines = "1.6.4"
 hilt = "2.44"
+jacoco = "0.8.8"
 junit = "4.13.2"
 keccak = "1.1.1"
-kluent = "1.68"
-kotlin = "1.7.10"
+kotlin = "1.8.0"
 kotlinPoet = "1.12.0"
-ksp = "1.7.10-1.0.6"
-ktor = "2.1.2"
+ksp = "1.8.0-1.0.8"
+ktor = "2.2.1"
 landscapist = "2.0.0"
 material = "1.6.1"
-material3 = "1.0.0-beta03"
+mockative = "1.3.0"
 serialization = "1.4.1"
-mockk = "1.12.8"
-mockwebserver = "4.10.0"
+stately = "1.2.2"
 systemuicontroller = "0.26.2-beta"
 
 [plugins]
@@ -32,7 +30,9 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 android-lint = { id = "com.android.lint", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 
-hilt = { id = "com.google.dagger.hilt.android",  version.ref = "hilt"}
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+
+jacoco = { id = "jacoco", version = "0.8.8" }
 
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
@@ -44,7 +44,7 @@ kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", vers
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxappcompat" }
-androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activitycompose" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidxcore" }
 androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxlifecycle" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxlifecycle" }
@@ -52,15 +52,17 @@ androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-ru
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxlifecycle" }
 androidx-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "androidxnavigation" }
 
-androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
-androidx-compose-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
-androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+androidx-compose-runtime = { module = "androidx.compose.runtime:runtime" }
+androidx-compose-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui" }
 
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidxtest" }
 androidx-test-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidxespressocore" }
 androidx-test-junit = { module = "androidx.test.ext:junit-ktx", version.ref = "androidxjunit" }
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidxtest" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxtest" }
+
+bignum = { module = "com.ionspin.kotlin:bignum", version.ref = "bignum" }
 
 crypto-keccak = { module = "com.github.komputing.khash:keccak", version.ref = "keccak" }
 
@@ -71,31 +73,34 @@ kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 
 kotlin-poet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinPoet" }
-kotlin-poet-ksp= { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinPoet" }
+kotlin-poet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinPoet" }
 
 ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
-ktor-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
 ktor-content-negociation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-engine-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-engine-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-websocket-server = { module = "io.ktor:ktor-server-websockets", version.ref = "ktor" }
 ktor-serialization-kotlinx = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 
 landscapist = { module = "com.github.skydoves:landscapist-glide", version.ref = "landscapist" }
 
 material = { module = "com.google.android.material:material", version.ref = "material" }
-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+material3 = { module = "androidx.compose.material3:material3" }
 
 kotlinx-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 
+stately-common = { module = "co.touchlab:stately-common", version.ref = "stately" }
+stately-concurrency = { module = "co.touchlab:stately-concurrency", version.ref = "stately" }
+
 system-ui-controller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "systemuicontroller" }
 
-test-fluent-assertions = { module = "org.amshove.kluent:kluent-android", version.ref = "kluent" }
 test-junit = { module = "junit:junit", version.ref = "junit" }
 test-kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
-test-mock-webserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockwebserver" }
-test-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
-test-mockk-agent = { module = "io.mockk:mockk-agent-jvm", version.ref = "mockk" }
+test-mockative = { module = "io.mockative:mockative", version.ref = "mockative" }
+test-mockative-processor = { module = "io.mockative:mockative-processor", version.ref = "mockative" }

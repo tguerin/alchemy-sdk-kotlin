@@ -1,10 +1,13 @@
 Currently focusing on migrating the project to KMP before introducing wallet support
 
-# Alchemy Sdk Kotlin
+# Alchemy Sdk Multiplatform
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/tguerin/alchemy-sdk-kotlin/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/tguerin/alchemy-sdk-kotlin/tree/main) [![codecov](https://codecov.io/gh/tguerin/alchemy-sdk-kotlin/branch/main/graph/badge.svg)](https://codecov.io/gh/tguerin/alchemy-sdk-kotlin)
+[![Kotlin](https://img.shields.io/badge/kotlin-1.8.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
+![badge-android][badge-android]
+![badge-ios][badge-ios]
 
-Support Alchemy on Android devices and java based projects. This is a side project to learn stuff around web3 and releasing a library.
+Support Alchemy on Android and iOS devices thanks to kotlin multi-platform. This is a side project to learn stuff around web3 and releasing a library.
 
 ## Roadmap
 
@@ -37,7 +40,7 @@ repositories {
 then just add the dependency to the required module:
 
 ```kotlin
-implementation("com.github.tguerin:alchemy-sdk-kotlin:0.9.0")
+implementation("com.github.tguerin:alchemy-core:0.10.0")
 ```
 
 ## Using Alchemy sdk
@@ -78,5 +81,8 @@ The websocket will automatically close if no subscriber is registered. Also it w
 resubscribe to previous topics when websocket is reconnected.
 
 Have a look at the [e2e tests](./alchemy-core/src/test/kotlin/com/alchemy/sdk/core/e2e) for samples.
+
+[badge-ios]: https://img.shields.io/badge/platform-ios-CDCDCD.svg?style=flat
+[badge-android]: https://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat
 
 

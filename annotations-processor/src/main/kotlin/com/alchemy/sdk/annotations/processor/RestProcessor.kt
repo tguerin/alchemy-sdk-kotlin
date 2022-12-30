@@ -175,7 +175,7 @@ class RestProcessor(
                         .build()
                 )
                 .returns(
-                    ClassName.bestGuess("Result")
+                    ClassName.bestGuess("SdkResult")
                         .parameterizedBy(t)
                 )
                 .addCode(
@@ -184,7 +184,7 @@ class RestProcessor(
                         |return try {
                         |     httpClient.executeGet("${'$'}url/${'$'}restMethodName", headers, params)
                         |} catch (e: Exception) {
-                        |     Result.failure(e)
+                        |     SdkResult.failure(e)
                         |}
                         """.trimMargin()
                     )

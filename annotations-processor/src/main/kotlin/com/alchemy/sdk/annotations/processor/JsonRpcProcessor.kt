@@ -148,7 +148,7 @@ class JsonRpcProcessor(
                         .build()
                 )
                 .returns(
-                    ClassName.bestGuess("Result")
+                    ClassName.bestGuess("SdkResult")
                         .parameterizedBy(t)
                 )
                 .addCode(
@@ -162,7 +162,7 @@ class JsonRpcProcessor(
                         |     )
                         |     jsonRpcClient.call(url, request)
                         |} catch (e: Exception) {
-                        |     Result.failure(e)
+                        |     SdkResult.failure(e)
                         |}
                         """.trimMargin()
                     )

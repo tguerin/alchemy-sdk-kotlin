@@ -1,0 +1,11 @@
+workspace 'ios'
+xcodeproj 'NftExplorer/NftExplorer.xcodeproj'
+
+target 'NftExplorer' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  #use_frameworks!
+  platform :ios, '14.2'
+  # Pods for iosApp
+  pod 'alchemy_core', :path => '../../alchemy-core'
+  xcodeproj 'NftExplorer/NftExplorer.xcodeproj'
+end
