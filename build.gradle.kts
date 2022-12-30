@@ -1,5 +1,4 @@
-import com.android.build.gradle.internal.tasks.JacocoTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinTest
+
 
 @Suppress(
     "DSL_SCOPE_VIOLATION"
@@ -18,25 +17,27 @@ plugins {
 
 subprojects {
     ext["useCoroutines"] = false
-    afterEvaluate {
-        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
-            kotlinOptions {
-                // Treat all Kotlin warnings as errors
-                allWarningsAsErrors = true
 
-                if (project.ext["useCoroutines"] == true) {
-                    // Enable experimental coroutines APIs, including Flow
-                    freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-                    freeCompilerArgs += "-opt-in=kotlinx.coroutines.FlowPreview"
-                    freeCompilerArgs += "-opt-in=kotlin.Experimental"
-                    freeCompilerArgs += "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
+    afterEvaluate {
+        /*tasks.withType<KotlinCompile>().all {
+                kotlinOptions {
+                    // Treat all Kotlin warnings as errors
+                    allWarningsAsErrors = true
+
+                    if (project.ext["useCoroutines"] == true) {
+                        // Enable experimental coroutines APIs, including Flow
+                        freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+                        freeCompilerArgs += "-opt-in=kotlinx.coroutines.FlowPreview"
+                        freeCompilerArgs += "-opt-in=kotlin.Experimental"
+                        freeCompilerArgs += "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
+                    }
                 }
-            }
         }
-    }
+    }*/
+        /*
     if (!this.path.contains("samples")) {
         apply(plugin = "jacoco")
-        tasks.withType<JacocoTask> {
+        tasks.withType<com.android.build.gradle.internal.tasks.JacocoTask> {
             version = "0.8.8"
         }
         tasks.withType<Test> {
@@ -44,16 +45,18 @@ subprojects {
             finalizedBy(tasks.withType<JacocoReport>())
         }
         tasks.withType<JacocoReport> {
-            dependsOn(*tasks.withType<KotlinTest>().toTypedArray())
+            dependsOn(*tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinTest>().toTypedArray())
             reports {
                 xml.required.set(true)
             }
         }
     }
+     */
+    }
 }
 
-tasks {
+/*tasks {
     register("clean", Delete::class) {
         delete(rootProject.buildDir)
     }
-}
+}*/

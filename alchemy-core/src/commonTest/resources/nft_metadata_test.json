@@ -1,0 +1,65 @@
+{
+  "contract": {
+    "address": "0x4b076f0e07eed3f1007fb1b5c000f7a08d3208e1"
+  },
+  "id": {
+    "tokenId": "1",
+    "tokenMetadata": {
+      "tokenType": "ERC721"
+    }
+  },
+  "title": "The Wanderer Lands #1",
+  "description": "A beautiful and high resolution collection of A.I. generated landscapes",
+  "tokenUri": {
+    "raw": "ipfs://bafybeifcnkipzxl54rk523qhorqw5ysrvdppxg4vykkuhh4vrqqhoeyfiy/1.json",
+    "gateway": "https://alchemy.mypinata.cloud/ipfs/bafybeifcnkipzxl54rk523qhorqw5ysrvdppxg4vykkuhh4vrqqhoeyfiy/1.json"
+  },
+  "media": [
+    {
+      "raw": "ipfs://bafybeifu4nlpuj5dniyvkxmd5fmghab7h2dfooprfpzm752hxhi7iou2yq/1.png",
+      "gateway": "https://nft-cdn.alchemy.com/eth-mainnet/d82d988e7789a99d428fd07f4ec174f6",
+      "thumbnail": "https://res.cloudinary.com/alchemyapi/image/upload/thumbnail/eth-mainnet/d82d988e7789a99d428fd07f4ec174f6",
+      "format": "png",
+      "bytes": 4726880
+    }
+  ],
+  "metadata": {
+    "date": 1654933547421,
+    "image": "ipfs://bafybeifu4nlpuj5dniyvkxmd5fmghab7h2dfooprfpzm752hxhi7iou2yq/1.png",
+    "dna": "172e42d0fc20a44ad5d2d10dcc09a37b8a75afe087d81c91375a3293b7532ab5",
+    "name": "The Wanderer Lands #1",
+    "description": "A beautiful and high resolution collection of A.I. generated landscapes",
+    "edition": 1,
+    "attributes": [
+      {
+        "value": "The Legend Valley",
+        "trait_type": "Land"
+      },
+      {
+        "value": "ColorFul",
+        "trait_type": "Style"
+      },
+      {
+        "value": "Peeling Paint Lvl 7",
+        "trait_type": "Blend"
+      }
+    ]
+  },
+  "timeLastUpdated": "2022-12-20T07:34:22.304Z",
+  "contractMetadata": {
+    "name": "AILandscape",
+    "symbol": "AILAND",
+    "totalSupply": "9",
+    "tokenType": "ERC721",
+    "openSea": {
+      "floorPrice": 0.0,
+      "collectionName": "The Wanderer Lands",
+      "safelistRequestStatus": "not_requested",
+      "imageUrl": "https://i.seadn.io/gcs/files/45bf0d1920093a55c4014f81feb8a049.png?w=500&auto=format",
+      "description": "Eleven blessed and cursed lands await you, \n\nOnly Fate knows where this journey will end, \n\nGet lost in the endless wandering of your soul\n\n[Claim your lands](https://the-wanderer-mint.xyz)\n\nThe wanderer lands is a 10K collection of beautiful and high resolution A.I. assisted handpainted landscapes. Eleven realm have been crafted and are waiting for you to be explored.\n\n\n\n\n\n\n \n",
+      "externalUrl": "https://the-wanderer-mint.xyz",
+      "twitterUsername": "LandsWanderer",
+      "lastIngestedAt": "2022-12-20T17:55:52.000Z"
+    }
+  }
+}

@@ -1,13 +1,22 @@
 version: 2.1
 
-executors:
-  test-executor:
-    docker:
-      - image: cimg/android:2022.09
+machine:
+  environment:
+    ANDROID_HOME: "/usr/local/share/android-sdk"
+    ANDROID_SDK_HOME: "/usr/local/share/android-sdk"
+    ANDROID_SDK_ROOT: "/usr/local/share/android-sdk"
+
+dependencies:
+  pre:
+    - brew tap caskroom/cask
+    - brew tap caskroom/versions
+    - brew cask install android-sdk
 
 jobs:
   build:
-    executor: test-executor
+    macos:
+      xcode: 14.2.0
+
     steps:
       - checkout
       - run:

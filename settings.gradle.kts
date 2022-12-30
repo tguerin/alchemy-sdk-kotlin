@@ -6,7 +6,7 @@ pluginManagement {
     }
 }
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    //repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
@@ -18,7 +18,7 @@ rootProject.name = "AlchemySdkKotlin"
 include(":alchemy-core")
 include(":annotations")
 include(":annotations-processor")
-include(":samples:nft-explorer-app")
+include(":samples:android:nft-explorer-app")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 enableFeaturePreview("VERSION_CATALOGS")
