@@ -14,8 +14,6 @@ jobs:
       - checkout
       - run:
           command: | 
-            brew tap caskroom/cask
-            brew tap caskroom/versions
             brew cask install android-sdk
             which android
       - run:
