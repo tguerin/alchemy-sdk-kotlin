@@ -13,9 +13,15 @@ jobs:
     steps:
       - checkout
       - run:
-          command: | 
-            brew install android-sdk
+          command: |
+            brew install java8
+            which java
+            brew install android-commandlinetools
             which android
+            brew remove android-sdk
+            brew install --cask android-ndk
+            yes | sdkmanager --licenses
+            sdkmanager "platform-tools" "platforms;android-33"
       - run:
           name: Build and execute tests
           command: ./gradlew test
