@@ -5,16 +5,16 @@ version: 2.1
 jobs:
   build:
     environment:
-      ANDROID_HOME: "/usr/local/opt/android-sdk"
-      ANDROID_SDK_HOME: "/usr/local/opt/android-sdk"
-      ANDROID_SDK_ROOT: "/usr/local/opt/android-sdk"
+      ANDROID_HOME: "/usr/local/share/android-commandlinetools"
+      ANDROID_SDK_HOME: "/usr/local/share/android-commandlinetools"
+      ANDROID_SDK_ROOT: "/usr/local/share/android-commandlinetools"
     macos:
       xcode: 14.2.0
     steps:
       - checkout
       - run:
           command: |
-            brew install java8
+            brew install adoptopenjdk/openjdk/adoptopenjdk8
             which java
             brew install android-commandlinetools
             which android
