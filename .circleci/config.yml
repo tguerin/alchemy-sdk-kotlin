@@ -8,6 +8,7 @@ jobs:
       ANDROID_HOME: "/usr/local/share/android-commandlinetools"
       ANDROID_SDK_HOME: "/usr/local/share/android-commandlinetools"
       ANDROID_SDK_ROOT: "/usr/local/share/android-commandlinetools"
+      JAVA_HOME: "/usr"
     macos:
       xcode: 14.2.0
     steps:
