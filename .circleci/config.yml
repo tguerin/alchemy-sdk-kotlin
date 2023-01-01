@@ -15,9 +15,7 @@ jobs:
       - checkout
       - run:
           command: |
-            which java
             brew install android-commandlinetools
-            which android
             brew remove android-sdk
             brew install --cask android-ndk
             yes | sdkmanager --licenses
