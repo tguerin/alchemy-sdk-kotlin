@@ -12,13 +12,15 @@ jobs:
     macos:
       xcode: 14.2.0
     steps:
-      - checkout
       - run:
           command: |
             brew install android-commandlinetools
             brew install --cask android-ndk
-            yes | sdkmanager --licenses
-            sdkmanager "platform-tools" "platforms;android-33"
+
+      - run:
+          command: |
+            sdkmanager --list
+      - checkout
       - run:
           name: Build and execute tests
           command: ./gradlew test
