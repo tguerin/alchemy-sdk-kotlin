@@ -1,27 +1,23 @@
 version: 2.1
 
-machine:
-  environment:
-    ANDROID_HOME: "/usr/local/opt/android-sdk"
-    ANDROID_SDK_HOME: "/usr/local/opt/android-sdk"
-    ANDROID_SDK_ROOT: "/usr/local/opt/android-sdk"
-
-dependencies:
-  pre:
-    - brew tap caskroom/cask
-    - brew tap caskroom/versions
-    - brew cask install android-sdk
 
 
 jobs:
   build:
+    environment:
+      ANDROID_HOME: "/usr/local/opt/android-sdk"
+      ANDROID_SDK_HOME: "/usr/local/opt/android-sdk"
+      ANDROID_SDK_ROOT: "/usr/local/opt/android-sdk"
     macos:
       xcode: 14.2.0
-
     steps:
       - checkout
       - run:
-          command: which android
+          command: | 
+            brew tap caskroom/cask
+            brew tap caskroom/versions
+            brew cask install android-sdk
+            which android
       - run:
           name: Build and execute tests
           command: ./gradlew test
