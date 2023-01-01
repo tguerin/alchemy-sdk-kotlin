@@ -16,7 +16,6 @@ jobs:
       - run:
           command: |
             brew install android-commandlinetools
-            brew remove android-sdk
             brew install --cask android-ndk
             yes | sdkmanager --licenses
             sdkmanager "platform-tools" "platforms;android-33"
