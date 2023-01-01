@@ -14,8 +14,6 @@ jobs:
       - checkout
       - run:
           command: |
-            brew install adoptopenjdk/openjdk/adoptopenjdk8
-            which java
             brew install android-commandlinetools
             which android
             brew remove android-sdk
