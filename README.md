@@ -40,7 +40,11 @@ repositories {
 then just add the dependency to the required module:
 
 ```kotlin
-implementation("com.github.tguerin:alchemy-core:0.10.0")
+val commonMain by getting { 
+    dependencies {
+        implementation("com.github.tguerin:alchemy-core:0.10.0")
+    }
+}
 ```
 
 ## Using Alchemy sdk
