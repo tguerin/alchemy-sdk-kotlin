@@ -21,6 +21,8 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import org.lighthousegames.logging.KmLogging
+import org.lighthousegames.logging.LogLevel
 
 data class AlchemySettings(
     /** The Alchemy API key that can be found in the Alchemy dashboard. */
@@ -95,6 +97,10 @@ class Alchemy private constructor(alchemySettings: AlchemySettings) {
             retryPolicy = alchemySettings.wsSettings.retryPolicy,
             dispatchers = dispatchers
         )
+    }
+
+    init {
+        KmLogging.setLogLevel(LogLevel.Off)
     }
 
     private fun setupCore(alchemySettings: AlchemySettings): Core {

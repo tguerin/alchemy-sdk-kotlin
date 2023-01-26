@@ -79,6 +79,7 @@ kotlin {
                 implementation(libs.ktor.content.negociation)
                 implementation(libs.ktor.serialization.kotlinx)
                 implementation(libs.kotlinx.json)
+                implementation(libs.logger)
                 implementation(libs.stately.common)
                 implementation(libs.stately.concurrency)
             }

@@ -12,14 +12,16 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
+import org.lighthousegames.logging.KmLog
 
 
-suspend inline fun <reified T> HttpClient.call(url: String, request: JsonRpcRequest): SdkResult<T> {
+suspend inline fun <reified T> HttpClient.call(url: String, request: JsonRpcRequest, logger: KmLog): SdkResult<T> {
     val response = post(url) {
         contentType(ContentType.Application.Json)
         setBody(request)
     }
     return if (response.status.isSuccess()) {
+        logger.debug { response.bodyAsText() }
         val jsonRpcResponse: JsonRpcResponse<T> = response.body()
         if (jsonRpcResponse.result == null && jsonRpcResponse.error != null) {
             SdkResult.failure(JsonRpcException(jsonRpcResponse.error))

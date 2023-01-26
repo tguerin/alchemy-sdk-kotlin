@@ -54,6 +54,11 @@ class JsonRpcProcessor(
         "JsonElement"
     )
 
+    private val kmLog = ClassName(
+        "org.lighthousegames.logging",
+        "KmLog"
+    )
+
     private val t = TypeVariableName("T")
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
@@ -160,7 +165,7 @@ class JsonRpcProcessor(
                         |         method = rpcMethodName,
                         |         params = JsonArray(args.toList())
                         |     )
-                        |     jsonRpcClient.call(url, request)
+                        |     jsonRpcClient.call(url, request, logger)
                         |} catch (e: Exception) {
                         |     SdkResult.failure(e)
                         |}
@@ -224,6 +229,14 @@ class JsonRpcProcessor(
         classDeclaration: KSClassDeclaration,
         classSpecBuilder: TypeSpec.Builder
     ) {
+        val companion = TypeSpec.companionObjectBuilder()
+            .addProperty(
+                PropertySpec.builder("logger", kmLog)
+                    .initializer("logging()")
+                    .build()
+            )
+            .build()
+
         FileSpec.builder(
             classDeclaration.packageName.asString(),
             classDeclaration.simpleName.asString() + "Impl"
@@ -234,6 +247,10 @@ class JsonRpcProcessor(
             )
             .addImport(
                 "kotlinx.serialization.json.encodeToJsonElement",
+                ""
+            )
+            .addImport(
+                "org.lighthousegames.logging.logging",
                 ""
             )
             .addImport(
@@ -250,7 +267,9 @@ class JsonRpcProcessor(
                     .build()
             )
             .addType(
-                classSpecBuilder.build()
+                classSpecBuilder
+                    .addType(companion)
+                    .build()
             )
             .build()
             .writeTo(codeGenerator, true)

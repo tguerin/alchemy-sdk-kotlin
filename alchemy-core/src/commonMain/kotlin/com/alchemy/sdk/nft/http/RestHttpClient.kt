@@ -10,12 +10,14 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
+import org.lighthousegames.logging.KmLog
 
 
 suspend inline fun <reified T> HttpClient.executeGet(
     url: String,
     headers: Map<String, String>,
-    params: Map<String, String?>
+    params: Map<String, String?>,
+    logger: KmLog,
 ): SdkResult<T> {
     val response = try {
         get(url) {
@@ -46,7 +48,7 @@ suspend inline fun <reified T> HttpClient.executeGet(
         error(e)
     }
     return if (response.status.isSuccess()) {
-        println(response.bodyAsText())
+        logger.debug { response.bodyAsText() }
         SdkResult.success(response.body())
     } else {
         SdkResult.failure(RuntimeException("error.http.code.${response.status.value}: " + response.bodyAsText()))

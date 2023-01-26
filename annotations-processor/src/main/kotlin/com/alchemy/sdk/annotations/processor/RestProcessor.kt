@@ -46,6 +46,11 @@ class RestProcessor(
         "Json"
     )
 
+    private val kmLog = ClassName(
+        "org.lighthousegames.logging",
+        "KmLog"
+    )
+
     private val t = TypeVariableName("T")
 
     private val mapData = Map::class.asClassName().parameterizedBy(STRING, STRING.copy(nullable = true))
@@ -182,7 +187,7 @@ class RestProcessor(
                     CodeBlock.of(
                         """
                         |return try {
-                        |     httpClient.executeGet("${'$'}url/${'$'}restMethodName", headers, params)
+                        |     httpClient.executeGet("${'$'}url/${'$'}restMethodName", headers, params, logger)
                         |} catch (e: Exception) {
                         |     SdkResult.failure(e)
                         |}
@@ -236,6 +241,14 @@ class RestProcessor(
         classDeclaration: KSClassDeclaration,
         classSpecBuilder: TypeSpec.Builder
     ) {
+        val companion = TypeSpec.companionObjectBuilder()
+            .addProperty(
+                PropertySpec.builder("logger", kmLog)
+                    .initializer("logging()")
+                    .build()
+            )
+            .build()
+
         FileSpec.builder(
             classDeclaration.packageName.asString(),
             classDeclaration.simpleName.asString() + "Impl"
@@ -248,13 +261,19 @@ class RestProcessor(
                 "com.alchemy.sdk.nft.http.executeGet",
                 ""
             )
+            .addImport(
+                "org.lighthousegames.logging.logging",
+                ""
+            )
             .addAnnotation(
                 AnnotationSpec.builder(ClassName("", "Suppress"))
                     .addMember("%S", "RedundantVisibilityModifier")
                     .build()
             )
             .addType(
-                classSpecBuilder.build()
+                classSpecBuilder
+                    .addType(companion)
+                    .build()
             )
             .build()
             .writeTo(codeGenerator, true)
