@@ -1,5 +1,3 @@
-Currently focusing on migrating the project to KMP before introducing wallet support
-
 # Alchemy Sdk Multiplatform
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/tguerin/alchemy-sdk-kotlin/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/tguerin/alchemy-sdk-kotlin/tree/main) [![codecov](https://codecov.io/gh/tguerin/alchemy-sdk-kotlin/branch/main/graph/badge.svg)](https://codecov.io/gh/tguerin/alchemy-sdk-kotlin)
