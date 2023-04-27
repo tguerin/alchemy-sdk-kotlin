@@ -23,7 +23,7 @@ mockative = "1.3.0"
 logger = "1.2.1"
 serialization = "1.4.1"
 stately = "1.2.2"
-systemuicontroller = "0.26.2-beta"
+systemuicontroller = "0.31.1-alpha"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
